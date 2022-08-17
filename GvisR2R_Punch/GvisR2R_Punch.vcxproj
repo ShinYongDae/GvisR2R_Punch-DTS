@@ -1,0 +1,423 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{187ACDF4-F3BF-43F3-BFF3-8E51F2EAEA0D}</ProjectGuid>
+    <RootNamespace>GvisR2R_Punch</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files\Matrox Imaging\MIL\Include;C:\Program Files\Matrox Imaging\MIL\Include\MILDyn;C:\YeTools\PCAPI\Include;C:\Program Files\HuarayTech\MV Viewer\Development\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Matrox Imaging\MIL\LIB;C:\YeTools\PCAPI\Lib;C:\Program Files\HuarayTech\MV Viewer\Development\Lib\x64;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>C:\Program Files\HuarayTech\MV Viewer\Application\x64;$(ExecutablePath)</ExecutablePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files\Matrox Imaging\MIL\Include;C:\Program Files\Matrox Imaging\MIL\Include\MILDyn;C:\YeTools\PCAPI\Include;C:\Program Files\HuarayTech\MV Viewer\Development\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Matrox Imaging\MIL\LIB;C:\YeTools\PCAPI\Lib;C:\Program Files\HuarayTech\MV Viewer\Development\Lib\x64;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>C:\Program Files\HuarayTech\MV Viewer\Application\x64;$(ExecutablePath)</ExecutablePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_XKEYCHECK_H;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>netapi32.lib;MVSDKmd.lib;VideoRender.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EnableUAC>false</EnableUAC>
+      <LargeAddressAware>true</LargeAddressAware>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <GenerateDebugInformation>Debug</GenerateDebugInformation>
+      <HeapReserveSize>10485760</HeapReserveSize>
+      <StackReserveSize>10485760</StackReserveSize>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <PreprocessorDefinitions>_XKEYCHECK_H;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>netapi32.lib;MVSDKmd.lib;VideoRender.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EnableUAC>false</EnableUAC>
+      <LargeAddressAware>true</LargeAddressAware>
+      <HeapReserveSize>10485760</HeapReserveSize>
+      <StackReserveSize>10485760</StackReserveSize>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Device\AdoConnection.h" />
+    <ClInclude Include="Device\BufferControl.h" />
+    <ClInclude Include="Device\CamIRayple.h" />
+    <ClInclude Include="Device\CEasyThread.h" />
+    <ClInclude Include="Device\Data.h" />
+    <ClInclude Include="Device\DataRow.h" />
+    <ClInclude Include="Device\DataSource.h" />
+    <ClInclude Include="Device\Dts.h" />
+    <ClInclude Include="Device\Engrave.h" />
+    <ClInclude Include="Device\EngraveDef.h" />
+    <ClInclude Include="Device\Field.h" />
+    <ClInclude Include="Device\FileOperation.h" />
+    <ClInclude Include="Device\HardwareInfoDefine.h" />
+    <ClInclude Include="Device\HardwareInfoEx.h" />
+    <ClInclude Include="Device\LibMil.h" />
+    <ClInclude Include="Device\LibMilBuf.h" />
+    <ClInclude Include="Device\LibMilDisp.h" />
+    <ClInclude Include="Device\LibMilDraw.h" />
+    <ClInclude Include="Device\Light.h" />
+    <ClInclude Include="Device\Motion.h" />
+    <ClInclude Include="Device\MotionParam.h" />
+    <ClInclude Include="Device\MpDevice.h" />
+    <ClInclude Include="Device\MyFileErrMap.h" />
+    <ClInclude Include="Device\NmcAxis.h" />
+    <ClInclude Include="Device\NmcDevice.h" />
+    <ClInclude Include="Device\NMC_Motion.h" />
+    <ClInclude Include="Device\NMC_R2R.h" />
+    <ClInclude Include="Device\Query.h" />
+    <ClInclude Include="Device\Render.h" />
+    <ClInclude Include="Device\RGBConvert.h" />
+    <ClInclude Include="Device\Rs232.h" />
+    <ClInclude Include="Device\safelock.h" />
+    <ClInclude Include="Device\Smac.h" />
+    <ClInclude Include="Device\SocketComm.h" />
+    <ClInclude Include="Device\Sr1000w.h" />
+    <ClInclude Include="Device\Sr1000wDef.h" />
+    <ClInclude Include="Device\stdafx.h" />
+    <ClInclude Include="Device\TcpIpClient.h" />
+    <ClInclude Include="Device\Tool.h" />
+    <ClInclude Include="Device\User.h" />
+    <ClInclude Include="Device\vic7defs.h" />
+    <ClInclude Include="Device\Vicdefs.h" />
+    <ClInclude Include="Device\Vision.h" />
+    <ClInclude Include="Dialog\DlgClient.h" />
+    <ClInclude Include="Dialog\DlgFrameHigh.h" />
+    <ClInclude Include="Dialog\DlgInfo.h" />
+    <ClInclude Include="Dialog\DlgKeyNum.h" />
+    <ClInclude Include="Dialog\DlgMenu01.h" />
+    <ClInclude Include="Dialog\DlgMenu02.h" />
+    <ClInclude Include="Dialog\DlgMenu03.h" />
+    <ClInclude Include="Dialog\DlgMenu04.h" />
+    <ClInclude Include="Dialog\DlgMenu05.h" />
+    <ClInclude Include="Dialog\DlgMsgBox.h" />
+    <ClInclude Include="Dialog\DlgMyKeypad.h" />
+    <ClInclude Include="Dialog\DlgMyMsg.h" />
+    <ClInclude Include="Dialog\DlgMyMsgSub00.h" />
+    <ClInclude Include="Dialog\DlgMyMsgSub01.h" />
+    <ClInclude Include="Dialog\DlgMyMsgSub02.h" />
+    <ClInclude Include="Dialog\DlgMyPassword.h" />
+    <ClInclude Include="Dialog\DlgProgress.h" />
+    <ClInclude Include="Dialog\DlgUser.h" />
+    <ClInclude Include="Dialog\DlgUtil01.h" />
+    <ClInclude Include="Dialog\DlgUtil02.h" />
+    <ClInclude Include="Dialog\DlgUtil03.h" />
+    <ClInclude Include="Dialog\DlgUtil04.h" />
+    <ClInclude Include="Dialog\DlgUtil05.h" />
+    <ClInclude Include="Dialog\DlgUtil07.h" />
+    <ClInclude Include="Dialog\Label.h" />
+    <ClInclude Include="Dialog\MyBtn.h" />
+    <ClInclude Include="Dialog\MyEdit.h" />
+    <ClInclude Include="Dialog\MyGL.h" />
+    <ClInclude Include="Dialog\MyGroup.h" />
+    <ClInclude Include="Dialog\MyLabel.h" />
+    <ClInclude Include="Dialog\MyPic.h" />
+    <ClInclude Include="Dialog\MyStatic.h" />
+    <ClInclude Include="Dialog\stdafx.h" />
+    <ClInclude Include="Global\GlobalDefine.h" />
+    <ClInclude Include="Global\GlobalFunc.h" />
+    <ClInclude Include="Global\MsgBoxTimeout.h" />
+    <ClInclude Include="Global\MyData.h" />
+    <ClInclude Include="Global\MySpec.h" />
+    <ClInclude Include="Global\SafeLock.h" />
+    <ClInclude Include="Global\stdafx.h" />
+    <ClInclude Include="Global\Token.h" />
+    <ClInclude Include="Global\Yield.h" />
+    <ClInclude Include="GvisR2R_Punch.h" />
+    <ClInclude Include="GvisR2R_PunchDoc.h" />
+    <ClInclude Include="GvisR2R_PunchView.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="Process\CamMaster.h" />
+    <ClInclude Include="Process\DataFile.h" />
+    <ClInclude Include="Process\DataMarking.h" />
+    <ClInclude Include="Process\freeimage.h" />
+    <ClInclude Include="Process\GVGL.h" />
+    <ClInclude Include="Process\Matrix.h" />
+    <ClInclude Include="Process\MyFile.h" />
+    <ClInclude Include="Process\PcsRgn.h" />
+    <ClInclude Include="Process\PtAlign.h" />
+    <ClInclude Include="Process\ReelMap.h" />
+    <ClInclude Include="Process\stdafx.h" />
+    <ClInclude Include="Process\ThreadTask.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="SingleInstance.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="type_def.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Device\AdoConnection.cpp" />
+    <ClCompile Include="Device\BufferControl.cpp" />
+    <ClCompile Include="Device\CamIRayple.cpp" />
+    <ClCompile Include="Device\CEasyThread.cpp" />
+    <ClCompile Include="Device\Data.cpp" />
+    <ClCompile Include="Device\DataRow.cpp" />
+    <ClCompile Include="Device\DataSource.cpp" />
+    <ClCompile Include="Device\Dts.cpp" />
+    <ClCompile Include="Device\Engrave.cpp" />
+    <ClCompile Include="Device\Field.cpp" />
+    <ClCompile Include="Device\FileOperation.cpp" />
+    <ClCompile Include="Device\HardwareInfoEx.cpp" />
+    <ClCompile Include="Device\LibMil.cpp" />
+    <ClCompile Include="Device\LibMilBuf.cpp" />
+    <ClCompile Include="Device\LibMilDisp.cpp" />
+    <ClCompile Include="Device\LibMilDraw.cpp" />
+    <ClCompile Include="Device\Light.cpp" />
+    <ClCompile Include="Device\Motion.cpp" />
+    <ClCompile Include="Device\MpDevice.cpp" />
+    <ClCompile Include="Device\MyFileErrMap.cpp" />
+    <ClCompile Include="Device\NmcAxis.cpp" />
+    <ClCompile Include="Device\NmcDevice.cpp" />
+    <ClCompile Include="Device\Query.cpp" />
+    <ClCompile Include="Device\Render.cpp" />
+    <ClCompile Include="Device\Rs232.cpp" />
+    <ClCompile Include="Device\Smac.cpp" />
+    <ClCompile Include="Device\SocketComm.cpp" />
+    <ClCompile Include="Device\Sr1000w.cpp" />
+    <ClCompile Include="Device\TcpIpClient.cpp" />
+    <ClCompile Include="Device\Tool.cpp" />
+    <ClCompile Include="Device\User.cpp" />
+    <ClCompile Include="Device\Vision.cpp" />
+    <ClCompile Include="Dialog\DlgClient.cpp" />
+    <ClCompile Include="Dialog\DlgFrameHigh.cpp" />
+    <ClCompile Include="Dialog\DlgInfo.cpp" />
+    <ClCompile Include="Dialog\DlgKeyNum.cpp" />
+    <ClCompile Include="Dialog\DlgMenu01.cpp" />
+    <ClCompile Include="Dialog\DlgMenu02.cpp" />
+    <ClCompile Include="Dialog\DlgMenu03.cpp" />
+    <ClCompile Include="Dialog\DlgMenu04.cpp" />
+    <ClCompile Include="Dialog\DlgMenu05.cpp" />
+    <ClCompile Include="Dialog\DlgMsgBox.cpp" />
+    <ClCompile Include="Dialog\DlgMyKeypad.cpp" />
+    <ClCompile Include="Dialog\DlgMyMsg.cpp" />
+    <ClCompile Include="Dialog\DlgMyMsgSub00.cpp" />
+    <ClCompile Include="Dialog\DlgMyMsgSub01.cpp" />
+    <ClCompile Include="Dialog\DlgMyMsgSub02.cpp" />
+    <ClCompile Include="Dialog\DlgMyPassword.cpp" />
+    <ClCompile Include="Dialog\DlgProgress.cpp" />
+    <ClCompile Include="Dialog\DlgUser.cpp" />
+    <ClCompile Include="Dialog\DlgUtil01.cpp" />
+    <ClCompile Include="Dialog\DlgUtil02.cpp" />
+    <ClCompile Include="Dialog\DlgUtil03.cpp" />
+    <ClCompile Include="Dialog\DlgUtil04.cpp" />
+    <ClCompile Include="Dialog\DlgUtil05.cpp" />
+    <ClCompile Include="Dialog\DlgUtil07.cpp" />
+    <ClCompile Include="Dialog\Label.cpp" />
+    <ClCompile Include="Dialog\MyBtn.cpp" />
+    <ClCompile Include="Dialog\MyEdit.cpp" />
+    <ClCompile Include="Dialog\MyGL.cpp" />
+    <ClCompile Include="Dialog\MyGroup.cpp" />
+    <ClCompile Include="Dialog\MyLabel.cpp" />
+    <ClCompile Include="Dialog\MyPic.cpp" />
+    <ClCompile Include="Dialog\MyStatic.cpp" />
+    <ClCompile Include="Global\GlobalFunc.cpp" />
+    <ClCompile Include="Global\MsgBoxTimeout.cpp" />
+    <ClCompile Include="Global\MyData.cpp" />
+    <ClCompile Include="Global\MySpec.cpp" />
+    <ClCompile Include="Global\Yield.cpp" />
+    <ClCompile Include="GvisR2R_Punch.cpp" />
+    <ClCompile Include="GvisR2R_PunchDoc.cpp" />
+    <ClCompile Include="GvisR2R_PunchView.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Process\CamMaster.cpp" />
+    <ClCompile Include="Process\DataFile.cpp" />
+    <ClCompile Include="Process\DataMarking.cpp" />
+    <ClCompile Include="Process\GVGL.cpp" />
+    <ClCompile Include="Process\Matrix.cpp" />
+    <ClCompile Include="Process\MyFile.cpp" />
+    <ClCompile Include="Process\PcsRgn.cpp" />
+    <ClCompile Include="Process\PtAlign.cpp" />
+    <ClCompile Include="Process\ReelMap.cpp" />
+    <ClCompile Include="Process\ThreadTask.cpp" />
+    <ClCompile Include="SingleInstance.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GvisR2R_Punch.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\GvisR2R_Punch.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\GigaVis-1280.bmp" />
+    <Image Include="res\GvisR2R_Punch.ico" />
+    <Image Include="res\GvisR2R_PunchDoc.ico" />
+    <Image Include="res\Toolbar.bmp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="GvisR2R_Punch.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

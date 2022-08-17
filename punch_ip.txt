@@ -1,0 +1,19 @@
+punching PC ip
+
+[2D Reader]
+pc : 192.168.100.99
+Reader : 192.168.100.100
+port : 9004
+
+[Huarai Cam-Left]
+Serial : AM00759AAK00032
+pc : 169.254.26.85
+Cam : 169.254.7.247
+port : 
+
+
+[Huarai Cam-Right]
+Serial : AM00759AAK00023
+pc : 169.254.101.213
+Cam : 169.254.7.193
+port : 

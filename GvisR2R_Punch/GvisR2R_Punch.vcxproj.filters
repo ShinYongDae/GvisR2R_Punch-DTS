@@ -1,0 +1,633 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Process">
+      <UniqueIdentifier>{1e9ad00f-e504-45a2-b106-8b0cdad9a593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialog">
+      <UniqueIdentifier>{c29465fb-2528-4bb0-8b34-675bb62ed900}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Device">
+      <UniqueIdentifier>{cc32cabe-24ab-46f1-b1d9-b661900ec56e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Global">
+      <UniqueIdentifier>{4a6c055d-3a6c-4acd-b62b-2de18627cc78}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GvisR2R_Punch.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GvisR2R_PunchDoc.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GvisR2R_PunchView.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleInstance.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\CamMaster.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\DataFile.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\DataMarking.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\MyFile.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\PcsRgn.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\ReelMap.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\ThreadTask.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\GVGL.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\Matrix.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\PtAlign.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgClient.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgFrameHigh.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgInfo.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgKeyNum.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMenu01.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMenu02.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMenu03.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMenu04.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMenu05.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMsgBox.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMyKeypad.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMyMsg.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMyMsgSub00.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMyMsgSub01.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMyMsgSub02.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgMyPassword.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgProgress.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgUser.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgUtil01.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgUtil02.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgUtil03.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgUtil04.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgUtil05.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\Label.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\MyBtn.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\MyEdit.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\MyGroup.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\MyLabel.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\MyPic.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\MyStatic.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\CEasyThread.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\LibMil.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\LibMilBuf.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\LibMilDisp.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\LibMilDraw.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Light.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Motion.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\MpDevice.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Rs232.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\SocketComm.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\TcpIpClient.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Vision.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Smac.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\MyFileErrMap.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\BufferControl.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\NmcAxis.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\NmcDevice.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\MotionParam.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\NMC_Motion.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Vicdefs.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\MyGL.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="type_def.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\NMC_R2R.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\freeimage.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\stdafx.h">
+      <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\stdafx.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\stdafx.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\vic7defs.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\CamIRayple.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Render.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Tool.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\RGBConvert.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Sr1000w.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Sr1000wDef.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Engrave.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\EngraveDef.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\FileOperation.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\safelock.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\HardwareInfoEx.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\HardwareInfoDefine.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\DlgUtil07.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\GlobalDefine.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\GlobalFunc.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\MyData.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\MySpec.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\SafeLock.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\stdafx.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\Yield.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\AdoConnection.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\DataSource.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Data.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\DataRow.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Field.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Query.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\Dts.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\Token.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\MsgBoxTimeout.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Device\User.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GvisR2R_Punch.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GvisR2R_PunchDoc.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GvisR2R_PunchView.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleInstance.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\CamMaster.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\DataFile.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\DataMarking.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\MyFile.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\PcsRgn.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\ReelMap.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\ThreadTask.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\GVGL.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\Matrix.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\PtAlign.cpp">
+      <Filter>Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgClient.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgFrameHigh.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgInfo.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgKeyNum.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMenu01.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMenu02.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMenu03.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMenu04.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMenu05.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMsgBox.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMyKeypad.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMyMsg.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMyMsgSub00.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMyMsgSub01.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMyMsgSub02.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMyPassword.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgProgress.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgUser.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgUtil01.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgUtil02.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgUtil03.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgUtil04.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgUtil05.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\Label.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\MyBtn.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\MyEdit.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\MyGroup.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\MyLabel.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\MyPic.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\MyStatic.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\CEasyThread.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\LibMil.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\LibMilBuf.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\LibMilDisp.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\LibMilDraw.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Light.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Motion.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\MpDevice.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Rs232.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\SocketComm.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\TcpIpClient.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Vision.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Smac.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\MyFileErrMap.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\BufferControl.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\NmcAxis.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\NmcDevice.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\MyGL.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\CamIRayple.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Render.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Tool.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Sr1000w.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Engrave.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\FileOperation.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\HardwareInfoEx.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgUtil07.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Global\GlobalFunc.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Global\MyData.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Global\MySpec.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Global\Yield.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\AdoConnection.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\DataSource.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Data.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\DataRow.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Field.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Query.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\Dts.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Global\MsgBoxTimeout.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Device\User.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GvisR2R_Punch.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\GvisR2R_Punch.rc2">
+      <Filter>리소스 파일</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\GvisR2R_PunchDoc.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\GvisR2R_Punch.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\GigaVis-1280.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
