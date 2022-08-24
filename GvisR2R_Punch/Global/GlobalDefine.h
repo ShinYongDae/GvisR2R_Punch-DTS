@@ -45,7 +45,7 @@
 	#define USE_ENGRAVE
 	#define USE_DTS
 
-	//#define USE_CAM_MASTER
+	#define USE_CAM_MASTER
 	//#define	USE_NMC
 	//#define	USE_MPE
 	//#define	USE_IRAYPLE

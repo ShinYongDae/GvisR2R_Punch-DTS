@@ -540,6 +540,7 @@ BOOL CGvisR2R_PunchView::LoadMstInfo()
 					pDoc->WorkingInfo.LastJob.sLayerUp,
 					_T(""), TRUE);
 				pDoc->m_MasterDB.LoadMstInfo();
+				pDoc->m_MasterDB.WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
 			}
 			//if (IsLastJob(1)) // Dn
 			//{
@@ -594,7 +595,7 @@ BOOL CGvisR2R_PunchView::LoadMstInfo()
 			pDoc->WorkingInfo.LastJob.sLayerUp,
 			_T(""), FALSE);
 		pDoc->m_Master[0].LoadMstInfo();
-		pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
+		//pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
 	}
 
 	if (IsLastJob(1)) // Dn
@@ -606,7 +607,7 @@ BOOL CGvisR2R_PunchView::LoadMstInfo()
 			pDoc->WorkingInfo.LastJob.sLayerUp,
 			FALSE);
 		pDoc->m_Master[1].LoadMstInfo();
-		pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
+		//pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
 	}
 
 	SetAlignPos();

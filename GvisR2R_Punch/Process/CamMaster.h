@@ -22,9 +22,9 @@
 #define MAX_PIECE_NODE_X_NUM	100		//600		
 #define MAX_PIECE_NODE_Y_NUM	100		//600
 
-#define MAX_FRAME_RGN_NUM		4		//1000		// Maximum number of Strip regions
-#define MAX_STRIP_X_NUM			1		//10			
-#define MAX_STRIP_Y_NUM			4		//10			
+#define MAX_FRAME_RGN_NUM		100//4		//1000		// Maximum number of Strip regions
+#define MAX_STRIP_X_NUM			10//1		//10			
+#define MAX_STRIP_Y_NUM			10//4		//10			
 #define MAX_PIECE_RGN_NUM		(MAX_PIECE_NODE_X_NUM * MAX_PIECE_NODE_Y_NUM)		// Maximum number of Cell regions
 //=======================================================================================================================
 

@@ -1497,27 +1497,27 @@ BOOL CCamMaster::WriteStripPieceRegion_Text(CString sBasePath, CString sLot)
 		WritePrivateProfileString(strTitle, _T("NumOfPiece"), sData, sPath);
 		for (i = 0; i < m_nPieceNum[j]; i++)
 		{
-			strSubTitle.Format(_T("Piece%dID"), i);
+			strSubTitle.Format(_T("%dPieceID"), i);
 			sData.Format(_T("%d"), PieceRgnPix[i + nPieceCount].nId);
 			WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);
-			strSubTitle.Format(_T("Piece%dRow"), i);
+			strSubTitle.Format(_T("%dPieceRow"), i);
 			sData.Format(_T("%d"), PieceRgnPix[i + nPieceCount].Row);
 			WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);
-			strSubTitle.Format(_T("Piece%dCol"), i);
+			strSubTitle.Format(_T("%dPieceCol"), i);
 			sData.Format(_T("%d"), PieceRgnPix[i + nPieceCount].Col);
 			WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);
-			strSubTitle.Format(_T("Piece%dDummy"), i);
+			strSubTitle.Format(_T("%dPieceDummy"), i);
 			sData.Format(_T("%d"), m_nDummy[6 + i + nPieceCount]);
 			WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);	//0 : 0도  1 : 90도  2 : 180도  3 : 270도
 
 			// Set Piece position
 			for (k = 0; k < m_nCornerNum; k++)
 			{
-				strSubTitle.Format(_T("Piece%dPoint%d"), i, k);
+				strSubTitle.Format(_T("%dPiecePoint%d"), i, k);
 				sData.Format(_T("%d, %d"), PolygonPoints[i + nPieceCount][k].x, PolygonPoints[i + nPieceCount][k].y);
 				WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);
 			}
-			strSubTitle.Format(_T("Piece%dRotate"), i);
+			strSubTitle.Format(_T("%dPieceRotate"), i);
 			sData.Format(_T("%d"), PieceRgnPix[i + nPieceCount].FRotate);
 			WritePrivateProfileString(strTitle, strSubTitle, sData, sPath);
 
