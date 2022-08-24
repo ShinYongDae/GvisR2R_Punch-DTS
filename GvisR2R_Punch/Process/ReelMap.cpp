@@ -250,19 +250,19 @@ void CReelMap::LoadConfig()
 		m_nBkColor[2] = _tstoi(sVal);
 	}
 
-	if (pView && pView->m_pDts)
-	{
-		if (pView->m_pDts->IsUseDts())
-		{
-			LoadDefectTableDB();
-			return;
-		}
-		else
-		{
-			LoadDefectTableIni();
-		}
-	}
-	else
+	//if (pView && pView->m_pDts)
+	//{
+	//	if (pView->m_pDts->IsUseDts())
+	//	{
+	//		LoadDefectTableDB();
+	//		return;
+	//	}
+	//	else
+	//	{
+	//		LoadDefectTableIni();
+	//	}
+	//}
+	//else
 	{
 		LoadDefectTableIni();
 	}

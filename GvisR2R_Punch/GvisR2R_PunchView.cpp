@@ -525,6 +525,95 @@ CGvisR2R_PunchDoc* CGvisR2R_PunchView::GetDocument() const // 디버그되지 않은 버
 #endif //_DEBUG
 
 
+BOOL CGvisR2R_PunchView::LoadMstInfo()
+{
+	if (m_pDts)
+	{
+		if (m_pDts->IsUseDts())
+		{
+			if (IsLastJob(0)) // Up
+			{
+				// CString sPathSpec, CString sModel, CString sLayer, CString sLayerUp, BOOL bUseDTS
+				pDoc->m_MasterDB.Init(
+					pDoc->WorkingInfo.System.sPathCamSpecDir,
+					pDoc->WorkingInfo.LastJob.sModelUp,
+					pDoc->WorkingInfo.LastJob.sLayerUp,
+					_T(""), TRUE);
+				pDoc->m_MasterDB.LoadMstInfo();
+			}
+			//if (IsLastJob(1)) // Dn
+			//{
+			//	pDoc->m_MasterDB.Init(
+			//		pDoc->WorkingInfo.System.sPathCamSpecDir,
+			//		pDoc->WorkingInfo.LastJob.sModelDn,
+			//		pDoc->WorkingInfo.LastJob.sLayerDn,
+			//		pDoc->WorkingInfo.LastJob.sLayerUp, TRUE);
+			//	pDoc->m_MasterDB.LoadMstInfo();
+			//}
+
+			//return TRUE;
+		}
+	}
+
+#ifdef TEST_MODE
+	//pDoc->GetCamPxlRes();
+	if (IsLastJob(0)) // Up
+	{
+		pDoc->m_Master[0].Init(
+			pDoc->WorkingInfo.System.sPathCamSpecDir,
+			pDoc->WorkingInfo.LastJob.sModelUp,
+			pDoc->WorkingInfo.LastJob.sLayerUp,
+			_T(""), FALSE);
+		pDoc->m_Master[0].LoadMstInfo();
+	}
+	if (IsLastJob(1)) // Dn
+	{
+		pDoc->m_Master[1].Init(
+			pDoc->WorkingInfo.System.sPathCamSpecDir,
+			pDoc->WorkingInfo.LastJob.sModelDn,
+			pDoc->WorkingInfo.LastJob.sLayerDn,
+			pDoc->WorkingInfo.LastJob.sLayerUp,
+			FALSE);
+		pDoc->m_Master[1].LoadMstInfo();
+	}
+	//pDoc->LoadMasterSpec();
+	//pDoc->LoadPinImg();
+	//pDoc->GetCamPxlRes();
+	//pDoc->LoadStripRgnFromCam();
+	//pDoc->LoadPcsRgnFromCam();
+	//pDoc->LoadPcsImg();
+	//pDoc->LoadCadImg();
+#else
+	pDoc->GetCamPxlRes();
+
+	if (IsLastJob(0)) // Up
+	{
+		pDoc->m_Master[0].Init(
+			pDoc->WorkingInfo.System.sPathCamSpecDir,
+			pDoc->WorkingInfo.LastJob.sModelUp,
+			pDoc->WorkingInfo.LastJob.sLayerUp,
+			_T(""), FALSE);
+		pDoc->m_Master[0].LoadMstInfo();
+		pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
+	}
+
+	if (IsLastJob(1)) // Dn
+	{
+		pDoc->m_Master[1].Init(
+			pDoc->WorkingInfo.System.sPathCamSpecDir,
+			pDoc->WorkingInfo.LastJob.sModelDn,
+			pDoc->WorkingInfo.LastJob.sLayerDn,
+			pDoc->WorkingInfo.LastJob.sLayerUp,
+			FALSE);
+		pDoc->m_Master[1].LoadMstInfo();
+		pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
+	}
+
+	SetAlignPos();
+#endif
+
+	return TRUE;
+}
 // CGvisR2R_PunchView 메시지 처리기
 
 
@@ -545,56 +634,10 @@ void CGvisR2R_PunchView::OnTimer(UINT_PTR nIDEvent)
 		case 0:
 			m_nStepInitView++;
 			DispMsg(_T("프로그램을 초기화합니다."), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
+			DtsInit();
 
-#ifdef TEST_MODE
-			pDoc->GetCamPxlRes();
-			if (IsLastJob(0)) // Up
-			{
-				pDoc->m_Master[0].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-					pDoc->WorkingInfo.LastJob.sModelUp,
-					pDoc->WorkingInfo.LastJob.sLayerUp);
-				pDoc->m_Master[0].LoadMstInfo();
-			}
-			if (IsLastJob(1)) // Dn
-			{
-				pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-					pDoc->WorkingInfo.LastJob.sModelDn,
-					pDoc->WorkingInfo.LastJob.sLayerDn,
-					pDoc->WorkingInfo.LastJob.sLayerUp);
-				pDoc->m_Master[1].LoadMstInfo();
-			}
+			LoadMstInfo();
 
-			// 			pDoc->LoadMasterSpec();
-			// 			pDoc->LoadPinImg();
-			// 			pDoc->GetCamPxlRes();
-			// 			pDoc->LoadStripRgnFromCam();
-			// 			pDoc->LoadPcsRgnFromCam();
-			// 			pDoc->LoadPcsImg();
-			// 			pDoc->LoadCadImg();
-#else
-			pDoc->GetCamPxlRes();
-
-			if (IsLastJob(0)) // Up
-			{
-				pDoc->m_Master[0].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-					pDoc->WorkingInfo.LastJob.sModelUp,
-					pDoc->WorkingInfo.LastJob.sLayerUp);
-				pDoc->m_Master[0].LoadMstInfo();
-				pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
-			}
-
-			if (IsLastJob(1)) // Dn
-			{
-				pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
-					pDoc->WorkingInfo.LastJob.sModelDn,
-					pDoc->WorkingInfo.LastJob.sLayerDn,
-					pDoc->WorkingInfo.LastJob.sLayerUp);
-				pDoc->m_Master[1].LoadMstInfo();
-				pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
-			}
-
-			SetAlignPos();
-#endif
 			// Reelmap 정보 Loading.....
 			InitReelmap();
 
@@ -817,7 +860,6 @@ void CGvisR2R_PunchView::OnTimer(UINT_PTR nIDEvent)
 			SetPlcParam();
 			GetPlcParam();
 			TcpIpInit();
-			DtsInit();
 			m_bTIM_DISP_STATUS = TRUE;
 			SetTimer(TIM_DISP_STATUS, 100, NULL);
 			break;
@@ -9925,9 +9967,11 @@ void CGvisR2R_PunchView::ResetMkInfo(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : 
 		if (IsLastJob(0)) // Up
 		{
 			pView->m_nDebugStep = 503; pView->DispThreadTick();
-			pDoc->m_Master[0].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+			pDoc->m_Master[0].Init(
+				pDoc->WorkingInfo.System.sPathCamSpecDir,
 				pDoc->WorkingInfo.LastJob.sModelUp,
-				pDoc->WorkingInfo.LastJob.sLayerUp);
+				pDoc->WorkingInfo.LastJob.sLayerUp,
+				_T(""), FALSE);
 			pView->m_nDebugStep = 504; pView->DispThreadTick();
 			pDoc->m_Master[0].LoadMstInfo();
 			pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
@@ -9984,10 +10028,12 @@ void CGvisR2R_PunchView::ResetMkInfo(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : 
 			if (IsLastJob(1)) // Dn
 			{
 				pView->m_nDebugStep = 515; pView->DispThreadTick();
-				pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+				pDoc->m_Master[1].Init(
+					pDoc->WorkingInfo.System.sPathCamSpecDir,
 					pDoc->WorkingInfo.LastJob.sModelDn,
 					pDoc->WorkingInfo.LastJob.sLayerDn,
-					pDoc->WorkingInfo.LastJob.sLayerUp);
+					pDoc->WorkingInfo.LastJob.sLayerUp,
+					FALSE);
 				pView->m_nDebugStep = 516; pView->DispThreadTick();
 				pDoc->m_Master[1].LoadMstInfo();
 				pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
@@ -11513,15 +11559,15 @@ void CGvisR2R_PunchView::InitReelmapDn()
 // 	pDoc->LoadPcsImg();
 // 	pDoc->LoadCadImg();
 // 
-// 	pDoc->LoadCadMk(); //.pch
+// 	pDoc->LoadCadAlignMkPos(); //.pch
 // }
 
 BOOL CGvisR2R_PunchView::IsPinMkData()
 {
 	if (pDoc->IsPinMkData())
 	{
-		// 		if(m_pDlgMenu02)
-		// 			m_pDlgMenu02->SetPcsOffset();
+ 		//if(m_pDlgMenu02)
+ 		//	m_pDlgMenu02->SetPcsOffset();
 		return TRUE;
 	}
 	return FALSE;
@@ -11532,10 +11578,10 @@ BOOL CGvisR2R_PunchView::IsPinData()
 	return pDoc->IsPinData();
 }
 
-// BOOL CGvisR2R_PunchView::IsMkOffsetData()
-// {
-// 	return pDoc->IsMkOffsetData();
-// }
+ //BOOL CGvisR2R_PunchView::IsMkOffsetData()
+ //{
+ //	return pDoc->IsMkOffsetData();
+ //}
 
 BOOL CGvisR2R_PunchView::CopyDefImg(int nSerial)
 {
@@ -15936,17 +15982,21 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 				pDoc->GetCamPxlRes();
 				if (IsLastJob(0)) // Up
 				{
-					pDoc->m_Master[0].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+					pDoc->m_Master[0].Init(
+						pDoc->WorkingInfo.System.sPathCamSpecDir,
 						pDoc->WorkingInfo.LastJob.sModelUp,
-						pDoc->WorkingInfo.LastJob.sLayerUp);
+						pDoc->WorkingInfo.LastJob.sLayerUp,
+						_T(""), FALSE);
 					pDoc->m_Master[0].LoadMstInfo();
 				}
 				if (IsLastJob(1)) // Dn
 				{
-					pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+					pDoc->m_Master[1].Init(
+						pDoc->WorkingInfo.System.sPathCamSpecDir,
 						pDoc->WorkingInfo.LastJob.sModelDn,
 						pDoc->WorkingInfo.LastJob.sLayerDn,
-						pDoc->WorkingInfo.LastJob.sLayerUp);
+						pDoc->WorkingInfo.LastJob.sLayerUp,
+						FALSE);
 					pDoc->m_Master[1].LoadMstInfo();
 				}
 
@@ -15962,19 +16012,23 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 
 				if (IsLastJob(0)) // Up
 				{
-					pDoc->m_Master[0].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+					pDoc->m_Master[0].Init(
+						pDoc->WorkingInfo.System.sPathCamSpecDir,
 						pDoc->WorkingInfo.LastJob.sModelUp,
-						pDoc->WorkingInfo.LastJob.sLayerUp);
+						pDoc->WorkingInfo.LastJob.sLayerUp,
+						_T(""), FALSE);
 					pDoc->m_Master[0].LoadMstInfo();
 					pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
 				}
 
 				if (IsLastJob(1)) // Dn
 				{
-					pDoc->m_Master[1].Init(pDoc->WorkingInfo.System.sPathCamSpecDir,
+					pDoc->m_Master[1].Init(
+						pDoc->WorkingInfo.System.sPathCamSpecDir,
 						pDoc->WorkingInfo.LastJob.sModelDn,
 						pDoc->WorkingInfo.LastJob.sLayerDn,
-						pDoc->WorkingInfo.LastJob.sLayerUp);
+						pDoc->WorkingInfo.LastJob.sLayerUp,
+						FALSE);
 					pDoc->m_Master[1].LoadMstInfo();
 					pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
 				}

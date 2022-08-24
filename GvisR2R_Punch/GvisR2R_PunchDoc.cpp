@@ -3618,8 +3618,8 @@ BOOL CGvisR2R_PunchDoc::InitReelmap()
 	{
 		CString strMsg;
 		strMsg.Format(_T("피스 영역이 존재하지 않습니다."));
-		pView->MsgBox(strMsg);
-		// 		AfxMessageBox(strMsg,MB_ICONSTOP);
+		//pView->MsgBox(strMsg);
+		AfxMessageBox(strMsg,MB_ICONSTOP);
 		return FALSE;
 	}
 

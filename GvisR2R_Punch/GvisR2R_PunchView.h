@@ -292,6 +292,7 @@ class CGvisR2R_PunchView : public CFormView
 	BOOL SortingOutDn(int* pSerial, int nTot);
 	void SwapDn(__int64 *num1, __int64 *num2);
 
+	BOOL LoadMstInfo();
 
 protected: // serialization에서만 만들어집니다.
 	CGvisR2R_PunchView();

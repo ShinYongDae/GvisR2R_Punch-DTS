@@ -35,6 +35,8 @@
 	#define PATH_PIN_IMG			_T("C:\\R2RSet\\Test\\Pin-330.TIF")
 	#define PATH_ALIGN0_IMG			_T("C:\\R2RSet\\Test\\Align0.TIF")
 	#define PATH_ALIGN1_IMG			_T("C:\\R2RSet\\Test\\Align1.TIF")
+	#define PATH_ALIGN2_IMG			_T("C:\\R2RSet\\Test\\Align2.TIF")
+	#define PATH_ALIGN3_IMG			_T("C:\\R2RSet\\Test\\Align3.TIF")
 	#define PATH_PCS_IMG			_T("C:\\R2RSet\\Test\\Piece.tif")
 
 	#define	USE_MIL
@@ -75,6 +77,8 @@
 	#define PATH_PIN_IMG			_T("C:\\R2RSet\\Pin\\Pin.TIF")
 	#define PATH_ALIGN0_IMG			_T("C:\\R2RSet\\Align\\Align0.TIF")
 	#define PATH_ALIGN1_IMG			_T("C:\\R2RSet\\Align\\Align1.TIF")
+	#define PATH_ALIGN2_IMG			_T("C:\\R2RSet\\Align\\Align2.TIF")
+	#define PATH_ALIGN3_IMG			_T("C:\\R2RSet\\Align\\Align3.TIF")
 	#define PATH_PCS_IMG			_T("C:\\R2RSet\\Pcs\\Piece.tif")
 #endif
 

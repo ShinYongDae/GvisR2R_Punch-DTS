@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Global/GlobalDefine.h"
 
 // CBufferControl
 

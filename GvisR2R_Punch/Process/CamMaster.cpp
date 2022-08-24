@@ -55,6 +55,7 @@ CCamMaster::CCamMaster()
 
 	PolygonPoints = NULL;	//20140116-ndy debug
 
+	m_bUseDTS = FALSE;
 }
 
 CCamMaster::~CCamMaster()
@@ -88,42 +89,88 @@ END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CCamMaster message handlers
-void CCamMaster::Init(CString sPathSpec, CString sModel, CString sLayer, CString sLayerUp)
+void CCamMaster::Init(CString sPathSpec, CString sModel, CString sLayer, CString sLayerUp, BOOL bUseDTS)
 {
-	m_sPathCamSpecDir = sPathSpec;
 	m_sModel = sModel;
 	m_sLayer = sLayer;
+	m_sPathCamSpecDir = sPathSpec;
 	m_sLayerUp = sLayerUp;
+	m_bUseDTS = bUseDTS;
 }
 
 BOOL CCamMaster::LoadMstInfo()
 {
 	CString sPath;
 
+	GetCamPxlRes();
 	LoadMasterSpec();
 	LoadPinImg();
 	LoadAlignImg();
-// 	GetCamPxlRes();
 	if(LoadStripRgnFromCam())
 	{
-		if(pDoc->WorkingInfo.System.bStripPcsRgnBin)
-			LoadStripPieceRegion_Binary();
+		if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+		{
+			if(LoadStripPieceRegion_Binary())
+				SetMasterPanelInfo(); // for DTS
+		}
 		else
 			LoadPcsRgnFromCam();
 
 		LoadPcsImg();
 		LoadCadImg();
 
-		LoadCadMk(); //.pch
+		LoadCadAlignMkPos(); //.pch
 	}
 	else
 		return FALSE;
+
 
 	return TRUE;
 }
 
 BOOL CCamMaster::LoadMasterSpec()
 {
+	//if (pView && pView->m_pDts)
+	//{
+	//	if (pView->m_pDts->IsUseDts())
+	//	{
+	//		CString sPathMstL, sPathCadL;
+	//		double dRes;
+	//		if(pView->m_pDts->LoadMasterSpec(m_sModel, m_sLayer, dRes, sPathMstL, sPathCadL))
+	//		{
+	//			MasterInfo.dPixelSize = dRes;									// [um] _T("MACHINE"), _T("PixelSize") --> RESOLUTION(caminfo)
+	//			MasterInfo.strMasterLocation = m_sPathCamSpecDir = sPathMstL;	// _T("MASTER"), _T("MASTERLOCATION1") --> MASTER_PATH(caminfo) - (model,layer)
+	//			//MasterInfo.nImageCompression = ;								// _T("SPEC"), _T("Compression") --> X
+	//			MasterInfo.strCADImgPath = sPathCadL;							// _T("MASTER"), _T("CADLINKLOCATION") --> CADLINK_PATH(caminfo)
+	//			//MasterInfo.strCADImgBackUpPath = ;							// _T("MASTER"), _T("CadLinkLocationBackUp") --> X
+	//			//MasterInfo.bTwoMetalInspection = ;							// _T("MASTER"), _T("TopBottomInspection") --> X
+	//			//MasterInfo.strTwoMetalOppLayer = ;							// _T("MASTER"), _T("OppLayerName") --> X
+	//			
+	//			TCHAR szData2[100];
+	//			CString sMsg2, sPath2, sPathDir2;
+	//			CFileFind findfile2;
+	//			sPathDir2 = m_sPathCamSpecDir;
+
+	//			sPath2.Format(_T("%s%s\\%s.ini"), sPathDir2, m_sModel, m_sLayer);
+
+	//			if (!findfile2.FindFile(sPath2))
+	//			{
+	//				sMsg2.Format(_T("캠마스터 스팩 파일이 없습니다.\r\n%s"), sPath2);
+	//				pView->MsgBox(sMsg2);
+	//				//AfxMessageBox(sMsg2);
+	//				return FALSE;
+	//			}
+
+	//			if (0 < ::GetPrivateProfileString(_T("SPEC"), _T("NumOfAlignPoint"), NULL, szData2, sizeof(szData2), sPath2))
+	//				MasterInfo.nNumOfAlignPoint = _tstoi(szData2);
+	//			else
+	//				MasterInfo.nNumOfAlignPoint = 0;
+
+	//			return TRUE;
+	//		}
+	//		return FALSE;
+	//	}
+	//}
 #ifdef USE_CAM_MASTER
 	//char szData[100];
 	TCHAR szData[100];
@@ -166,6 +213,11 @@ BOOL CCamMaster::LoadMasterSpec()
 	else
 		MasterInfo.nImageCompression = 1;
 
+	if (0 < ::GetPrivateProfileString(_T("SPEC"), _T("NumOfAlignPoint"), NULL, szData, sizeof(szData), sPath))
+		MasterInfo.nNumOfAlignPoint = _tstoi(szData);
+	else
+		MasterInfo.nNumOfAlignPoint = 0;
+
 	if (0 < ::GetPrivateProfileString(_T("MASTER"), _T("CADLINKLOCATION"), NULL, szData, sizeof(szData), sPath))
 		MasterInfo.strCADImgPath = CString(szData);
 	else
@@ -186,165 +238,42 @@ BOOL CCamMaster::LoadMasterSpec()
 	else
 		MasterInfo.strTwoMetalOppLayer = _T("");
 
+
+	if (0 < ::GetPrivateProfileString(_T("ORIGIN COORD"), _T("PX"), NULL, szData, sizeof(szData), sPath))
+		MasterInfo.dPinPosX = _tstof(szData); // [mm]
+	else
+		MasterInfo.dPinPosX = 0.0; // [mm]
+
+	if (0 < ::GetPrivateProfileString(_T("ORIGIN COORD"), _T("PY"), NULL, szData, sizeof(szData), sPath))
+		MasterInfo.dPinPosY = _tstof(szData); // [mm]
+	else
+		MasterInfo.dPinPosY = 0.0; // [mm]
+
+	if (0 < ::GetPrivateProfileString(_T("ORIGIN COORD"), _T("MX"), NULL, szData, sizeof(szData), sPath))
+		MasterInfo.dTestRgnLeft = _tstof(szData); // [mm]
+	else
+		MasterInfo.dTestRgnLeft = 0.0; // [mm]
+
+	if (0 < ::GetPrivateProfileString(_T("ORIGIN COORD"), _T("MY"), NULL, szData, sizeof(szData), sPath))
+		MasterInfo.dTestRgnTop = _tstof(szData); // [mm]
+	else
+		MasterInfo.dTestRgnTop = 0.0; // [mm]
+
+	if (0 < ::GetPrivateProfileString(_T("PANEL INFO"), _T("InspectionWidth"), NULL, szData, sizeof(szData), sPath))
+		MasterInfo.dTestRgnW = _tstof(szData); // [mm]
+	else
+		MasterInfo.dTestRgnW = 0.0; // [mm]
+
+	if (0 < ::GetPrivateProfileString(_T("PANEL INFO"), _T("InspectionHeight"), NULL, szData, sizeof(szData), sPath))
+		MasterInfo.dTestRgnH = _tstof(szData); // [mm]
+	else
+		MasterInfo.dTestRgnH = 0.0; // [mm]
+
 #else
 	MasterInfo.dPixelSize = 33.0;	// [um]
 #endif
 
 	return TRUE;
-}
-
-// CamMaster Marking Index, Align Position Data. ========================
-BOOL CCamMaster::LoadCadMk()
-{
-#ifdef USE_CAM_MASTER
-	BOOL b2PointAlign = FALSE;
-	BOOL b4PointAlign = FALSE;
-
-	CFileFind findfile;
-	CString sPath2, sPath;
-
-	if (m_sPathCamSpecDir.Right(1) != "\\")
-		sPath2.Format(_T("%s\\%s\\%s.pch2"), m_sPathCamSpecDir, m_sModel, m_sLayer);
-	else
-		sPath2.Format(_T("%s%s\\%s.pch2"), m_sPathCamSpecDir, m_sModel, m_sLayer);
-
-	if (findfile.FindFile(sPath2)) // find 4PointAlign file.
-	{
-		b4PointAlign = TRUE; 
-	}
-
-	if (m_sPathCamSpecDir.Right(1) != "\\")
-		sPath.Format(_T("%s\\%s\\%s.pch"), m_sPathCamSpecDir, m_sModel, m_sLayer);
-	else
-		sPath.Format(_T("%s%s\\%s.pch"), m_sPathCamSpecDir, m_sModel, m_sLayer);
-
-	if (findfile.FindFile(sPath)) // find 2PointAlign file.
-	{
-		b2PointAlign = TRUE; 
-	}
-
-	if(b4PointAlign && b2PointAlign)
-	{
-		if (pDoc->WorkingInfo.LastJob.nAlignMethode == FOUR_POINT)
-			return LoadCadMk4PntAlign(sPath2);
-		else
-			return LoadCadMk2PntAlign(sPath);
-	}
-	else if (b4PointAlign)
-	{
-		pDoc->WorkingInfo.LastJob.nAlignMethode = FOUR_POINT;
-		return LoadCadMk4PntAlign(sPath2);
-	}
-	else if (b2PointAlign)
-	{
-		pDoc->WorkingInfo.LastJob.nAlignMethode = TWO_POINT;
-		return LoadCadMk2PntAlign(sPath);
-	}
-	else
-		return FALSE;
-#else
-	return TRUE;
-#endif
-}
-
-BOOL CCamMaster::LoadCadMk2PntAlign(CString sPath)
-{
-	CFile file;
-	int nRet;
-	int nSzAlignMk, nSzPcsMk;
-	int i;
-
-	// Structure Initialize
-	m_stAlignMk.X0 = 0.0;
-	m_stAlignMk.Y0 = 0.0;
-	m_stAlignMk.X1 = 0.0;
-	m_stAlignMk.Y1 = 0.0;
-	m_lPcsNum = 0;
-	for (i = 0; i < MAX_PCS; i++)
-	{
-		m_stPcsMk[i].X = 0.0;
-		m_stPcsMk[i].Y = 0.0;
-	}
-
-	// Mark File Load
-	if (file.Open((LPCTSTR)sPath, CFile::modeRead))
-	{
-		nSzAlignMk = sizeof(stAlignMark);
-
-		nRet = file.Read((void *)&m_stAlignMk, nSzAlignMk);
-		if (nRet != nSzAlignMk)
-			return(FALSE);
-
-		//nRet = file.Read((void *) &m_lPcsNum, sizeof(long));
-		//if(nRet != sizeof(long))
-		//	return(FALSE);
-		nRet = file.Read((void *)&m_lPcsNum, sizeof(int));
-		if (nRet != sizeof(int))
-			return(FALSE);
-
-		nSzPcsMk = m_lPcsNum * sizeof(stPieceMark);
-		nRet = file.Read((void *)&m_stPcsMk, nSzPcsMk);
-		if (nRet != nSzPcsMk)
-			return(FALSE);
-
-		file.Close();
-		return(TRUE);
-	}
-	else
-		return(FALSE);
-}
-
-BOOL CCamMaster::LoadCadMk4PntAlign(CString sPath)
-{
-	CFile file;
-	int nRet;
-	int nSzAlignMk, nSzPcsMk;
-	int i;
-
-	// Structure Initialize
-	m_stAlignMk2.X0 = 0.0;
-	m_stAlignMk2.Y0 = 0.0;
-	m_stAlignMk2.X1 = 0.0;
-	m_stAlignMk2.Y1 = 0.0;
-	m_stAlignMk2.X2 = 0.0;
-	m_stAlignMk2.Y2 = 0.0;
-	m_stAlignMk2.X3 = 0.0;
-	m_stAlignMk2.Y3 = 0.0;
-
-	m_lPcsNum = 0;
-
-	for (i = 0; i < MAX_PCS; i++)
-	{
-		m_stPcsMk[i].X = 0.0;
-		m_stPcsMk[i].Y = 0.0;
-	}
-
-	// Mark File Load
-	if (file.Open((LPCTSTR)sPath, CFile::modeRead))
-	{
-		nSzAlignMk = sizeof(stAlignMark2);
-
-		nRet = file.Read((void *)&m_stAlignMk2, nSzAlignMk);
-		if (nRet != nSzAlignMk)
-			return(FALSE);
-
-		//nRet = file.Read((void *) &m_lPcsNum, sizeof(long));
-		//if(nRet != sizeof(long))
-		//	return(FALSE);
-		nRet = file.Read((void *)&m_lPcsNum, sizeof(int));
-		if (nRet != sizeof(int))
-			return(FALSE);
-
-		nSzPcsMk = m_lPcsNum * sizeof(stPieceMark);
-		nRet = file.Read((void *)&m_stPcsMk, nSzPcsMk);
-		if (nRet != nSzPcsMk)
-			return(FALSE);
-
-		file.Close();
-		return(TRUE);
-	}
-	else
-		return(FALSE);
 }
 
 void CCamMaster::LoadPinImg()
@@ -418,31 +347,6 @@ void CCamMaster::LoadPinImg()
 
 //	pView->ClrDispMsg();
 }
-// 
-// CString CCamMaster::GetCamPxlRes()
-// {
-// 	CString sRes=_T("");
-// 	CString sPath;
-// #ifdef TEST_MODE
-// 	sPath = PATH_PIN_IMG_;
-// #else
-// 	sPath.Format(_T("%s\\%s\\%s.mst"), m_sPathCamSpecDir, 
-// 								   m_sModel, 
-// 								   m_sLayer);
-// #endif
-// 
-// 	int nPos = sPath.ReverseFind('-');
-// 	if(nPos > 0)
-// 	{
-// 		sRes = sPath.Right(sPath.GetLength()-(nPos+1));
-// 		nPos = sRes.ReverseFind('.');
-// 		if(nPos > 0)
-// 			sRes = sRes.Left(nPos);
-// 		WorkingInfo.Vision[0].sCamPxlRes = sRes;
-// 		WorkingInfo.Vision[1].sCamPxlRes = sRes;
-// 	}
-// 	return sRes;
-// }
 
 BOOL CCamMaster::LoadStripRgnFromCam() // sprintf(FileNCam,"%s%s\\%s.mst",strSpecPath,strModelPath,strLayerPath);
 {
@@ -505,6 +409,542 @@ BOOL CCamMaster::LoadStripRgnFromCam() // sprintf(FileNCam,"%s%s\\%s.mst",strSpe
 
 	return(TRUE);
 }
+
+void CCamMaster::LoadAlignImg()
+{
+	/*
+	char FN[200];
+
+	sprintf(FN, "%s%s\\%s-md0.tif",strSpecPath,strModel,strLayer);
+	VicFileLoad(pGlobalView->m_pDlgSetPunchAlign->m_VisionFirst.m_MilAlign0PositionImg, FN);
+
+	sprintf(FN, "%s%s\\%s-md1.tif",strSpecPath,strModel,strLayer);
+	VicFileLoad(pGlobalView->m_pDlgSetPunchAlign->m_VisionFirst.m_MilAlign1PositionImg, FN);
+
+	sprintf(FN, "c:\\test100.tif");
+	MbufSave(FN, pGlobalView->m_pDlgSetPunchAlign->m_VisionFirst.m_MilAlign0PositionImg);
+	sprintf(FN, "c:\\test200.tif");
+	MbufSave(FN, pGlobalView->m_pDlgSetPunchAlign->m_VisionFirst.m_MilAlign1PositionImg);
+	*/
+	BOOL prcStopF = FALSE;
+	//char FileNAlign[200], FileNLoc[200];
+	TCHAR FileNLoc[200];
+	CString StrDirectoryPath;
+	CFileFind AlignFindFile;
+	CString strFileNAlign;
+
+	DWORD dwMilliseconds = 10;
+
+	pView->DispMsg(_T("Align 이미지를 다운로드 중입니다."), _T("Align 이미지"), RGB_GREEN, DELAY_TIME_MSG);
+	//sprintf(FileNLoc, "C:\\R2RSet\\Align");
+	_stprintf(FileNLoc, _T("%s"), _T("C:\\R2RSet\\Align"));
+
+	//if(!AlignFindFile.FindFile(FileNLoc))
+	if (!pDoc->DirectoryExists(FileNLoc))
+	{
+		if (!CreateDirectory(FileNLoc, NULL))
+		{
+			pView->MsgBox(_T("Can not Create Align Directory"));
+			// 			AfxMessageBox(_T("Can not Create CAD Directory"),MB_ICONSTOP|MB_OK);
+		}
+	}
+	else
+	{
+		StrDirectoryPath.Format(_T("%s"), FileNLoc);
+		DeleteFileInFolder(FileNLoc);
+	}
+	AlignImgFree();
+
+#ifdef USE_CAM_MASTER
+	int i;
+	int Cell;
+	TCHAR FileNAlign[200];
+
+	if (MasterInfo.nNumOfAlignPoint >= 2)
+	{
+		// CAM-Master File Copy and Local File Load
+		//strcpy(FileNLoc, PATH_ALIGN0_IMG);
+		_stprintf(FileNLoc, _T("%s"), PATH_ALIGN0_IMG);
+		if (m_sLayerUp.IsEmpty())
+		{
+			if (m_sPathCamSpecDir.Right(1) != "\\")
+				strFileNAlign.Format(_T("%s\\%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+			else
+				strFileNAlign.Format(_T("%s%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+		}
+		else
+		{
+			if (m_sPathCamSpecDir.Right(1) != "\\")
+				strFileNAlign.Format(_T("%s\\%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
+			else
+				strFileNAlign.Format(_T("%s%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
+		}
+		//sprintf(FileNAlign, "%s", strFileNAlign);
+		_stprintf(FileNAlign, _T("%s"), strFileNAlign);
+
+		if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+		{
+			if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+			{
+				if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+				{
+					prcStopF = TRUE;
+				}
+			}
+		}
+
+		if (!prcStopF)
+		{
+			AlignImgBufAlloc(FileNLoc, 0);
+			//pView->DispStsBar("Align0 이미지 다운로드를 완료하였습니다.", 0);
+		}
+		else
+			pView->DispMsg(_T("Align0 이미지 다운로드를 실패하였습니다."), _T("경고"), RGB_GREEN, DELAY_TIME_MSG);
+
+		// CAM-Master File Copy and Local File Load
+		//strcpy(FileNLoc, PATH_ALIGN1_IMG);
+		_stprintf(FileNLoc, _T("%s"), PATH_ALIGN1_IMG);
+		if (m_sLayerUp.IsEmpty())
+		{
+			if (m_sPathCamSpecDir.Right(1) != "\\")
+				strFileNAlign.Format(_T("%s\\%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+			else
+				strFileNAlign.Format(_T("%s%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+		}
+		else
+		{
+			if (m_sPathCamSpecDir.Right(1) != "\\")
+				strFileNAlign.Format(_T("%s\\%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
+			else
+				strFileNAlign.Format(_T("%s%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
+		}
+		//sprintf(FileNAlign, "%s", strFileNAlign);
+		_stprintf(FileNAlign, _T("%s"), strFileNAlign);
+
+		if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+		{
+			if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+			{
+				if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+				{
+					prcStopF = TRUE;
+				}
+			}
+		}
+
+		if (!prcStopF)
+		{
+			AlignImgBufAlloc(FileNLoc, 1);
+			//pView->DispStsBar("Align1 이미지 다운로드를 완료하였습니다.", 0);
+		}
+		else
+			pView->DispMsg(_T("Align1 이미지 다운로드를 실패하였습니다."), _T("경고"), RGB_GREEN, DELAY_TIME_MSG);
+
+		if (MasterInfo.nNumOfAlignPoint >= 3)
+		{
+			// CAM-Master File Copy and Local File Load
+			//strcpy(FileNLoc, PATH_ALIGN1_IMG);
+			_stprintf(FileNLoc, _T("%s"), PATH_ALIGN2_IMG);
+			if (m_sLayerUp.IsEmpty())
+			{
+				if (m_sPathCamSpecDir.Right(1) != "\\")
+					strFileNAlign.Format(_T("%s\\%s\\%s-md2.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+				else
+					strFileNAlign.Format(_T("%s%s\\%s-md2.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+			}
+			else
+			{
+				if (m_sPathCamSpecDir.Right(1) != "\\")
+					strFileNAlign.Format(_T("%s\\%s\\%s-md2.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
+				else
+					strFileNAlign.Format(_T("%s%s\\%s-md2.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
+			}
+			//sprintf(FileNAlign, "%s", strFileNAlign);
+			_stprintf(FileNAlign, _T("%s"), strFileNAlign);
+
+			if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+			{
+				if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+				{
+					if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+					{
+						prcStopF = TRUE;
+					}
+				}
+			}
+
+			if (!prcStopF)
+			{
+				AlignImgBufAlloc(FileNLoc, 2);
+				//pView->DispStsBar("Align2 이미지 다운로드를 완료하였습니다.", 0);
+			}
+			else
+				pView->DispMsg(_T("Align2 이미지 다운로드를 실패하였습니다."), _T("경고"), RGB_GREEN, DELAY_TIME_MSG);
+		}
+
+		if (MasterInfo.nNumOfAlignPoint >= 4)
+		{
+			// CAM-Master File Copy and Local File Load
+			//strcpy(FileNLoc, PATH_ALIGN1_IMG);
+			_stprintf(FileNLoc, _T("%s"), PATH_ALIGN3_IMG);
+			if (m_sLayerUp.IsEmpty())
+			{
+				if (m_sPathCamSpecDir.Right(1) != "\\")
+					strFileNAlign.Format(_T("%s\\%s\\%s-md3.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+				else
+					strFileNAlign.Format(_T("%s%s\\%s-md3.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+			}
+			else
+			{
+				if (m_sPathCamSpecDir.Right(1) != "\\")
+					strFileNAlign.Format(_T("%s\\%s\\%s-md3.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
+				else
+					strFileNAlign.Format(_T("%s%s\\%s-md3.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
+			}
+			//sprintf(FileNAlign, "%s", strFileNAlign);
+			_stprintf(FileNAlign, _T("%s"), strFileNAlign);
+
+			if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+			{
+				if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+				{
+					if (!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
+					{
+						prcStopF = TRUE;
+					}
+				}
+			}
+
+			if (!prcStopF)
+			{
+				AlignImgBufAlloc(FileNLoc, 3);
+				//pView->DispStsBar("Align3 이미지 다운로드를 완료하였습니다.", 0);
+			}
+			else
+				pView->DispMsg(_T("Align3 이미지 다운로드를 실패하였습니다."), _T("경고"), RGB_GREEN, DELAY_TIME_MSG);
+		}
+
+	}
+	else
+	{
+		pView->DispMsg(_T("Align 이미지가 생성되지 않았습니다."), _T("경고"), RGB_GREEN, DELAY_TIME_MSG);
+	}
+#else
+	AlignImgBufAlloc(PATH_ALIGN0_IMG, 1);
+#endif
+}
+
+// CamMaster Marking Index, Align Position Data. ========================
+BOOL CCamMaster::LoadCadAlignMkPos()
+{
+#ifdef USE_CAM_MASTER
+	BOOL bRtn = TRUE;
+	BOOL b2PointAlign = FALSE;
+	BOOL b4PointAlign = FALSE;
+
+	CFileFind findfile;
+	CString sPath2, sPath;
+
+	if (m_sPathCamSpecDir.Right(1) != "\\")
+		sPath2.Format(_T("%s\\%s\\%s.pch2"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	else
+		sPath2.Format(_T("%s%s\\%s.pch2"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+
+	if (findfile.FindFile(sPath2)) // find 4PointAlign file.
+	{
+		b4PointAlign = TRUE; 
+	}
+
+	if (m_sPathCamSpecDir.Right(1) != "\\")
+		sPath.Format(_T("%s\\%s\\%s.pch"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	else
+		sPath.Format(_T("%s%s\\%s.pch"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+
+	if (findfile.FindFile(sPath)) // find 2PointAlign file.
+	{
+		b2PointAlign = TRUE; 
+	}
+
+	if(b4PointAlign && b2PointAlign)
+	{
+		if (pDoc->WorkingInfo.LastJob.nAlignMethode == FOUR_POINT)
+		{
+			bRtn = LoadCad4PntAlignMkPos(sPath2);
+			SetCad4PntAlignMkPos();
+			return bRtn;
+		}
+		else
+		{
+			bRtn = LoadCad2PntAlignMkPos(sPath);
+			SetCad2PntAlignMkPos();
+			return bRtn;
+		}
+	}
+	else if (b4PointAlign)
+	{
+		pDoc->WorkingInfo.LastJob.nAlignMethode = FOUR_POINT;
+		bRtn = LoadCad4PntAlignMkPos(sPath2);
+		SetCad4PntAlignMkPos();
+		return bRtn;
+	}
+	else if (b2PointAlign)
+	{
+		pDoc->WorkingInfo.LastJob.nAlignMethode = TWO_POINT;
+		bRtn = LoadCad2PntAlignMkPos(sPath);
+		SetCad2PntAlignMkPos();
+		return bRtn;
+	}
+	else
+		return FALSE;
+#else
+	return TRUE;
+#endif
+}
+
+BOOL CCamMaster::LoadCad2PntAlignMkPos(CString sPath)
+{
+	CFile file;
+	int nRet;
+	int nSzAlignMk, nSzPcsMk;
+	int i;
+
+	// Structure Initialize
+	m_stAlignMk.X0 = 0.0;
+	m_stAlignMk.Y0 = 0.0;
+	m_stAlignMk.X1 = 0.0;
+	m_stAlignMk.Y1 = 0.0;
+	m_lPcsNum = 0;
+	for (i = 0; i < MAX_PCS; i++)
+	{
+		m_stPcsMk[i].X = 0.0;
+		m_stPcsMk[i].Y = 0.0;
+	}
+
+	// Mark File Load
+	if (file.Open((LPCTSTR)sPath, CFile::modeRead))
+	{
+		nSzAlignMk = sizeof(stAlignMark);
+
+		nRet = file.Read((void *)&m_stAlignMk, nSzAlignMk);
+		if (nRet != nSzAlignMk)
+		{
+			file.Close();
+			return(FALSE);
+		}
+
+		//nRet = file.Read((void *) &m_lPcsNum, sizeof(long));
+		//if(nRet != sizeof(long))
+		//	return(FALSE);
+		nRet = file.Read((void *)&m_lPcsNum, sizeof(int));
+		if (nRet != sizeof(int))
+		{
+			file.Close();
+			return(FALSE);
+		}
+
+		nSzPcsMk = m_lPcsNum * sizeof(stPieceMark);
+		nRet = file.Read((void *)&m_stPcsMk, nSzPcsMk);
+		if (nRet != nSzPcsMk)
+		{
+			file.Close();
+			return(FALSE);
+		}
+
+		file.Close();
+		return(TRUE);
+	}
+	else
+		return(FALSE);
+}
+ 
+BOOL CCamMaster::LoadCad4PntAlignMkPos(CString sPath)
+{
+	CFile file;
+	int nRet;
+	int nSzAlignMk, nSzPcsMk;
+	int i;
+
+	// Structure Initialize
+	m_stAlignMk2.X0 = 0.0;
+	m_stAlignMk2.Y0 = 0.0;
+	m_stAlignMk2.X1 = 0.0;
+	m_stAlignMk2.Y1 = 0.0;
+	m_stAlignMk2.X2 = 0.0;
+	m_stAlignMk2.Y2 = 0.0;
+	m_stAlignMk2.X3 = 0.0;
+	m_stAlignMk2.Y3 = 0.0;
+
+	m_lPcsNum = 0;
+
+	for (i = 0; i < MAX_PCS; i++)
+	{
+		m_stPcsMk[i].X = 0.0;
+		m_stPcsMk[i].Y = 0.0;
+	}
+
+	// Mark File Load
+	if (file.Open((LPCTSTR)sPath, CFile::modeRead))
+	{
+		nSzAlignMk = sizeof(stAlignMark2);
+
+		nRet = file.Read((void *)&m_stAlignMk2, nSzAlignMk);
+		if (nRet != nSzAlignMk)
+		{
+			file.Close();
+			return(FALSE);
+		}
+
+		//nRet = file.Read((void *) &m_lPcsNum, sizeof(long));
+		//if(nRet != sizeof(long))
+		//	return(FALSE);
+		nRet = file.Read((void *)&m_lPcsNum, sizeof(int));
+		if (nRet != sizeof(int))
+		{
+			file.Close();
+			return(FALSE);
+		}
+
+		nSzPcsMk = m_lPcsNum * sizeof(stPieceMark);
+		nRet = file.Read((void *)&m_stPcsMk, nSzPcsMk);
+		if (nRet != nSzPcsMk)
+		{
+			file.Close();
+			return(FALSE);
+		}
+
+		file.Close();
+		return(TRUE);
+	}
+	else
+		return(FALSE);
+}
+
+void CCamMaster::SetCad2PntAlignMkPos()
+{
+	MstPnl.PinPos.dX = MasterInfo.dPinPosX; // [mm]
+	MstPnl.PinPos.dY = MasterInfo.dPinPosY; // [mm]
+
+	MstPnl.AlignPos[0].dX = m_stAlignMk.X0; // [mm]
+	MstPnl.AlignPos[0].dY = m_stAlignMk.Y0; // [mm]
+	MstPnl.AlignPos[1].dX = m_stAlignMk.X1; // [mm]
+	MstPnl.AlignPos[1].dY = m_stAlignMk.Y1; // [mm]
+	MstPnl.AlignPos[2].dX = 0.0;			// [mm]
+	MstPnl.AlignPos[2].dY = 0.0;			// [mm]
+	MstPnl.AlignPos[3].dX = 0.0;			// [mm]
+	MstPnl.AlignPos[3].dY = 0.0;			// [mm]
+
+	int nSMaxR, nSMaxC, nPMaxR, nPMaxC;
+
+	nSMaxR = MstPnl.nTotalStripRow;
+	nSMaxC = MstPnl.nTotalStripCol;
+
+	int i, j, k;
+	int nPcsIdx;
+
+	for(k = 0; k < nSMaxR; k++)				// k is strip row.
+	{
+		nPMaxR = MstPnl.Strip[k].nTotalPieceRow;
+		nPMaxC = MstPnl.Strip[k].nTotalPieceCol;
+
+		for(j = 0; j < nPMaxR; j++)			// j is piece row.
+		{
+			for(i = 0; i < nPMaxC; i++)		// i is piece col.
+			{
+				nPcsIdx = MstPnl.Strip[k].Piece[j][i].nMstPieceIndex;
+				MstPnl.Strip[k].Piece[j][i].MkPos.dX = m_stPcsMk[nPcsIdx].X; // [mm]
+				MstPnl.Strip[k].Piece[j][i].MkPos.dY = m_stPcsMk[nPcsIdx].Y; // [mm]
+			}
+		}
+	}
+}
+
+void CCamMaster::SetCad4PntAlignMkPos()
+{
+	MstPnl.PinPos.dX = MasterInfo.dPinPosX;		// [mm]
+	MstPnl.PinPos.dY = MasterInfo.dPinPosY;		// [mm]
+
+	MstPnl.AlignPos[0].dX = m_stAlignMk2.X0;	// [mm]
+	MstPnl.AlignPos[0].dY = m_stAlignMk2.Y0;	// [mm]
+	MstPnl.AlignPos[1].dX = m_stAlignMk2.X1;	// [mm]
+	MstPnl.AlignPos[1].dY = m_stAlignMk2.Y1;	// [mm]
+	MstPnl.AlignPos[2].dX = m_stAlignMk2.X2;	// [mm]
+	MstPnl.AlignPos[2].dY = m_stAlignMk2.Y2;	// [mm]
+	MstPnl.AlignPos[3].dX = m_stAlignMk2.X3;	// [mm]
+	MstPnl.AlignPos[3].dY = m_stAlignMk2.Y3;	// [mm]
+
+	int nSMaxR, nSMaxC, nPMaxR, nPMaxC;
+
+	nSMaxR = MstPnl.nTotalStripRow;
+	nSMaxC = MstPnl.nTotalStripCol;
+
+	int i, j, k;
+	int nPcsIdx;
+
+	for (k = 0; k < nSMaxR; k++)				// k is strip row.
+	{
+		nPMaxR = MstPnl.Strip[k].nTotalPieceRow;
+		nPMaxC = MstPnl.Strip[k].nTotalPieceCol;
+
+		for (j = 0; j < nPMaxR; j++)			// j is piece row.
+		{
+			for (i = 0; i < nPMaxC; i++)		// i is piece col.
+			{
+				nPcsIdx = MstPnl.Strip[k].Piece[j][i].nMstPieceIndex;
+				MstPnl.Strip[k].Piece[j][i].MkPos.dX = m_stPcsMk[nPcsIdx].X; // [mm]
+				MstPnl.Strip[k].Piece[j][i].MkPos.dY = m_stPcsMk[nPcsIdx].Y; // [mm]
+			}
+		}
+	}
+}
+
+ CString CCamMaster::GetCamPxlRes()
+ {
+ 	CString sRes = _T("");
+ 	CString sPath = _T("");
+
+	//if (pView && pView->m_pDts)
+	//{
+	//	if (pView->m_pDts->IsUseDts())
+	//	{
+	//		double dRes = pView->m_pDts->GetCamInfoResolution(m_sModel, m_sLayer);
+	//		if (dRes > 0.0)
+	//		{
+	//			sRes.Format(_T("%03d"), int(dRes*10.0));
+	//			if (pDoc)
+	//			{
+	//				pDoc->WorkingInfo.Vision[0].sCamPxlRes = sRes;
+	//				pDoc->WorkingInfo.Vision[1].sCamPxlRes = sRes;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			AfxMessageBox(_T("Error - GetCamInfoResolution()."), MB_ICONSTOP | MB_OK);
+	//		}
+	//		return sRes;
+	//	}
+	//}
+ #ifdef TEST_MODE
+ 	sPath = PATH_PIN_IMG_;
+ #else
+	if (m_sPathCamSpecDir.Right(1) != "\\")
+		sPath.Format(_T("%s\\%s\\%s.mst"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	else
+		sPath.Format(_T("%s%s\\%s.mst"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+ #endif
+ 
+ 	int nPos = sPath.ReverseFind('-');
+ 	if(nPos > 0)
+ 	{
+ 		sRes = sPath.Right(sPath.GetLength()-(nPos+1));
+ 		nPos = sRes.ReverseFind('.');
+ 		if(nPos > 0)
+ 			sRes = sRes.Left(nPos);
+
+		pDoc->WorkingInfo.Vision[0].sCamPxlRes = sRes;
+		pDoc->WorkingInfo.Vision[1].sCamPxlRes = sRes;
+ 	}
+ 	return sRes;
+ }
 
 BOOL CCamMaster::LoadPcsRgnFromCam()
 {
@@ -701,7 +1141,6 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 	file.Read((void *)&m_nDummy[2], sizeof(int));	// reserved
 	file.Read((void *)&m_nDummy[3], sizeof(int));	// reserved
 	file.Read((void *)&m_nDummy[4], sizeof(int));	// reserved
-
 												// Init. Buffers
 	for (i = 0; i < FrameRgnNum; i++)
 	{
@@ -767,14 +1206,13 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 
 		// 5. Set Piece Info.
 		file.Read((void *)&m_nPieceNum[j], sizeof(int));
-
 		for (i = 0; i < m_nPieceNum[j]; i++)
 		{
 			file.Read((void *)&PieceRgnPix[i + nPieceCount].nId, sizeof(int));	// Piece ID
 			file.Read((void *)&PieceRgnPix[i + nPieceCount].Row, sizeof(int));	// Row
 			file.Read((void *)&PieceRgnPix[i + nPieceCount].Col, sizeof(int));	// Col
 			file.Read((void *)&m_nDummy[6 + i + nPieceCount], sizeof(int));							// Rotation Info (0 : 0  1 : 90  2 : 180  3 : 270 [Degree])
-
+			
 			////////////////////////////////////////////////////////////////////////////////////////////////
 			// Set Piece position
 			nDummy = sizeof(CPoint);
@@ -863,11 +1301,111 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 	m_pPcsRgn->rtFrm.right = rtFrm.right + dMargin;
 	m_pPcsRgn->rtFrm.bottom = rtFrm.bottom + dMargin;
 	//end for previous pcs info.
-
+	
 	file.Close();
 
 
 	return TRUE;
+}
+
+void CCamMaster::SetMasterPanelInfo()
+{
+	int i, j, k;
+	int nR, nC, nRow, nCol, nSMaxR, nSMaxC, nPMaxR, nPMaxC;
+	int nPieceCount = 0;
+
+	double mmPxl = MasterInfo.dPixelSize / 1000.0; // [mm]
+
+	MstPnl.nTotalStrip = FrameRgnNum;
+	MstPnl.nTotalPiece = PieceRgnNum;
+	MstPnl.nPcsCorner = m_nCornerNum;
+	MstPnl.nTotalAlignPos = MasterInfo.nNumOfAlignPoint;
+
+	MstPnl.Area.dLeft = m_pPcsRgn->rtFrm.left;		// [mm]
+	MstPnl.Area.dTop = m_pPcsRgn->rtFrm.top;		// [mm]
+	MstPnl.Area.dRight = m_pPcsRgn->rtFrm.right;	// [mm]
+	MstPnl.Area.dBottom = m_pPcsRgn->rtFrm.bottom;	// [mm]
+
+	nSMaxR = 0; nSMaxC = 0;
+	for (j = 0; j < FrameRgnNum; j++)
+	{
+		nRow = FrameRgnID[j].Row - 1; // Cammaster Row, Col : (1, 1) 부터시작
+		nCol = FrameRgnID[j].Col - 1; // Cammaster Row, Col : (1, 1) 부터시작
+		if (nSMaxR < nRow) nSMaxR = nRow;
+		if (nSMaxC < nCol) nSMaxC = nCol;
+
+		MstPnl.Strip[nRow].nMstStripIndex = FrameRgnID[j].nId;
+
+		MstPnl.Strip[nRow].Area.dLeft = (double)FrameRgnPix[j].iStartX * mmPxl;
+		MstPnl.Strip[nRow].Area.dTop = (double)FrameRgnPix[j].iStartY * mmPxl;
+		MstPnl.Strip[nRow].Area.dRight = (double)FrameRgnPix[j].iEndX * mmPxl;
+		MstPnl.Strip[nRow].Area.dBottom = (double)FrameRgnPix[j].iEndY * mmPxl;
+
+		MstPnl.Strip[nRow].nTotalPiece = m_nPieceNum[j];
+		nPMaxR = 0; nPMaxC = 0;
+		for (i = 0; i < m_nPieceNum[j]; i++)
+		{
+			nR = PieceRgnPix[i + nPieceCount].Row - 1; // Cammaster Row, Col : (1, 1) 부터시작
+			nC = PieceRgnPix[i + nPieceCount].Col - 1; // Cammaster Row, Col : (1, 1) 부터시작
+			if (nPMaxR < nR) nPMaxR = nR;
+			if (nPMaxC < nC) nPMaxC = nC;
+			MstPnl.Strip[nRow].Piece[nR][nC].nMstPieceIndex = PieceRgnPix[i + nPieceCount].nId; // Cammaster ID : 0 부터시작
+			MstPnl.Strip[nRow].Piece[nR][nC].Area.dLeft = PieceRgnPix[i + nPieceCount].iStartX * mmPxl;
+			MstPnl.Strip[nRow].Piece[nR][nC].Area.dTop = PieceRgnPix[i + nPieceCount].iStartY * mmPxl;
+			MstPnl.Strip[nRow].Piece[nR][nC].Area.dRight = PieceRgnPix[i + nPieceCount].iEndX * mmPxl;
+			MstPnl.Strip[nRow].Piece[nR][nC].Area.dBottom = PieceRgnPix[i + nPieceCount].iEndY * mmPxl;
+		}
+		nPieceCount += m_nPieceNum[j];
+
+		MstPnl.Strip[nRow].nTotalPieceCol = nPMaxC + 1;
+		MstPnl.Strip[nRow].nTotalPieceRow = nPMaxR + 1;
+	}
+
+	MstPnl.nTotalStripCol = nSMaxC + 1;
+	MstPnl.nTotalStripRow = nSMaxR + 1;
+
+	CString sPath;
+	if (MasterInfo.strMasterLocation.Right(1) != "\\")
+		sPath.Format(_T("%s\\%s\\%s\\Piece.tif"), MasterInfo.strMasterLocation, m_sModel, m_sLayer);
+	else
+		sPath.Format(_T("%s%s\\%s\\Piece.tif"), MasterInfo.strMasterLocation, m_sModel, m_sLayer);
+	MstPnl.sPathPcsImg = sPath;
+
+	if (m_sPathCamSpecDir.Right(1) != "\\")
+		sPath.Format(_T("%s\\%s\\%s.TIF"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	else
+		sPath.Format(_T("%s%s\\%s.TIF"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	MstPnl.sPathPinImg = sPath;
+
+	for(i=0; i<4; i++)
+	{
+		if (m_sPathCamSpecDir.Right(1) != "\\")
+			sPath.Format(_T("%s\\%s\\%s-md%d.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer, i);
+		else
+			sPath.Format(_T("%s%s\\%s-md%d.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer, i);
+
+		MstPnl.sPathAlignImg[i] = sPath;
+	}
+
+	if (m_sPathCamSpecDir.Right(1) != "\\")
+		sPath.Format(_T("%s\\%s\\%s.pch"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	else
+		sPath.Format(_T("%s%s\\%s.pch"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	MstPnl.sPath2ptAlignAndMkPos = sPath;
+
+	if (m_sPathCamSpecDir.Right(1) != "\\")
+		sPath.Format(_T("%s\\%s\\%s.pch2"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	else
+		sPath.Format(_T("%s%s\\%s.pch2"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	MstPnl.sPath4ptAlignAndMkPos = sPath;
+
+	if (m_sPathCamSpecDir.Right(1) != "\\")
+		sPath.Format(_T("%s\\%s\\%s.ini"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	else
+		sPath.Format(_T("%s%s\\%s.ini"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+	MstPnl.sPathPinPos = sPath; // [ORIGIN COORD] (원점): PX, PY ; (검사영역 좌상): MX, MY
+								// [PANEL INFO] (검사영역 W, H): InspectionWidth, InspectionHeight
+
 }
 
 BOOL CCamMaster::WriteStripPieceRegion_Text(CString sBasePath, CString sLot)
@@ -1027,7 +1565,6 @@ void CCamMaster::FreePolygonRgnData()	// 120809 jsy
 		PolygonPoints = NULL;
 	}
 }
-
 
 
 void CCamMaster::LoadPcsImg()
@@ -1345,141 +1882,9 @@ BOOL CCamMaster::CADImgBufAlloc(TCHAR *strCADImg, int CellNum, BOOL bOppLayerF)
 	return TRUE;
 }
 
-void CCamMaster::LoadAlignImg()
-{
-/*
-	char FN[200];
-
-	sprintf(FN, "%s%s\\%s-md0.tif",strSpecPath,strModel,strLayer);
-	VicFileLoad(pGlobalView->m_pDlgSetPunchAlign->m_VisionFirst.m_MilAlign0PositionImg, FN);
-	
-	sprintf(FN, "%s%s\\%s-md1.tif",strSpecPath,strModel,strLayer);
-	VicFileLoad(pGlobalView->m_pDlgSetPunchAlign->m_VisionFirst.m_MilAlign1PositionImg, FN);
-
-	sprintf(FN, "c:\\test100.tif");
-	MbufSave(FN, pGlobalView->m_pDlgSetPunchAlign->m_VisionFirst.m_MilAlign0PositionImg);
-	sprintf(FN, "c:\\test200.tif");
-	MbufSave(FN, pGlobalView->m_pDlgSetPunchAlign->m_VisionFirst.m_MilAlign1PositionImg);
-*/
-	BOOL prcStopF = FALSE;
-	//char FileNAlign[200], FileNLoc[200];
-	TCHAR FileNLoc[200]; 
-	CString StrDirectoryPath;
-	CFileFind AlignFindFile;
-	CString strFileNAlign;
-
-	DWORD dwMilliseconds = 10;
-
-	pView->DispMsg(_T("Align 이미지를 다운로드 중입니다."), _T("Align 이미지"), RGB_GREEN, DELAY_TIME_MSG);
-	//sprintf(FileNLoc, "C:\\R2RSet\\Align");
-	_stprintf(FileNLoc, _T("%s"), _T("C:\\R2RSet\\Align"));
-
-	//if(!AlignFindFile.FindFile(FileNLoc))
-	if (!pDoc->DirectoryExists(FileNLoc))
-	{
-		if(!CreateDirectory(FileNLoc, NULL))
-		{
-			pView->MsgBox(_T("Can not Create Align Directory"));
-// 			AfxMessageBox(_T("Can not Create CAD Directory"),MB_ICONSTOP|MB_OK);
-		}
-	}
-	else
-	{
-		StrDirectoryPath.Format(_T("%s"), FileNLoc);
-		DeleteFileInFolder(FileNLoc);
-	}
-	AlignImgFree();
-
-#ifdef USE_CAM_MASTER
-	int i;
-	int Cell;
-	TCHAR FileNAlign[200];
-
-	// CAM-Master File Copy and Local File Load
-	//strcpy(FileNLoc, PATH_ALIGN0_IMG);
-	_stprintf(FileNLoc, _T("%s"), PATH_ALIGN0_IMG);
-	if(m_sLayerUp.IsEmpty())
-	{ 
-		if (m_sPathCamSpecDir.Right(1) != "\\")
-			strFileNAlign.Format(_T("%s\\%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
-		else
-			strFileNAlign.Format(_T("%s%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
-	}
-	else
-	{
-		if (m_sPathCamSpecDir.Right(1) != "\\")
-			strFileNAlign.Format(_T("%s\\%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
-		else
-			strFileNAlign.Format(_T("%s%s\\%s-md0.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
-	}
-	//sprintf(FileNAlign, "%s", strFileNAlign);
-	_stprintf(FileNAlign, _T("%s"), strFileNAlign);
-
-	if(!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
-	{
-		if(!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
-		{
-			if(!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
-			{
-				prcStopF = TRUE;
-			}
-		}
-	}
-
-	if (!prcStopF)
-	{
-		AlignImgBufAlloc(FileNLoc, 0);
-// 		pView->DispStsBar("Align0 이미지 다운로드를 완료하였습니다.", 0);
-	}
-	else
-		pView->DispMsg(_T("Align0 이미지 다운로드를 실패하였습니다."), _T("경고"), RGB_GREEN, DELAY_TIME_MSG);
-
-	// CAM-Master File Copy and Local File Load
-	//strcpy(FileNLoc, PATH_ALIGN1_IMG);
-	_stprintf(FileNLoc, _T("%s"), PATH_ALIGN1_IMG);
-	if(m_sLayerUp.IsEmpty())
-	{
-		if (m_sPathCamSpecDir.Right(1) != "\\")
-			strFileNAlign.Format(_T("%s\\%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer); 
-		else
-			strFileNAlign.Format(_T("%s%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayer);
-	}
-	else
-	{
-		if (m_sPathCamSpecDir.Right(1) != "\\")
-			strFileNAlign.Format(_T("%s\\%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
-		else
-			strFileNAlign.Format(_T("%s%s\\%s-md1.tif"), m_sPathCamSpecDir, m_sModel, m_sLayerUp);
-	}
-	//sprintf(FileNAlign, "%s", strFileNAlign);
-	_stprintf(FileNAlign, _T("%s"), strFileNAlign);
-
-	if(!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
-	{
-		if(!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
-		{
-			if(!CopyFile((LPCTSTR)FileNAlign, (LPCTSTR)FileNLoc, FALSE))
-			{
-				prcStopF = TRUE;
-			}
-		}
-	}
-
-	if (!prcStopF)
-	{
-		AlignImgBufAlloc(FileNLoc, 1);
-// 		pView->DispStsBar("Align1 이미지 다운로드를 완료하였습니다.", 0);
-	}
-	else
-		pView->DispMsg(_T("Align1 이미지 다운로드를 실패하였습니다."), _T("경고"), RGB_GREEN, DELAY_TIME_MSG);
-#else
-	AlignImgBufAlloc(PATH_ALIGN0_IMG, 1);
-#endif
-}
-
 void CCamMaster::AlignImgFree(int nPos)
 {
-	if(nPos<0)
+	if(nPos<0)  // -1 : All
 	{
 		if(m_pAlignImg[0] != NULL)
 		{

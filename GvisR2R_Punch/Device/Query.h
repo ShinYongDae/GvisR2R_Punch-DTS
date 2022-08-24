@@ -42,7 +42,9 @@ public:
 	int GetEquipmentNameList(CStringArray &strEquipName);
 	BOOL GetEquipmentName(int nIndex, CString &strEquipName);
 	BOOL FindEquipCode(CString strEquipName, CString &strEquipCode);
+	double GetCamInfoResolution(CString strModelName, CString strLayerName);
 	CString GetCamInfoData(CString strModelName, CString strLayerCode, CString strLayerName);
+	BOOL LoadMasterSpec(CString sModelN, CString sLayerN, double& dRes, CString& sPathMstLoc, CString& sPathCadLoc);
 	CString GetCamSpecDirFromRSTH(CString strLotCode, CString strLayerCode, CString strLayerName);
 	BOOL GetInspectionRegionByModel(CString strModelName, double &fWidth, double &fHeight);
 	BOOL GetNumberOfStripRegionFromMODEL(CString strModelCode, int &nNumOfRegion);

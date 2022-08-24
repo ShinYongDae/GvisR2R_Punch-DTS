@@ -632,6 +632,50 @@ BOOL CQuery::FindEquipCode(CString strEquipName, CString &strEquipCode)
 	return FALSE;
 }
 
+double CQuery::GetCamInfoResolution(CString strModelName, CString strLayerName)
+{
+	CString strQuery;
+	long lMaxCols, lMaxRows;
+	CString strName, strData, strData2;
+	_variant_t vColName, vValue;
+	double dRes = -1.0;
+
+	strQuery.Format(_T("SELECT RESOLUTION FROM CAMINFO WHERE MODEL_NAME = '%s' AND LAYER_NAME = '%s'"), strModelName, strLayerName);
+
+	if (!m_dataSource.ExecuteQuery((LPCTSTR)strQuery))
+	{
+		CString strMsg;
+		strMsg.Format(_T("Error occur at m_dataSource.ExecuteQuery() at GetCamInfoResolution()\r\n%s"), m_dataSource.GetLastError());
+		Log(strMsg);
+		AfxMessageBox(strMsg, MB_ICONSTOP);
+		return dRes;
+	}
+
+	lMaxCols = m_dataSource.m_pRS->Fields->Count;
+	lMaxRows = m_dataSource.m_pRS->RecordCount;
+
+	if (lMaxRows > 0)
+	{
+		m_dataSource.m_pRS->MoveFirst();
+		//	for(long lRow=0; lRow<lMaxRows; lRow++)
+		{
+			vValue = m_dataSource.m_pRS->Fields->Item[(long)0]->Value;     //master offsetx
+			if (vValue.vt != VT_NULL)
+			{
+				vValue.ChangeType(VT_BSTR);
+				strData = vValue.bstrVal;
+				dRes = _ttof(strData);
+			}
+			//else
+			//{
+			//	dRes = -1.0;
+			//}
+		}
+	}
+
+	return dRes;
+}
+
 CString CQuery::GetCamInfoData(CString strModelName, CString strLayerCode, CString strLayerName)
 {
 	CString strQuery;
@@ -682,6 +726,66 @@ CString CQuery::GetCamInfoData(CString strModelName, CString strLayerCode, CStri
 
 }
 
+BOOL CQuery::LoadMasterSpec(CString sModelN, CString sLayerN, double& dRes, CString& sPathMstLoc, CString& sPathCadLoc)
+{
+	CString strQuery;
+	long lMaxCols, lMaxRows;
+	CString strName, strData, strData2;
+	_variant_t vColName, vValue;
+	CString MasterPath = _T("");
+
+
+	// Get piece region for model
+	CString sModelCode;
+	GetModelCode(sModelN, sModelCode);
+
+	strQuery.Format(_T("SELECT RESOLUTION, MASTER_PATH, CADLINK_PATH FROM CAMINFO WHERE MODEL_NAME = '%s' AND LAYER_NAME = '%s'"), sModelN, sLayerN);
+
+	if (!m_dataSource.ExecuteQuery((LPCTSTR)strQuery))
+	{
+		CString strMsg;
+		strMsg.Format(_T("Error occur at m_dataSource.ExecuteQuery() at LoadMasterSpec()\r\n%s"), m_dataSource.GetLastError());
+		Log(strMsg);
+		AfxMessageBox(strMsg, MB_ICONSTOP);
+		return FALSE;
+	}
+
+	lMaxCols = m_dataSource.m_pRS->Fields->Count;
+	lMaxRows = m_dataSource.m_pRS->RecordCount;
+
+	//MasterInfo.dPixelSize = ; // [um] _T("MACHINE"), _T("PixelSize") --> RESOLUTION(caminfo)
+	//MasterInfo.strMasterLocation = ; // _T("MASTER"), _T("MASTERLOCATION1") --> MASTER_PATH(caminfo) - (model,layer)
+	//MasterInfo.nImageCompression = ; // _T("SPEC"), _T("Compression") --> X
+	//MasterInfo.strCADImgPath = ; // _T("MASTER"), _T("CADLINKLOCATION") --> CADLINK_PATH(caminfo)
+	//MasterInfo.strCADImgBackUpPath = ; // _T("MASTER"), _T("CadLinkLocationBackUp") --> X
+	//MasterInfo.bTwoMetalInspection = ; // _T("MASTER"), _T("TopBottomInspection") --> X
+	//MasterInfo.strTwoMetalOppLayer = ; // _T("MASTER"), _T("OppLayerName") --> X
+
+	if (lMaxRows > 0)
+	{
+		m_dataSource.m_pRS->MoveFirst();
+
+		vValue = m_dataSource.m_pRS->Fields->Item[(long)0]->Value;
+		vValue.ChangeType(VT_BSTR);
+		strData = vValue.bstrVal;
+		dRes = _ttof(strData);
+
+		vValue = m_dataSource.m_pRS->Fields->Item[(long)1]->Value;
+		vValue.ChangeType(VT_BSTR);
+		strData = vValue.bstrVal;
+		sPathMstLoc = strData;
+
+		vValue = m_dataSource.m_pRS->Fields->Item[(long)2]->Value;
+		vValue.ChangeType(VT_BSTR);
+		strData = vValue.bstrVal;
+		sPathCadLoc = strData;
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 CString CQuery::GetCamSpecDirFromRSTH(CString strLotCode, CString strLayerCode, CString strLayerName)
 {
 	CString strQuery;
@@ -722,7 +826,6 @@ CString CQuery::GetCamSpecDirFromRSTH(CString strLotCode, CString strLayerCode, 
 	}
 
 	return MasterPath;
-
 }
 
 BOOL CQuery::GetInspectionRegionByModel(CString strModelName, double &fWidth, double &fHeight)
