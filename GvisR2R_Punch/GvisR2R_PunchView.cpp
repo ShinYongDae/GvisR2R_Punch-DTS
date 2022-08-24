@@ -527,88 +527,70 @@ CGvisR2R_PunchDoc* CGvisR2R_PunchView::GetDocument() const // 디버그되지 않은 버
 
 BOOL CGvisR2R_PunchView::LoadMstInfo()
 {
-	if (m_pDts)
-	{
-		if (m_pDts->IsUseDts())
-		{
-			if (IsLastJob(0)) // Up
-			{
-				// CString sPathSpec, CString sModel, CString sLayer, CString sLayerUp, BOOL bUseDTS
-				pDoc->m_MasterDB.Init(
-					pDoc->WorkingInfo.System.sPathCamSpecDir,
-					pDoc->WorkingInfo.LastJob.sModelUp,
-					pDoc->WorkingInfo.LastJob.sLayerUp,
-					_T(""), TRUE);
-				pDoc->m_MasterDB.LoadMstInfo();
-				pDoc->m_MasterDB.WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
-			}
-			//if (IsLastJob(1)) // Dn
-			//{
-			//	pDoc->m_MasterDB.Init(
-			//		pDoc->WorkingInfo.System.sPathCamSpecDir,
-			//		pDoc->WorkingInfo.LastJob.sModelDn,
-			//		pDoc->WorkingInfo.LastJob.sLayerDn,
-			//		pDoc->WorkingInfo.LastJob.sLayerUp, TRUE);
-			//	pDoc->m_MasterDB.LoadMstInfo();
-			//}
-
-			//return TRUE;
-		}
-	}
-
-#ifdef TEST_MODE
-	//pDoc->GetCamPxlRes();
-	if (IsLastJob(0)) // Up
-	{
-		pDoc->m_Master[0].Init(
-			pDoc->WorkingInfo.System.sPathCamSpecDir,
-			pDoc->WorkingInfo.LastJob.sModelUp,
-			pDoc->WorkingInfo.LastJob.sLayerUp,
-			_T(""), FALSE);
-		pDoc->m_Master[0].LoadMstInfo();
-	}
-	if (IsLastJob(1)) // Dn
-	{
-		pDoc->m_Master[1].Init(
-			pDoc->WorkingInfo.System.sPathCamSpecDir,
-			pDoc->WorkingInfo.LastJob.sModelDn,
-			pDoc->WorkingInfo.LastJob.sLayerDn,
-			pDoc->WorkingInfo.LastJob.sLayerUp,
-			FALSE);
-		pDoc->m_Master[1].LoadMstInfo();
-	}
-	//pDoc->LoadMasterSpec();
-	//pDoc->LoadPinImg();
-	//pDoc->GetCamPxlRes();
-	//pDoc->LoadStripRgnFromCam();
-	//pDoc->LoadPcsRgnFromCam();
-	//pDoc->LoadPcsImg();
-	//pDoc->LoadCadImg();
-#else
 	pDoc->GetCamPxlRes();
 
 	if (IsLastJob(0)) // Up
 	{
-		pDoc->m_Master[0].Init(
+		pDoc->m_MasterDB.Init(
 			pDoc->WorkingInfo.System.sPathCamSpecDir,
 			pDoc->WorkingInfo.LastJob.sModelUp,
 			pDoc->WorkingInfo.LastJob.sLayerUp,
-			_T(""), FALSE);
-		pDoc->m_Master[0].LoadMstInfo();
-		//pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
+			_T(""), TRUE);
+		pDoc->m_MasterDB.LoadMstInfo();
 	}
 
-	if (IsLastJob(1)) // Dn
+	if (m_pDts)
 	{
-		pDoc->m_Master[1].Init(
-			pDoc->WorkingInfo.System.sPathCamSpecDir,
-			pDoc->WorkingInfo.LastJob.sModelDn,
-			pDoc->WorkingInfo.LastJob.sLayerDn,
-			pDoc->WorkingInfo.LastJob.sLayerUp,
-			FALSE);
-		pDoc->m_Master[1].LoadMstInfo();
-		//pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
+		if (m_pDts->IsUseDts())
+		{
+			pDoc->m_MasterDB.WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
+		}
 	}
+
+#ifdef TEST_MODE
+	//if (IsLastJob(0)) // Up
+	//{
+	//	pDoc->m_Master[0].Init(
+	//		pDoc->WorkingInfo.System.sPathCamSpecDir,
+	//		pDoc->WorkingInfo.LastJob.sModelUp,
+	//		pDoc->WorkingInfo.LastJob.sLayerUp,
+	//		_T(""), FALSE);
+	//	pDoc->m_Master[0].LoadMstInfo();
+	//}
+	//if (IsLastJob(1)) // Dn
+	//{
+	//	pDoc->m_Master[1].Init(
+	//		pDoc->WorkingInfo.System.sPathCamSpecDir,
+	//		pDoc->WorkingInfo.LastJob.sModelDn,
+	//		pDoc->WorkingInfo.LastJob.sLayerDn,
+	//		pDoc->WorkingInfo.LastJob.sLayerUp,
+	//		FALSE);
+	//	pDoc->m_Master[1].LoadMstInfo();
+	//}
+#else
+
+	//if (IsLastJob(0)) // Up
+	//{
+	//	pDoc->m_Master[0].Init(
+	//		pDoc->WorkingInfo.System.sPathCamSpecDir,
+	//		pDoc->WorkingInfo.LastJob.sModelUp,
+	//		pDoc->WorkingInfo.LastJob.sLayerUp,
+	//		_T(""), FALSE);
+	//	pDoc->m_Master[0].LoadMstInfo();
+	//	//pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
+	//}
+
+	//if (IsLastJob(1)) // Dn
+	//{
+	//	pDoc->m_Master[1].Init(
+	//		pDoc->WorkingInfo.System.sPathCamSpecDir,
+	//		pDoc->WorkingInfo.LastJob.sModelDn,
+	//		pDoc->WorkingInfo.LastJob.sLayerDn,
+	//		pDoc->WorkingInfo.LastJob.sLayerUp,
+	//		FALSE);
+	//	pDoc->m_Master[1].LoadMstInfo();
+	//	//pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
+	//}
 
 	SetAlignPos();
 #endif
@@ -1310,12 +1292,16 @@ BOOL CGvisR2R_PunchView::InitAct()
 
 
 		CfPoint ptPnt0(dX[0], dY[0]);
-		if (pDoc->m_Master[0].m_pPcsRgn)
-			pDoc->m_Master[0].m_pPcsRgn->SetPinPos(0, ptPnt0);
+		if (pDoc->m_MasterDB.m_pPcsRgn)
+			pDoc->m_MasterDB.m_pPcsRgn->SetPinPos(0, ptPnt0);
+		//if (pDoc->m_Master[0].m_pPcsRgn)
+		//	pDoc->m_Master[0].m_pPcsRgn->SetPinPos(0, ptPnt0);
 
 		CfPoint ptPnt1(dX[1], dY[1]);
-		if (pDoc->m_Master[0].m_pPcsRgn)
-			pDoc->m_Master[0].m_pPcsRgn->SetPinPos(1, ptPnt1);
+		if (pDoc->m_MasterDB.m_pPcsRgn)
+			pDoc->m_MasterDB.m_pPcsRgn->SetPinPos(1, ptPnt1);
+		//if (pDoc->m_Master[0].m_pPcsRgn)
+		//	pDoc->m_Master[0].m_pPcsRgn->SetPinPos(1, ptPnt1);
 
 		if (pDoc->m_pSpecLocal)// && IsMkOffsetData())
 		{
@@ -9968,14 +9954,21 @@ void CGvisR2R_PunchView::ResetMkInfo(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : 
 		if (IsLastJob(0)) // Up
 		{
 			pView->m_nDebugStep = 503; pView->DispThreadTick();
-			pDoc->m_Master[0].Init(
+			pDoc->m_MasterDB.Init(
 				pDoc->WorkingInfo.System.sPathCamSpecDir,
 				pDoc->WorkingInfo.LastJob.sModelUp,
 				pDoc->WorkingInfo.LastJob.sLayerUp,
 				_T(""), FALSE);
+			//pDoc->m_Master[0].Init(
+			//	pDoc->WorkingInfo.System.sPathCamSpecDir,
+			//	pDoc->WorkingInfo.LastJob.sModelUp,
+			//	pDoc->WorkingInfo.LastJob.sLayerUp,
+			//	_T(""), FALSE);
 			pView->m_nDebugStep = 504; pView->DispThreadTick();
-			pDoc->m_Master[0].LoadMstInfo();
-			pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
+			pDoc->m_MasterDB.LoadMstInfo();
+			pDoc->m_MasterDB.WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
+			//pDoc->m_Master[0].LoadMstInfo();
+			//pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
 		}
 		else
 		{
@@ -10026,23 +10019,23 @@ void CGvisR2R_PunchView::ResetMkInfo(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : 
 			//ResetReelmap();
 
 			pView->m_nDebugStep = 514; pView->DispThreadTick();
-			if (IsLastJob(1)) // Dn
-			{
-				pView->m_nDebugStep = 515; pView->DispThreadTick();
-				pDoc->m_Master[1].Init(
-					pDoc->WorkingInfo.System.sPathCamSpecDir,
-					pDoc->WorkingInfo.LastJob.sModelDn,
-					pDoc->WorkingInfo.LastJob.sLayerDn,
-					pDoc->WorkingInfo.LastJob.sLayerUp,
-					FALSE);
-				pView->m_nDebugStep = 516; pView->DispThreadTick();
-				pDoc->m_Master[1].LoadMstInfo();
-				pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
-			}
-			else
-			{
-				AfxMessageBox(_T("Error - IsLastJob(1)..."));
-			}
+			//if (IsLastJob(1)) // Dn
+			//{
+			//	pView->m_nDebugStep = 515; pView->DispThreadTick();
+			//	pDoc->m_Master[1].Init(
+			//		pDoc->WorkingInfo.System.sPathCamSpecDir,
+			//		pDoc->WorkingInfo.LastJob.sModelDn,
+			//		pDoc->WorkingInfo.LastJob.sLayerDn,
+			//		pDoc->WorkingInfo.LastJob.sLayerUp,
+			//		FALSE);
+			//	pView->m_nDebugStep = 516; pView->DispThreadTick();
+			//	pDoc->m_Master[1].LoadMstInfo();
+			//	pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
+			//}
+			//else
+			//{
+			//	AfxMessageBox(_T("Error - IsLastJob(1)..."));
+			//}
 
 			pView->m_nDebugStep = 517; pView->DispThreadTick();
 			InitReelmapDn();
@@ -10079,15 +10072,24 @@ void CGvisR2R_PunchView::SetAlignPos()
 {
 	if (m_pMotion)
 	{
-		m_pMotion->m_dAlignPosX[0][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
-		m_pMotion->m_dAlignPosY[0][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
-		m_pMotion->m_dAlignPosX[0][1] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
-		m_pMotion->m_dAlignPosY[0][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
+		m_pMotion->m_dAlignPosX[0][0] = pDoc->m_MasterDB.m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
+		m_pMotion->m_dAlignPosY[0][0] = pDoc->m_MasterDB.m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
+		m_pMotion->m_dAlignPosX[0][1] = pDoc->m_MasterDB.m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
+		m_pMotion->m_dAlignPosY[0][1] = pDoc->m_MasterDB.m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
 
-		m_pMotion->m_dAlignPosX[1][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[1];
-		m_pMotion->m_dAlignPosY[1][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[1];
-		m_pMotion->m_dAlignPosX[1][1] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[1];
-		m_pMotion->m_dAlignPosY[1][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[1];
+		m_pMotion->m_dAlignPosX[1][0] = pDoc->m_MasterDB.m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[1];
+		m_pMotion->m_dAlignPosY[1][0] = pDoc->m_MasterDB.m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[1];
+		m_pMotion->m_dAlignPosX[1][1] = pDoc->m_MasterDB.m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[1];
+		m_pMotion->m_dAlignPosY[1][1] = pDoc->m_MasterDB.m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[1];
+		//m_pMotion->m_dAlignPosX[0][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
+		//m_pMotion->m_dAlignPosY[0][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
+		//m_pMotion->m_dAlignPosX[0][1] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
+		//m_pMotion->m_dAlignPosY[0][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
+
+		//m_pMotion->m_dAlignPosX[1][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[1];
+		//m_pMotion->m_dAlignPosY[1][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[1];
+		//m_pMotion->m_dAlignPosX[1][1] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[1];
+		//m_pMotion->m_dAlignPosY[1][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[1];
 	}
 }
 
@@ -10095,10 +10097,14 @@ void CGvisR2R_PunchView::SetAlignPosUp()
 {
 	if (m_pMotion)
 	{
-		m_pMotion->m_dAlignPosX[0][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
-		m_pMotion->m_dAlignPosY[0][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
-		m_pMotion->m_dAlignPosX[0][1] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
-		m_pMotion->m_dAlignPosY[0][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
+		m_pMotion->m_dAlignPosX[0][0] = pDoc->m_MasterDB.m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
+		m_pMotion->m_dAlignPosY[0][0] = pDoc->m_MasterDB.m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
+		m_pMotion->m_dAlignPosX[0][1] = pDoc->m_MasterDB.m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
+		m_pMotion->m_dAlignPosY[0][1] = pDoc->m_MasterDB.m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
+		//m_pMotion->m_dAlignPosX[0][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[0];
+		//m_pMotion->m_dAlignPosY[0][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[0];
+		//m_pMotion->m_dAlignPosX[0][1] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[0];
+		//m_pMotion->m_dAlignPosY[0][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[0];
 	}
 }
 
@@ -10106,10 +10112,14 @@ void CGvisR2R_PunchView::SetAlignPosDn()
 {
 	if (m_pMotion)
 	{
-		m_pMotion->m_dAlignPosX[1][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[1];
-		m_pMotion->m_dAlignPosY[1][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[1];
-		m_pMotion->m_dAlignPosX[1][1] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[1];
-		m_pMotion->m_dAlignPosY[1][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[1];
+		m_pMotion->m_dAlignPosX[1][0] = pDoc->m_MasterDB.m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[1];
+		m_pMotion->m_dAlignPosY[1][0] = pDoc->m_MasterDB.m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[1];
+		m_pMotion->m_dAlignPosX[1][1] = pDoc->m_MasterDB.m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[1];
+		m_pMotion->m_dAlignPosY[1][1] = pDoc->m_MasterDB.m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[1];
+		//m_pMotion->m_dAlignPosX[1][0] = pDoc->m_Master[0].m_stAlignMk.X0 + pView->m_pMotion->m_dPinPosX[1];
+		//m_pMotion->m_dAlignPosY[1][0] = pDoc->m_Master[0].m_stAlignMk.Y0 + pView->m_pMotion->m_dPinPosY[1];
+		//m_pMotion->m_dAlignPosX[1][1] = pDoc->m_Master[0].m_stAlignMk.X1 + pView->m_pMotion->m_dPinPosX[1];
+		//m_pMotion->m_dAlignPosY[1][1] = pDoc->m_Master[0].m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[1];
 	}
 }
 
@@ -10633,8 +10643,10 @@ CfPoint CGvisR2R_PunchView::GetMkPnt(int nMkPcs)
 	ptPnt.y = -1.0;
 
 #ifndef TEST_MODE
-	if (pDoc->m_Master[0].m_pPcsRgn)
-		ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt(nMkPcs); // Cam0의 Mk 포인트.
+	if (pDoc->m_MasterDB.m_pPcsRgn)
+		ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt(nMkPcs); // Cam0의 Mk 포인트.
+	//if (pDoc->m_Master[0].m_pPcsRgn)
+	//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt(nMkPcs); // Cam0의 Mk 포인트.
 #else
 	ptPnt.x = 1.0;
 	ptPnt.y = 1.0;
@@ -10650,8 +10662,10 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nMkPcs)
 	ptPnt.y = -1.0;
 
 #ifndef TEST_MODE
-	if (pDoc->m_Master[0].m_pPcsRgn)
-		ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt0(nMkPcs); // Cam0의 Mk 포인트.
+	if (pDoc->m_MasterDB.m_pPcsRgn)
+		ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nMkPcs); // Cam0의 Mk 포인트.
+	//if (pDoc->m_Master[0].m_pPcsRgn)
+	//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt0(nMkPcs); // Cam0의 Mk 포인트.
 #else
 	ptPnt.x = 1.0;
 	ptPnt.y = 1.0;
@@ -10667,8 +10681,10 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nMkPcs)
 	ptPnt.y = -1.0;
 
 #ifndef TEST_MODE
-	if (pDoc->m_Master[0].m_pPcsRgn)
-		ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt1(nMkPcs); // Cam1의 Mk 포인트.
+	if (pDoc->m_MasterDB.m_pPcsRgn)
+		ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nMkPcs); // Cam1의 Mk 포인트.
+	//if (pDoc->m_Master[0].m_pPcsRgn)
+	//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt1(nMkPcs); // Cam1의 Mk 포인트.
 #else
 	ptPnt.x = 1.0;
 	ptPnt.y = 1.0;
@@ -10699,8 +10715,10 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nMkPcs)
 // 				if(pDoc->m_pPcr[2][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 // 				{
 // 					nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
-// 					if(pDoc->m_Master[0].m_pPcsRgn)
-// 						ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt(nDefPcsId); // Cam0의 Mk 포인트.
+// 					if(pDoc->m_MasterDB.m_pPcsRgn)
+// 						ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt(nDefPcsId); // Cam0의 Mk 포인트.
+// 					//if(pDoc->m_Master[0].m_pPcsRgn)
+// 					//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt(nDefPcsId); // Cam0의 Mk 포인트.
 // 				}
 // 			}
 // 		}
@@ -10736,8 +10754,10 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs)
 					if (pDoc->m_pPcr[2][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
 						nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
-						if (pDoc->m_Master[0].m_pPcsRgn)
-							ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
+						if (pDoc->m_MasterDB.m_pPcsRgn)
+							ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
+						//if (pDoc->m_Master[0].m_pPcsRgn)
+						//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
 					}
 				}
 			}
@@ -10754,8 +10774,10 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs)
 					if (pDoc->m_pPcr[0][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
 						nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
-						if (pDoc->m_Master[0].m_pPcsRgn)
-							ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
+						if (pDoc->m_MasterDB.m_pPcsRgn)
+							ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
+						//if (pDoc->m_Master[0].m_pPcsRgn)
+						//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
 					}
 				}
 			}
@@ -10771,8 +10793,10 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs)
 
 int CGvisR2R_PunchView::GetMkStripIdx0(int nDefPcsId) // 0 : Fail , 1~4 : Strip Idx
 {
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
+	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 	int nStripY = int(nNodeY / 4);
 	int nStripIdx = 0; 
 
@@ -10795,8 +10819,10 @@ int CGvisR2R_PunchView::GetMkStripIdx0(int nDefPcsId) // 0 : Fail , 1~4 : Strip 
 
 int CGvisR2R_PunchView::GetMkStripIdx1(int nDefPcsId) // 0 : Fail , 1~4 : Strip Idx
 {
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
+	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 	int nStripY = int(nNodeY / 4);
 	int nStripIdx = 0;
 
@@ -10827,8 +10853,10 @@ int CGvisR2R_PunchView::GetMkStripIdx0(int nSerial, int nMkPcs) // 0 : Fail , 1~
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nIdx = pDoc->GetPcrIdx0(nSerial);
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
+	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 	int nStripY = int(nNodeY / 4);
 	int nStripIdx = 0;
 
@@ -10911,10 +10939,14 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs)
 					if (pDoc->m_pPcr[2][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
 						nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
-						if (pDoc->m_Master[0].m_pPcsRgn)
+						if (pDoc->m_MasterDB.m_pPcsRgn)
 						{
-							ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
+							ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
 						}
+						//if (pDoc->m_Master[0].m_pPcsRgn)
+						//{
+						//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
+						//}
 					}
 				}
 			}
@@ -10931,10 +10963,14 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs)
 					if (pDoc->m_pPcr[0][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
 						nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
-						if (pDoc->m_Master[0].m_pPcsRgn)
+						if (pDoc->m_MasterDB.m_pPcsRgn)
 						{
-							ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
+							ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
 						}
+						//if (pDoc->m_Master[0].m_pPcsRgn)
+						//{
+						//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
+						//}
 					}
 				}
 			}
@@ -10958,8 +10994,10 @@ int CGvisR2R_PunchView::GetMkStripIdx1(int nSerial, int nMkPcs) // 0 : Fail , 1~
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nIdx = pDoc->GetPcrIdx1(nSerial);
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
+	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 	int nStripY = int(nNodeY / 4);
 	int nStripIdx = 0;
 
@@ -12190,8 +12228,10 @@ BOOL CGvisR2R_PunchView::IsFixPcsUp(int nSerial)
 
 	if (pDoc->m_pReelMapUp->IsFixPcs(nSerial, pCol, pRow, nTot))
 	{
-		int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-		int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+		int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+		int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+		//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
+		//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 		int nStPcsY = nNodeY / 4;
 
 		sMsg.Format(_T("상면 고정불량 발생"));
@@ -12229,8 +12269,10 @@ BOOL CGvisR2R_PunchView::IsFixPcsDn(int nSerial)
 
 	if (pDoc->m_pReelMapDn->IsFixPcs(nSerial, pCol, pRow, nTot))
 	{
-		int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-		int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+		int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+		int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+		//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
+		//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 		int nStPcsY = nNodeY / 4;
 
 		sMsg.Format(_T("하면 고정불량 발생"));
@@ -12813,7 +12855,8 @@ void CGvisR2R_PunchView::DoReject0()
 		m_nStepMk[2]++;
 		break;
 	case 1:
-		if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
+		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
 		{
 			m_nStepMk[2]++;
 		}
@@ -12826,7 +12869,8 @@ void CGvisR2R_PunchView::DoReject0()
 		m_nStepMk[2]++;
 		break;
 	case 3:
-		if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		{
 			ptPnt = GetMkPnt0(m_nMkPcs[2]);
 
@@ -12998,7 +13042,8 @@ void CGvisR2R_PunchView::DoReject0()
 		m_nStepMk[2]++;
 		break;
 	case 13:
-		if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		{
 			m_nStepMk[2] = 3;
 		}
@@ -13077,7 +13122,8 @@ void CGvisR2R_PunchView::DoReject1()
 		m_nStepMk[3]++;
 		break;
 	case 1:
-		if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
+		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
 		{
 			m_nStepMk[3]++;
 		}
@@ -13090,7 +13136,8 @@ void CGvisR2R_PunchView::DoReject1()
 		m_nStepMk[3]++;
 		break;
 	case 3:
-		if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		{
 			ptPnt = GetMkPnt1(m_nMkPcs[3]);
 
@@ -13261,7 +13308,8 @@ void CGvisR2R_PunchView::DoReject1()
 		m_nStepMk[3]++;
 		break;
 	case 13:
-		if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		{
 			m_nStepMk[3] = 3;
 		}
@@ -13331,7 +13379,8 @@ void CGvisR2R_PunchView::DoMark0All()
 		m_nStepMk[2]++;
 		break;
 	case 1:
-		if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
+		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
 		{
 			m_nStepMk[2]++;
 		}
@@ -13344,7 +13393,8 @@ void CGvisR2R_PunchView::DoMark0All()
 		m_nStepMk[2]++;
 		break;
 	case 3:
-		if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		{
 			ptPnt = GetMkPnt0(m_nMkPcs[2]);
 
@@ -13418,7 +13468,8 @@ void CGvisR2R_PunchView::DoMark0All()
 		m_nStepMk[2]++;
 		break;
 	case 8:
-		if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		{
 			m_nStepMk[2] = 3;
 		}
@@ -13486,7 +13537,8 @@ void CGvisR2R_PunchView::DoMark1All()
 		m_nStepMk[3]++;
 		break;
 	case 1:
-		if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
+		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
 		{
 			m_nStepMk[3]++;
 		}
@@ -13499,7 +13551,8 @@ void CGvisR2R_PunchView::DoMark1All()
 		m_nStepMk[3]++;
 		break;
 	case 3:
-		if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		{
 			ptPnt = GetMkPnt1(m_nMkPcs[3]);
 
@@ -13573,7 +13626,8 @@ void CGvisR2R_PunchView::DoMark1All()
 		m_nStepMk[3]++;
 		break;
 	case 8:
-		if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		{
 			m_nStepMk[3] = 3;
 		}
@@ -13590,7 +13644,8 @@ void CGvisR2R_PunchView::DoMark1All()
 	case 101:
 		if (!WaitDelay1(1))		// F:Done, T:On Waiting....
 		{
-			if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
+			//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
+			if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
 			{
 				if (m_nMkPcs[2] > 0)
 				{
@@ -13651,7 +13706,8 @@ void CGvisR2R_PunchView::DoMark0()
 	int nSerial, nIdx, nErrCode, nRtn;
 	CfPoint ptPnt;
 	CString sMsg;
-	double dStripOut = (pDoc->m_Master[0].m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	//double dStripOut = (pDoc->m_Master[0].m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	int nStripOut = int(dStripOut);
 	if (dStripOut > nStripOut)
 		nStripOut++;
@@ -14337,7 +14393,8 @@ void CGvisR2R_PunchView::DoMark1()
 	int nSerial, nIdx, nErrCode, nRtn;
 	CfPoint ptPnt;
 	CString sMsg;
-	double dStripOut = (pDoc->m_Master[0].m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	//double dStripOut = (pDoc->m_Master[0].m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	int nStripOut = int(dStripOut);
 	if (dStripOut > nStripOut)
 		nStripOut++;
@@ -15983,56 +16040,67 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 				pDoc->GetCamPxlRes();
 				if (IsLastJob(0)) // Up
 				{
-					pDoc->m_Master[0].Init(
+					pDoc->m_MasterDB.Init(
 						pDoc->WorkingInfo.System.sPathCamSpecDir,
 						pDoc->WorkingInfo.LastJob.sModelUp,
 						pDoc->WorkingInfo.LastJob.sLayerUp,
 						_T(""), FALSE);
-					pDoc->m_Master[0].LoadMstInfo();
+					pDoc->m_MasterDB.LoadMstInfo();
 				}
-				if (IsLastJob(1)) // Dn
-				{
-					pDoc->m_Master[1].Init(
-						pDoc->WorkingInfo.System.sPathCamSpecDir,
-						pDoc->WorkingInfo.LastJob.sModelDn,
-						pDoc->WorkingInfo.LastJob.sLayerDn,
-						pDoc->WorkingInfo.LastJob.sLayerUp,
-						FALSE);
-					pDoc->m_Master[1].LoadMstInfo();
-				}
-
-				// 			pDoc->LoadMasterSpec();
-				// 			pDoc->LoadPinImg();
-				// 			pDoc->GetCamPxlRes();
-				// 			pDoc->LoadStripRgnFromCam();
-				// 			pDoc->LoadPcsRgnFromCam();
-				// 			pDoc->LoadPcsImg();
-				// 			pDoc->LoadCadImg();
+				//if (IsLastJob(0)) // Up
+				//{
+				//	pDoc->m_Master[0].Init(
+				//		pDoc->WorkingInfo.System.sPathCamSpecDir,
+				//		pDoc->WorkingInfo.LastJob.sModelUp,
+				//		pDoc->WorkingInfo.LastJob.sLayerUp,
+				//		_T(""), FALSE);
+				//	pDoc->m_Master[0].LoadMstInfo();
+				//}
+				//if (IsLastJob(1)) // Dn
+				//{
+				//	pDoc->m_Master[1].Init(
+				//		pDoc->WorkingInfo.System.sPathCamSpecDir,
+				//		pDoc->WorkingInfo.LastJob.sModelDn,
+				//		pDoc->WorkingInfo.LastJob.sLayerDn,
+				//		pDoc->WorkingInfo.LastJob.sLayerUp,
+				//		FALSE);
+				//	pDoc->m_Master[1].LoadMstInfo();
+				//}
 #else
 				pDoc->GetCamPxlRes();
-
 				if (IsLastJob(0)) // Up
 				{
-					pDoc->m_Master[0].Init(
+					pDoc->m_MasterDB.Init(
 						pDoc->WorkingInfo.System.sPathCamSpecDir,
 						pDoc->WorkingInfo.LastJob.sModelUp,
 						pDoc->WorkingInfo.LastJob.sLayerUp,
 						_T(""), FALSE);
-					pDoc->m_Master[0].LoadMstInfo();
-					pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
+					pDoc->m_MasterDB.LoadMstInfo();
+					pDoc->m_MasterDB.WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
 				}
 
-				if (IsLastJob(1)) // Dn
-				{
-					pDoc->m_Master[1].Init(
-						pDoc->WorkingInfo.System.sPathCamSpecDir,
-						pDoc->WorkingInfo.LastJob.sModelDn,
-						pDoc->WorkingInfo.LastJob.sLayerDn,
-						pDoc->WorkingInfo.LastJob.sLayerUp,
-						FALSE);
-					pDoc->m_Master[1].LoadMstInfo();
-					pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
-				}
+				//if (IsLastJob(0)) // Up
+				//{
+				//	pDoc->m_Master[0].Init(
+				//		pDoc->WorkingInfo.System.sPathCamSpecDir,
+				//		pDoc->WorkingInfo.LastJob.sModelUp,
+				//		pDoc->WorkingInfo.LastJob.sLayerUp,
+				//		_T(""), FALSE);
+				//	pDoc->m_Master[0].LoadMstInfo();
+				//	pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
+				//}
+
+				//if (IsLastJob(1)) // Dn
+				//{
+				//	pDoc->m_Master[1].Init(
+				//		pDoc->WorkingInfo.System.sPathCamSpecDir,
+				//		pDoc->WorkingInfo.LastJob.sModelDn,
+				//		pDoc->WorkingInfo.LastJob.sLayerDn,
+				//		pDoc->WorkingInfo.LastJob.sLayerUp,
+				//		FALSE);
+				//	pDoc->m_Master[1].LoadMstInfo();
+				//	pDoc->m_Master[1].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotDn);
+				//}
 
 				SetAlignPos();
 #endif
@@ -20530,14 +20598,24 @@ BOOL CGvisR2R_PunchView::MoveAlign0(int nPos)
 		double pPos[2];
 		if (nPos == 0)
 		{
-			pPos[0] = pDoc->m_Master[0].m_stAlignMk.X0 + m_pMotion->m_dPinPosX[0];
-			pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y0 + m_pMotion->m_dPinPosY[0];
+			pPos[0] = pDoc->m_MasterDB.m_stAlignMk.X0 + m_pMotion->m_dPinPosX[0];
+			pPos[1] = pDoc->m_MasterDB.m_stAlignMk.Y0 + m_pMotion->m_dPinPosY[0];
 		}
 		else if (nPos == 1)
 		{
-			pPos[0] = pDoc->m_Master[0].m_stAlignMk.X1 + m_pMotion->m_dPinPosX[0];
-			pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y1 + m_pMotion->m_dPinPosY[0];
+			pPos[0] = pDoc->m_MasterDB.m_stAlignMk.X1 + m_pMotion->m_dPinPosX[0];
+			pPos[1] = pDoc->m_MasterDB.m_stAlignMk.Y1 + m_pMotion->m_dPinPosY[0];
 		}
+		//if (nPos == 0)
+		//{
+		//	pPos[0] = pDoc->m_Master[0].m_stAlignMk.X0 + m_pMotion->m_dPinPosX[0];
+		//	pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y0 + m_pMotion->m_dPinPosY[0];
+		//}
+		//else if (nPos == 1)
+		//{
+		//	pPos[0] = pDoc->m_Master[0].m_stAlignMk.X1 + m_pMotion->m_dPinPosX[0];
+		//	pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y1 + m_pMotion->m_dPinPosY[0];
+		//}
 
 		if (ChkCollision(AXIS_X0, pPos[0]))
 			return FALSE;
@@ -20579,14 +20657,24 @@ BOOL CGvisR2R_PunchView::MoveAlign1(int nPos)
 		double pPos[2];
 		if (nPos == 0)
 		{
-			pPos[0] = pDoc->m_Master[0].m_stAlignMk.X0 + m_pMotion->m_dPinPosX[1];
-			pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y0 + m_pMotion->m_dPinPosY[1];
+			pPos[0] = pDoc->m_MasterDB.m_stAlignMk.X0 + m_pMotion->m_dPinPosX[1];
+			pPos[1] = pDoc->m_MasterDB.m_stAlignMk.Y0 + m_pMotion->m_dPinPosY[1];
 		}
 		else if (nPos == 1)
 		{
-			pPos[0] = pDoc->m_Master[0].m_stAlignMk.X1 + m_pMotion->m_dPinPosX[1];
-			pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y1 + m_pMotion->m_dPinPosY[1];
+			pPos[0] = pDoc->m_MasterDB.m_stAlignMk.X1 + m_pMotion->m_dPinPosX[1];
+			pPos[1] = pDoc->m_MasterDB.m_stAlignMk.Y1 + m_pMotion->m_dPinPosY[1];
 		}
+		//if (nPos == 0)
+		//{
+		//	pPos[0] = pDoc->m_Master[0].m_stAlignMk.X0 + m_pMotion->m_dPinPosX[1];
+		//	pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y0 + m_pMotion->m_dPinPosY[1];
+		//}
+		//else if (nPos == 1)
+		//{
+		//	pPos[0] = pDoc->m_Master[0].m_stAlignMk.X1 + m_pMotion->m_dPinPosX[1];
+		//	pPos[1] = pDoc->m_Master[0].m_stAlignMk.Y1 + m_pMotion->m_dPinPosY[1];
+		//}
 
 		if (ChkCollision(AXIS_X1, pPos[0]))
 			return FALSE;
@@ -21796,7 +21884,8 @@ void CGvisR2R_PunchView::CntMk()
 
 BOOL CGvisR2R_PunchView::IsOnMarking0()
 {
-	if (m_nMkPcs[0] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+	//if (m_nMkPcs[0] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+	if (m_nMkPcs[0] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		return TRUE;
 
 	return FALSE;
@@ -21804,7 +21893,8 @@ BOOL CGvisR2R_PunchView::IsOnMarking0()
 
 BOOL CGvisR2R_PunchView::IsOnMarking1()
 {
-	if (m_nMkPcs[1] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+	//if (m_nMkPcs[1] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
+	if (m_nMkPcs[1] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		return TRUE;
 
 	return FALSE;

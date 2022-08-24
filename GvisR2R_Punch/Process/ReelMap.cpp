@@ -427,8 +427,8 @@ BOOL CReelMap::Open(CString sPath)
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nNodeX = 0, nNodeY = 0;
 #ifndef TEST_MODE
-	nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 #endif
 
 	int k, i;
@@ -552,8 +552,8 @@ BOOL CReelMap::OpenUser(CString sPath)
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 
 	int k, i;
 	FILE *fp = NULL;
@@ -670,8 +670,8 @@ BOOL CReelMap::Open(CString sPath, CString sModel, CString sLayer, CString sLot)
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 
 	int k, i;
 	FILE *fp = NULL;
@@ -783,8 +783,8 @@ BOOL CReelMap::OpenUser(CString sPath, CString sModel, CString sLayer, CString s
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 
 	int k, i;
 	FILE *fp = NULL;
@@ -950,9 +950,9 @@ BOOL CReelMap::Write(int nSerial, int nLayer)
 	}
 
 	int nIdx = pDoc->GetPcrIdx1(nSerial, pDoc->m_bNewLotShare[1]);
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-	int nStripY = pDoc->m_Master[0].m_pPcsRgn->nRow / 4; // Strip(1~4);
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	int nStripY = pDoc->m_MasterDB.m_pPcsRgn->nRow / 4; // Strip(1~4);
 	int nTotDefPcs = 0;
 	if(pDoc->m_pPcr[nLayer])
 	{
@@ -1059,9 +1059,9 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 	}
 
 	int nIdx = pDoc->GetPcrIdx1(nSerial, pDoc->m_bNewLotShare[1]);
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-	int nStripY = pDoc->m_Master[0].m_pPcsRgn->nRow / 4; // Strip(1~4);
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	int nStripY = pDoc->m_MasterDB.m_pPcsRgn->nRow / 4; // Strip(1~4);
 	int nTotDefPcs = 0;
 	if(pDoc->m_pPcr[nLayer])
 	{
@@ -1281,7 +1281,7 @@ BOOL CReelMap::Disp(int nMkPnl, BOOL bDumy)
 		}
 	}
 
-	if(!pDoc->m_Master[0].m_pPcsRgn)
+	if(!pDoc->m_MasterDB.m_pPcsRgn)
 	{
 		pView->MsgBox(_T("PCS RGN Error."));
 		return FALSE;
@@ -1350,8 +1350,8 @@ BOOL CReelMap::Disp(int nMkPnl, BOOL bDumy)
 	int k, i, nR, nC, nP, nInc=0;
 	//int nCol, nRow;
 	int nLoadPnl;
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol; // 10
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow; // 5
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol; // 10
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow; // 5
 
 	for(k=nTotPnl-1; k>=0; k--) // k = 7 ~ 0
 	{
@@ -1788,8 +1788,8 @@ void CReelMap::ClrRst()
 // 		TotPnl = PNL_TOT;
 
 	int nPnl, nRow, nCol;
-// 	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-// 	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+// 	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+// 	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	int TotPnl = PNL_TOT;
 	int nNodeX = PNLBUF_X;
 	int nNodeY = PNLBUF_Y;
@@ -2066,8 +2066,8 @@ BOOL CReelMap::WriteYield(int nSerial, CString sPath)
 {
 	int nNodeX = 0, nNodeY = 0;
 #ifndef TEST_MODE
-	nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 #endif
 	CString sDefNum, strData;
 	int nPnl, nRow, nCol, nDefCode, nStrip;
@@ -2205,8 +2205,8 @@ BOOL CReelMap::UpdateYield(int nSerial)
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nNodeX = 0, nNodeY = 0;
 #ifndef TEST_MODE
-	nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 #endif
 
 	int k, i;
@@ -2357,8 +2357,8 @@ BOOL CReelMap::UpdateRst(int nSerial)
 /*
 	CString sCode, sDefNum, strData, strMenu, strItem;
 	int nPnl, nRow, nCol, nDefCode , nTot, nGood, nDef, k, i, nStrip;
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	int nTotPcs = nNodeX * nNodeY;
 	int nStripPcs = nTotPcs / 4;
 
@@ -2500,8 +2500,8 @@ void CReelMap::SetFixPcs(int nSerial)
 // 	if(!pDoc->WorkingInfo.LastJob.bContFixDef)
 // 		return;
 
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	int nR, nC, nDefCode;
 
 	for(nR=0; nR<nNodeY; nR++)
@@ -2564,8 +2564,8 @@ void CReelMap::ClrFixPcs(int nCol, int nRow)
 BOOL CReelMap::IsFixPcs(int nSerial, int &Col, int &Row)
 {
 	BOOL bRtn = FALSE;
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 
 	BOOL bOn = pDoc->WorkingInfo.LastJob.bContFixDef;
 	int nRange = _tstoi(pDoc->WorkingInfo.LastJob.sNumRangeFixDef);
@@ -2629,8 +2629,8 @@ BOOL CReelMap::IsFixPcs(int nSerial, int &Col, int &Row)
 BOOL CReelMap::IsFixPcs(int nSerial, int* pCol, int* pRow, int &nTot) // nTot : total of PCS Over nJudge
 {
 	BOOL bRtn = FALSE;
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 
 	BOOL bOn = pDoc->WorkingInfo.LastJob.bContFixDef;
 	int nRange = _tstoi(pDoc->WorkingInfo.LastJob.sNumRangeFixDef);
@@ -3420,8 +3420,8 @@ BOOL CReelMap::RemakeReelmap()
 	}
 	if(!nNodeX || !nNodeY)
 	{
-		nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol; // on Cam
-		nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow; // on Cam
+		nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol; // on Cam
+		nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow; // on Cam
 	}
 
 	nStripNumY = 4;
@@ -3710,8 +3710,8 @@ BOOL CReelMap::ReloadRst(int nTo)
 	TCHAR sep[] = { _T(",/;\r\n\t") };
 	TCHAR szData[MAX_PATH];
 
-	int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	int nTotPcs = nNodeX * nNodeY;
 	int nStripPcs = nTotPcs / 4;
 

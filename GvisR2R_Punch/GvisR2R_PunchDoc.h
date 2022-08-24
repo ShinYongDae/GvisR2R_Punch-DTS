@@ -38,7 +38,8 @@ public:
 	double m_dShiftAdjustRatio;
 
 	BOOL m_bCamChged;
-	CCamMaster m_Master[2], m_MasterDB;
+	CCamMaster m_MasterDB;
+	//CCamMaster m_Master[2], m_MasterDB;
 	CMyFile *m_pFile;
 	CMySpec *m_pSpecLocal;
 	stMkIo MkIo;

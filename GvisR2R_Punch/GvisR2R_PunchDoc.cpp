@@ -3614,7 +3614,7 @@ void CGvisR2R_PunchDoc::ClrPcr()
 
 BOOL CGvisR2R_PunchDoc::InitReelmap()
 {
-	if (!m_Master[0].m_pPcsRgn)
+	if (!m_MasterDB.m_pPcsRgn)
 	{
 		CString strMsg;
 		strMsg.Format(_T("피스 영역이 존재하지 않습니다."));
@@ -3623,7 +3623,7 @@ BOOL CGvisR2R_PunchDoc::InitReelmap()
 		return FALSE;
 	}
 
-	int nTotPcs = m_Master[0].m_pPcsRgn->nTotPcs;
+	int nTotPcs = m_MasterDB.m_pPcsRgn->nTotPcs;
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	if (m_pReelMap)
@@ -3686,7 +3686,7 @@ BOOL CGvisR2R_PunchDoc::InitReelmap()
 
 BOOL CGvisR2R_PunchDoc::InitReelmapUp()
 {
-	if (!m_Master[0].m_pPcsRgn)
+	if (!m_MasterDB.m_pPcsRgn)
 	{
 		CString strMsg;
 		strMsg.Format(_T("피스 영역이 존재하지 않습니다."));
@@ -3696,7 +3696,7 @@ BOOL CGvisR2R_PunchDoc::InitReelmapUp()
 	}
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	int nTotPcs = m_Master[0].m_pPcsRgn->nTotPcs;
+	int nTotPcs = m_MasterDB.m_pPcsRgn->nTotPcs;
 
 	if (m_pReelMap)
 	{
@@ -3759,7 +3759,7 @@ BOOL CGvisR2R_PunchDoc::InitReelmapDn()
 	if (!bDualTest)
 		return TRUE;
 
-	if (!m_Master[0].m_pPcsRgn)
+	if (!m_MasterDB.m_pPcsRgn)
 	{
 		CString strMsg;
 		strMsg.Format(_T("피스 영역이 존재하지 않습니다."));
@@ -3768,7 +3768,7 @@ BOOL CGvisR2R_PunchDoc::InitReelmapDn()
 		return FALSE;
 	}
 
-	int nTotPcs = m_Master[0].m_pPcsRgn->nTotPcs;
+	int nTotPcs = m_MasterDB.m_pPcsRgn->nTotPcs;
 
 	if (m_pReelMap)
 	{
@@ -3842,7 +3842,7 @@ void CGvisR2R_PunchDoc::InitPcr()
 
 void CGvisR2R_PunchDoc::SetReelmap(int nDir)
 {
-	if (!m_pReelMap || !m_Master[0].m_pPcsRgn)
+	if (!m_pReelMap || !m_MasterDB.m_pPcsRgn)
 		return;
 
 	if (!m_pReelMap->pFrmRgn || !m_pReelMap->pPcsRgn)
@@ -3858,7 +3858,7 @@ void CGvisR2R_PunchDoc::SetReelmap(int nDir)
 	int nTotPcs = m_pReelMap->nTotPcs;
 
 	// 	double dScale = (MasterInfo.dPixelSize/10.0);
-	double dScale = (m_Master[0].MasterInfo.dPixelSize / 10.0);
+	double dScale = (m_MasterDB.MasterInfo.dPixelSize / 10.0);
 	m_pReelMap->SetAdjRatio(dScale);
 	dScale = m_pReelMap->GetAdjRatio();
 
@@ -3867,13 +3867,13 @@ void CGvisR2R_PunchDoc::SetReelmap(int nDir)
 		switch (nDir)
 		{
 		case ROT_NONE:
-			fWidth = (m_Master[0].m_pPcsRgn->pPcs[0].right - m_Master[0].m_pPcsRgn->pPcs[0].left);
-			fHeight = (m_Master[0].m_pPcsRgn->pPcs[0].bottom - m_Master[0].m_pPcsRgn->pPcs[0].top);
-			fRight = m_Master[0].m_pPcsRgn->rtFrm.right - fWidth * (1.0 - RMAP_PCS_SCALE);
-			fBottom = m_Master[0].m_pPcsRgn->rtFrm.bottom - fHeight * (1.0 - RMAP_PCS_SCALE);;
-			m_pReelMap->pFrmRgn[k].left = (m_Master[0].m_pPcsRgn->rtFrm.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + m_Master[0].m_pPcsRgn->rtFrm.left;
-			m_pReelMap->pFrmRgn[k].top = m_Master[0].m_pPcsRgn->rtFrm.top;
-			m_pReelMap->pFrmRgn[k].right = (m_Master[0].m_pPcsRgn->rtFrm.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fRight;
+			fWidth = (m_MasterDB.m_pPcsRgn->pPcs[0].right - m_MasterDB.m_pPcsRgn->pPcs[0].left);
+			fHeight = (m_MasterDB.m_pPcsRgn->pPcs[0].bottom - m_MasterDB.m_pPcsRgn->pPcs[0].top);
+			fRight = m_MasterDB.m_pPcsRgn->rtFrm.right - fWidth * (1.0 - RMAP_PCS_SCALE);
+			fBottom = m_MasterDB.m_pPcsRgn->rtFrm.bottom - fHeight * (1.0 - RMAP_PCS_SCALE);;
+			m_pReelMap->pFrmRgn[k].left = (m_MasterDB.m_pPcsRgn->rtFrm.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + m_MasterDB.m_pPcsRgn->rtFrm.left;
+			m_pReelMap->pFrmRgn[k].top = m_MasterDB.m_pPcsRgn->rtFrm.top;
+			m_pReelMap->pFrmRgn[k].right = (m_MasterDB.m_pPcsRgn->rtFrm.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fRight;
 			m_pReelMap->pFrmRgn[k].bottom = fBottom;
 			// 			m_pReelMap->pFrmRgn[k].left = (m_pPcsRgn->rtFrm.right+MYGL_GAP_PNL*dScale)*(nTotPnl-1-k)+m_pPcsRgn->rtFrm.left;
 			// 			m_pReelMap->pFrmRgn[k].top = m_pPcsRgn->rtFrm.top;
@@ -3882,16 +3882,16 @@ void CGvisR2R_PunchDoc::SetReelmap(int nDir)
 
 			for (i = 0; i < nTotPcs; i++)
 			{
-				fWidth = (m_Master[0].m_pPcsRgn->pPcs[i].right - m_Master[0].m_pPcsRgn->pPcs[i].left);
-				fHeight = (m_Master[0].m_pPcsRgn->pPcs[i].bottom - m_Master[0].m_pPcsRgn->pPcs[i].top);
-				fData1 = m_Master[0].m_pPcsRgn->pPcs[i].left;	// left
-				fData2 = m_Master[0].m_pPcsRgn->pPcs[i].top;	// top
+				fWidth = (m_MasterDB.m_pPcsRgn->pPcs[i].right - m_MasterDB.m_pPcsRgn->pPcs[i].left);
+				fHeight = (m_MasterDB.m_pPcsRgn->pPcs[i].bottom - m_MasterDB.m_pPcsRgn->pPcs[i].top);
+				fData1 = m_MasterDB.m_pPcsRgn->pPcs[i].left;	// left
+				fData2 = m_MasterDB.m_pPcsRgn->pPcs[i].top;	// top
 				fData3 = fData1 + fWidth * RMAP_PCS_SCALE; // right
 				fData4 = fData2 + fHeight * RMAP_PCS_SCALE; // bottom
 
-				m_pReelMap->pPcsRgn[k][i].left = (m_Master[0].m_pPcsRgn->rtFrm.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData1;
+				m_pReelMap->pPcsRgn[k][i].left = (m_MasterDB.m_pPcsRgn->rtFrm.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData1;
 				m_pReelMap->pPcsRgn[k][i].top = fData2;
-				m_pReelMap->pPcsRgn[k][i].right = (m_Master[0].m_pPcsRgn->rtFrm.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData3;
+				m_pReelMap->pPcsRgn[k][i].right = (m_MasterDB.m_pPcsRgn->rtFrm.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData3;
 				m_pReelMap->pPcsRgn[k][i].bottom = fData4;
 			}
 			break;
@@ -3916,22 +3916,22 @@ void CGvisR2R_PunchDoc::SetReelmap(int nDir)
 			// 			break;
 		case ROT_CCW_90: // right->bottom, top->left, bottom->right, left->top ; Dir (x *= 1, y *= -1) 
 			fDistX = 0;
-			fDistY = m_Master[0].m_pPcsRgn->rtFrm.left + m_Master[0].m_pPcsRgn->rtFrm.right;
-			m_pReelMap->pFrmRgn[k].left = (m_Master[0].m_pPcsRgn->rtFrm.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + m_Master[0].m_pPcsRgn->rtFrm.top;
-			m_pReelMap->pFrmRgn[k].top = fDistY - m_Master[0].m_pPcsRgn->rtFrm.right;
-			m_pReelMap->pFrmRgn[k].right = (m_Master[0].m_pPcsRgn->rtFrm.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + m_Master[0].m_pPcsRgn->rtFrm.bottom;
-			m_pReelMap->pFrmRgn[k].bottom = fDistY - m_Master[0].m_pPcsRgn->rtFrm.left;
+			fDistY = m_MasterDB.m_pPcsRgn->rtFrm.left + m_MasterDB.m_pPcsRgn->rtFrm.right;
+			m_pReelMap->pFrmRgn[k].left = (m_MasterDB.m_pPcsRgn->rtFrm.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + m_MasterDB.m_pPcsRgn->rtFrm.top;
+			m_pReelMap->pFrmRgn[k].top = fDistY - m_MasterDB.m_pPcsRgn->rtFrm.right;
+			m_pReelMap->pFrmRgn[k].right = (m_MasterDB.m_pPcsRgn->rtFrm.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + m_MasterDB.m_pPcsRgn->rtFrm.bottom;
+			m_pReelMap->pFrmRgn[k].bottom = fDistY - m_MasterDB.m_pPcsRgn->rtFrm.left;
 
 			for (i = 0; i < nTotPcs; i++)
 			{
-				fData1 = m_Master[0].m_pPcsRgn->pPcs[i].top;	// left
-				fData2 = fDistY - m_Master[0].m_pPcsRgn->pPcs[i].right;	// top
-				fData3 = m_Master[0].m_pPcsRgn->pPcs[i].bottom;	// right
-				fData4 = fDistY - m_Master[0].m_pPcsRgn->pPcs[i].left; // bottom
+				fData1 = m_MasterDB.m_pPcsRgn->pPcs[i].top;	// left
+				fData2 = fDistY - m_MasterDB.m_pPcsRgn->pPcs[i].right;	// top
+				fData3 = m_MasterDB.m_pPcsRgn->pPcs[i].bottom;	// right
+				fData4 = fDistY - m_MasterDB.m_pPcsRgn->pPcs[i].left; // bottom
 
-				m_pReelMap->pPcsRgn[k][i].left = (m_Master[0].m_pPcsRgn->rtFrm.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData1;
+				m_pReelMap->pPcsRgn[k][i].left = (m_MasterDB.m_pPcsRgn->rtFrm.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData1;
 				m_pReelMap->pPcsRgn[k][i].top = fData2;
-				m_pReelMap->pPcsRgn[k][i].right = (m_Master[0].m_pPcsRgn->rtFrm.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData3;
+				m_pReelMap->pPcsRgn[k][i].right = (m_MasterDB.m_pPcsRgn->rtFrm.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData3;
 				m_pReelMap->pPcsRgn[k][i].bottom = fData4;
 			}
 			break;
@@ -4552,7 +4552,7 @@ int CGvisR2R_PunchDoc::LoadPCRAllUp(int nSerial, BOOL bFromShare)	// return : 2(
 	nTotDef[1] = pDoc->m_pPcr[1][nIdx]->m_nTotDef;
 	//	nTotDef[2] = nTotDef[0] + nTotDef[1];
 
-	int nTotPcs = m_Master[0].m_pPcsRgn->nTotPcs;
+	int nTotPcs = m_MasterDB.m_pPcsRgn->nTotPcs;
 	stPcrMerge *pPcrMgr = new stPcrMerge[nTotPcs];
 
 	int nComp, nPcsId;
@@ -4726,7 +4726,7 @@ int CGvisR2R_PunchDoc::LoadPCRAllDn(int nSerial, BOOL bFromShare)	// return : 2(
 	nTotDef[1] = pDoc->m_pPcr[1][nIdx]->m_nTotDef;
 	//	nTotDef[2] = nTotDef[0] + nTotDef[1];
 
-	int nTotPcs = m_Master[0].m_pPcsRgn->nTotPcs;
+	int nTotPcs = m_MasterDB.m_pPcsRgn->nTotPcs;
 	stPcrMerge *pPcrMgr = new stPcrMerge[nTotPcs];
 
 	int nComp, nPcsId;
@@ -5914,8 +5914,8 @@ int CGvisR2R_PunchDoc::GetLotSerial()
 
 void CGvisR2R_PunchDoc::SetMkPnt(int nCam)	// Pin위치에 의한 정렬.
 {
-	if (m_Master[0].m_pPcsRgn)
-		m_Master[0].m_pPcsRgn->SetMkPnt(nCam);
+	if (m_MasterDB.m_pPcsRgn)
+		m_MasterDB.m_pPcsRgn->SetMkPnt(nCam);
 }
 
 void CGvisR2R_PunchDoc::SetOnePnlLen(double dLen)
@@ -7580,8 +7580,8 @@ int CGvisR2R_PunchDoc::Mirroring(int nPcsId)
 #endif
 
 	int nId, nCol, nRow, nC, nR;
-	int nNodeX = m_Master[0].m_pPcsRgn->nCol;
-	int nNodeY = m_Master[0].m_pPcsRgn->nRow;
+	int nNodeX = m_MasterDB.m_pPcsRgn->nCol;
+	int nNodeY = m_MasterDB.m_pPcsRgn->nRow;
 
 	nCol = int(nPcsId / nNodeY);
 	if (nCol % 2)

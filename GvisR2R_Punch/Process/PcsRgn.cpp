@@ -107,8 +107,8 @@ void CPcsRgn::SetMkPnt(int nCam)
 		{
 			for(nR=0; nR<nRow; nR++)
 			{
-				ptRef.x = pDoc->m_Master[0].m_stPcsMk[idx].X;
-				ptRef.y = pDoc->m_Master[0].m_stPcsMk[idx].Y;
+				ptRef.x = pDoc->m_MasterDB.m_stPcsMk[idx].X;
+				ptRef.y = pDoc->m_MasterDB.m_stPcsMk[idx].Y;
 
 // 				pMkPnt[0][idx].x = ptRef.x + ptAdjCM[0].x;
 // 				pMkPnt[0][idx].y = ptRef.y + ptAdjCM[0].y;
@@ -129,8 +129,8 @@ void CPcsRgn::SetMkPnt(int nCam)
 		{
 			for(nR=0; nR<nRow; nR++)
 			{
-				ptRef.x = pDoc->m_Master[0].m_stPcsMk[idx].X;
-				ptRef.y = pDoc->m_Master[0].m_stPcsMk[idx].Y;
+				ptRef.x = pDoc->m_MasterDB.m_stPcsMk[idx].X;
+				ptRef.y = pDoc->m_MasterDB.m_stPcsMk[idx].Y;
 
 // 				pMkPnt[nCam][idx].x = ptRef.x + ptAdjCM[nCam].x;
 // 				pMkPnt[nCam][idx].y = ptRef.y + ptAdjCM[nCam].y;
