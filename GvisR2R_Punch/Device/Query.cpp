@@ -35,6 +35,198 @@ void CQuery::InitDB(LPCTSTR szServerIP, LPCTSTR szCatalog, LPCTSTR szUserID, LPC
 		m_dataSource.InitDB(szServerIP, szCatalog, szUserID, szUserPassword, nDbType);
 	}
 }
+/*
+enum VARENUM
+{
+VT_EMPTY	= 0,
+VT_NULL	= 1,
+
+VT_I2	= 2,
+VT_I4	= 3,
+VT_R4	= 4,
+VT_R8	= 5,
+VT_CY	= 6,
+VT_DATE	= 7,
+VT_BSTR	= 8,
+
+VT_DISPATCH	= 9,
+VT_ERROR	= 10,
+
+VT_BOOL	= 11,
+VT_VARIANT	= 12,
+
+VT_UNKNOWN	= 13,
+
+VT_DECIMAL	= 14,
+VT_I1	= 16,
+VT_UI1	= 17,
+VT_UI2	= 18,
+VT_UI4	= 19,
+VT_I8	= 20,
+VT_UI8	= 21,
+VT_INT	= 22,
+VT_UINT	= 23,
+VT_VOID	= 24,
+
+VT_HRESULT	= 25,
+VT_PTR	= 26,
+VT_SAFEARRAY	= 27,
+VT_CARRAY	= 28,
+VT_USERDEFINED	= 29,
+
+VT_LPSTR	= 30,
+VT_LPWSTR	= 31,
+VT_RECORD	= 36,
+VT_INT_PTR	= 37,
+VT_UINT_PTR	= 38,
+VT_FILETIME	= 64,
+
+VT_BLOB	= 65,
+VT_STREAM	= 66,
+VT_STORAGE	= 67,
+VT_STREAMED_OBJECT	= 68,
+VT_STORED_OBJECT	= 69,
+VT_BLOB_OBJECT	= 70,
+VT_CF	= 71,
+VT_CLSID	= 72,
+VT_VERSIONED_STREAM	= 73,
+VT_BSTR_BLOB	= 0xfff,
+VT_VECTOR	= 0x1000,
+VT_ARRAY	= 0x2000,
+VT_BYREF	= 0x4000,
+VT_RESERVED	= 0x8000,
+VT_ILLEGAL	= 0xffff,
+VT_ILLEGALMASKED	= 0xfff,
+VT_TYPEMASK	= 0xfff
+} ;
+typedef ULONG PROPID;
+
+
+VT_I2	= 2,
+VT_I4	= 3,
+VT_R4	= 4,
+VT_R8	= 5,
+VT_CY	= 6,
+VT_DATE	= 7,
+VT_BSTR	= 8,
+
+VT_BOOL	= 11,
+VT_VARIANT	= 12,
+
+VT_DECIMAL	= 14,
+VT_I1	= 16,
+VT_UI1	= 17,
+VT_UI2	= 18,
+VT_UI4	= 19,
+VT_I8	= 20,
+VT_UI8	= 21,
+VT_INT	= 22,
+VT_UINT	= 23,
+VT_VOID	= 24,
+
+VT_LPSTR	= 30,
+VT_LPWSTR	= 31,
+VT_RECORD	= 36,
+VT_INT_PTR	= 37,
+VT_UINT_PTR	= 38,
+VT_FILETIME	= 64,
+
+*/
+
+BOOL CQuery::IsDataType(VARTYPE vT)
+{
+	switch(vT)
+	{
+	case VT_I2:			// 2
+	case VT_I4:			// 3,
+	case VT_R4:			// 4,
+	case VT_R8:			// 5,
+	case VT_CY:			// 6,
+	case VT_DATE:		// 7,
+	case VT_BSTR:		// 8,
+	case VT_BOOL:		// 11,
+	case VT_VARIANT:	// 12,
+	case VT_DECIMAL:	// 14,
+	case VT_I1:			// 16,
+	case VT_UI1:		// 17,
+	case VT_UI2:		// 18,
+	case VT_UI4:		// 19,
+	case VT_I8:			// 20,
+	case VT_UI8:		// 21,
+	case VT_INT:		// 22,
+	case VT_UINT:		// 23,
+	case VT_VOID:		// 24,
+	case VT_LPSTR:		// 30,
+	case VT_LPWSTR:		// 31,
+	case VT_RECORD:		// 36,
+	case VT_INT_PTR:	// 37,
+	case VT_UINT_PTR:	// 38,
+	case VT_FILETIME:	// 64,
+		;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+BOOL CQuery::Execute(CString sQuery, CStringArray& sArrayData, int& nTotalRow, int&nTotalCol)
+{
+
+	if (!m_dataSource.ExecuteQuery((LPCTSTR)sQuery))
+	{
+		CString strMsg;
+		strMsg.Format(_T("Error occur at m_dataSource.ExecuteQuery() at GetCustomerNameList()\r\n%s"), m_dataSource.GetLastError());
+		Log(strMsg); AfxMessageBox(strMsg, MB_ICONSTOP);
+		return FALSE;
+	}
+
+	long lMaxCols=0, lMaxRows=0, lRow=0, lCol=0;
+	lMaxCols = m_dataSource.m_pRS->Fields->Count;
+	lMaxRows = m_dataSource.m_pRS->RecordCount;
+
+	if (lMaxRows > 0)
+	{
+		nTotalRow = lMaxRows;
+		nTotalCol = lMaxCols;
+
+		_variant_t vColName, vValue;
+		CString strData;
+		m_dataSource.m_pRS->MoveFirst();
+		for (lRow = 0; lRow < lMaxRows; lRow++)
+		{
+			for (lCol = 0; lCol < lMaxCols; lCol++)
+			{
+				vValue = m_dataSource.m_pRS->Fields->Item[(long)lCol]->Value;
+				//if(vValue.vt == VT_NULL || vValue.vt == VT_EMPTY)
+				if(!IsDataType(vValue.vt))
+				{
+					sArrayData.Add(_T("NULL"));
+				}
+				else
+				{
+					vValue.ChangeType(VT_BSTR);
+					strData = vValue.bstrVal;
+
+					if(strData.IsEmpty())
+					{
+						sArrayData.Add(_T("Empty"));
+					}
+					else
+					{
+						sArrayData.Add(strData);
+					}
+				}
+			}
+			m_dataSource.m_pRS->MoveNext();
+		}
+		return TRUE;
+	}
+
+	CString strMsg;
+	strMsg.Format(_T("Not found record for query."));
+	MessageBoxTimeout(NULL, strMsg, _T("Warnning"), MB_OK | MB_SETFOREGROUND | MB_APPLMODAL | MB_ICONSTOP, 0, 500);
+	return FALSE;
+}
 
 int CQuery::GetCustomerNameList(CStringArray &strCustomerName)
 {

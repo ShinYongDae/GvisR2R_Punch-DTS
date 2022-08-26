@@ -24,6 +24,7 @@ class CQuery
 	void Log(CString strMsg, int nType = 0);
 	void StringToChar(CString str, char* pCh); // char* returned must be deleted... 
 	BOOL DirectoryExists(LPCTSTR szPath);
+	BOOL IsDataType(VARTYPE nType);
 
 public:
 	CQuery();
@@ -31,6 +32,7 @@ public:
 
 	void InitDB(LPCTSTR szServerIP, LPCTSTR szCatalog, LPCTSTR szUserID, LPCTSTR szUserPassword);
 	void InitDB(LPCTSTR szServerIP, LPCTSTR szCatalog, LPCTSTR szUserID, LPCTSTR szUserPassword, int nDbtype);
+	BOOL Execute(CString sQuery, CStringArray& sArrayData, int& nTotalRow, int&nTotalCol);
 
 	int GetCustomerNameList(CStringArray &strCustomerName);
 	BOOL FindCustomerCode(CString strCustomerName, CString &strCustomerCode);

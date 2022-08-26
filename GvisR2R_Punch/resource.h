@@ -115,10 +115,13 @@
 #define IDC_STC_REELMAP_IMG             1000
 #define IDC_STATUS                      1000
 #define IDC_CHECK_SR1000W               1000
+#define IDC_BUTTON1                     1000
 #define IDC_PIC_CAD_001                 1001
 #define IDC_PROGRESS                    1001
 #define IDC_CHECK_ENGRAVE               1001
+#define IDC_EDIT2                       1001
 #define IDC_PIC_CAD_002                 1002
+#define IDC_BUTTON2                     1002
 #define IDC_PIC_CAD_003                 1003
 #define IDC_BTN_00                      1003
 #define IDC_PIC_CAD_004                 1004
@@ -1293,7 +1296,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        354
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif
