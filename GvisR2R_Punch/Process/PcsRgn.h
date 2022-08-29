@@ -15,6 +15,9 @@ class CPcsRgn : public CWnd
 {
 	CfPoint m_ptPinPos[2];
 	CfPoint m_ptOffset;
+	int nCol, nRow;
+	int nTotPcs;
+	CRect rtFrm;
 
 // Construction
 public:
@@ -22,9 +25,6 @@ public:
 
 // Attributes
 public:
-	int nTotPcs;
-	int nCol, nRow;
-	CRect rtFrm;
 	CRect *pPcs;
 	CfPoint *pCenter, *pMkPnt[2]; // [Cam]
 
@@ -41,6 +41,11 @@ public:
 	BOOL GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR);
 
 	void GetPcsRgn(int nC, int nR, int &nPcsId, CRect &ptRect);
+	void GetShotRowCol(int& nR, int& nC);
+	void SetShotRowCol(int nR, int nC);
+	void SetShotRgn(CRect rect);
+	CRect GetShotRgn();
+	int GetTotPcs();
 
 // Overrides
 	// ClassWizard generated virtual function overrides

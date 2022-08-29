@@ -4657,8 +4657,9 @@ BOOL CDlgMenu02::Do2PtAlign0(int nPos, BOOL bDraw)
 		//}
 		if (pDoc->m_MasterDB.m_pPcsRgn)
 		{
-			nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-			nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+			pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+			//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+			//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 		}
 
 		pView->m_Align[0].SetAlignData(dRefAlignX0, dRefAlignY0, dRefAlignX1, dRefAlignY1, dTgtAlignX0, dTgtAlignY0, dTgtAlignX1, dTgtAlignY1);
@@ -4817,8 +4818,9 @@ BOOL CDlgMenu02::Do2PtAlign1(int nPos, BOOL bDraw)
 		int nNodeX = 0, nNodeY = 0;
 		if (pDoc->m_MasterDB.m_pPcsRgn)
 		{
-			nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-			nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+			pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+			//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+			//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 		}
 
 		pView->m_Align[1].SetAlignData(dRefAlignX0, dRefAlignY0, dRefAlignX1, dRefAlignY1, dTgtAlignX0, dTgtAlignY0, dTgtAlignX1, dTgtAlignY1);
@@ -5001,8 +5003,9 @@ BOOL CDlgMenu02::Do4PtAlign0(int nPos, BOOL bDraw)
 		int nNodeX = 0, nNodeY = 0;
 		if (pDoc->m_MasterDB.m_pPcsRgn)
 		{
-			nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-			nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+			pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+			//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+			//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 		}
 
 		//pView->m_Align[0].SetAlignData(dRefAlignX0, dRefAlignY0, dRefAlignX1, dRefAlignY1, dRefAlignX2, dRefAlignY2, dRefAlignX3, dRefAlignY3,
@@ -5172,8 +5175,9 @@ BOOL CDlgMenu02::Do4PtAlign1(int nPos, BOOL bDraw)
 		int nNodeX = 0, nNodeY = 0;
 		if (pDoc->m_MasterDB.m_pPcsRgn)
 		{
-			nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-			nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+			pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+			//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+			//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 		}
 
 		//pView->m_Align[1].SetAlignData(dRefAlignX0, dRefAlignY0, dRefAlignX1, dRefAlignY1, dTgtAlignX0, dTgtAlignY0, dTgtAlignX1, dTgtAlignY1);

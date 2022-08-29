@@ -202,8 +202,12 @@ void CDlgUtil03::OnShowWindow(BOOL bShow, UINT nStatus)
 
 void CDlgUtil03::AtDlgShow()
 {
+	int nNodeX, nNodeY;
+	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+
 	if(pDoc->m_MasterDB.m_pPcsRgn)
-		SetScrlBarMax(pDoc->m_MasterDB.m_pPcsRgn->nCol, pDoc->m_MasterDB.m_pPcsRgn->nRow); // ROT_NONE
+		SetScrlBarMax(nNodeX, nNodeY); // ROT_NONE
+		//SetScrlBarMax(pDoc->m_MasterDB.m_pPcsRgn->nCol, pDoc->m_MasterDB.m_pPcsRgn->nRow); // ROT_NONE
 // 	SetScrlBarMax(pDoc->m_pPcsRgn->nRow, pDoc->m_pPcsRgn->nCol); // ROT_CCW_90
 	SetScrlBar(0,0);
 	
@@ -252,8 +256,12 @@ BOOL CDlgUtil03::OnInitDialog()
 	InitStc();
 	InitBtn();
 
+	int nNodeX, nNodeY;
+	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+
 	if(pDoc->m_MasterDB.m_pPcsRgn)
-		SetScrlBarMax(pDoc->m_MasterDB.m_pPcsRgn->nCol, pDoc->m_MasterDB.m_pPcsRgn->nRow); // ROT_NONE
+		SetScrlBarMax(nNodeX, nNodeY); // ROT_NONE
+		//SetScrlBarMax(pDoc->m_MasterDB.m_pPcsRgn->nCol, pDoc->m_MasterDB.m_pPcsRgn->nRow); // ROT_NONE
 // 	SetScrlBarMax(pDoc->m_pPcsRgn->nRow, pDoc->m_pPcsRgn->nCol); // ROT_CCW_90
 	SetScrlBar(0,0);
 

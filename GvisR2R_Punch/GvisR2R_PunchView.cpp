@@ -10793,8 +10793,10 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs)
 
 int CGvisR2R_PunchView::GetMkStripIdx0(int nDefPcsId) // 0 : Fail , 1~4 : Strip Idx
 {
-	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	int nNodeX, nNodeY;
+	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 	int nStripY = int(nNodeY / 4);
@@ -10819,8 +10821,10 @@ int CGvisR2R_PunchView::GetMkStripIdx0(int nDefPcsId) // 0 : Fail , 1~4 : Strip 
 
 int CGvisR2R_PunchView::GetMkStripIdx1(int nDefPcsId) // 0 : Fail , 1~4 : Strip Idx
 {
-	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	int nNodeX, nNodeY;
+	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 	int nStripY = int(nNodeY / 4);
@@ -10853,8 +10857,10 @@ int CGvisR2R_PunchView::GetMkStripIdx0(int nSerial, int nMkPcs) // 0 : Fail , 1~
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nIdx = pDoc->GetPcrIdx0(nSerial);
-	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	int nNodeX, nNodeY;
+	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 	int nStripY = int(nNodeY / 4);
@@ -10994,8 +11000,10 @@ int CGvisR2R_PunchView::GetMkStripIdx1(int nSerial, int nMkPcs) // 0 : Fail , 1~
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nIdx = pDoc->GetPcrIdx1(nSerial);
-	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	int nNodeX, nNodeY;
+	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 	int nStripY = int(nNodeY / 4);
@@ -12228,8 +12236,10 @@ BOOL CGvisR2R_PunchView::IsFixPcsUp(int nSerial)
 
 	if (pDoc->m_pReelMapUp->IsFixPcs(nSerial, pCol, pRow, nTot))
 	{
-		int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-		int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+		int nNodeX, nNodeY;
+		pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+		//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+		//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 		//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 		//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 		int nStPcsY = nNodeY / 4;
@@ -12269,8 +12279,10 @@ BOOL CGvisR2R_PunchView::IsFixPcsDn(int nSerial)
 
 	if (pDoc->m_pReelMapDn->IsFixPcs(nSerial, pCol, pRow, nTot))
 	{
-		int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-		int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+		int nNodeX, nNodeY;
+		pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+		//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+		//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 		//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 		//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
 		int nStPcsY = nNodeY / 4;
@@ -12856,7 +12868,8 @@ void CGvisR2R_PunchView::DoReject0()
 		break;
 	case 1:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
 		{
 			m_nStepMk[2]++;
 		}
@@ -12870,7 +12883,8 @@ void CGvisR2R_PunchView::DoReject0()
 		break;
 	case 3:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
 		{
 			ptPnt = GetMkPnt0(m_nMkPcs[2]);
 
@@ -13043,7 +13057,8 @@ void CGvisR2R_PunchView::DoReject0()
 		break;
 	case 13:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
 		{
 			m_nStepMk[2] = 3;
 		}
@@ -13123,7 +13138,8 @@ void CGvisR2R_PunchView::DoReject1()
 		break;
 	case 1:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
 		{
 			m_nStepMk[3]++;
 		}
@@ -13137,7 +13153,8 @@ void CGvisR2R_PunchView::DoReject1()
 		break;
 	case 3:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
 		{
 			ptPnt = GetMkPnt1(m_nMkPcs[3]);
 
@@ -13309,7 +13326,8 @@ void CGvisR2R_PunchView::DoReject1()
 		break;
 	case 13:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
 		{
 			m_nStepMk[3] = 3;
 		}
@@ -13380,7 +13398,8 @@ void CGvisR2R_PunchView::DoMark0All()
 		break;
 	case 1:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
 		{
 			m_nStepMk[2]++;
 		}
@@ -13394,7 +13413,8 @@ void CGvisR2R_PunchView::DoMark0All()
 		break;
 	case 3:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
 		{
 			ptPnt = GetMkPnt0(m_nMkPcs[2]);
 
@@ -13469,7 +13489,8 @@ void CGvisR2R_PunchView::DoMark0All()
 		break;
 	case 8:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
 		{
 			m_nStepMk[2] = 3;
 		}
@@ -13538,7 +13559,8 @@ void CGvisR2R_PunchView::DoMark1All()
 		break;
 	case 1:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
 		{
 			m_nStepMk[3]++;
 		}
@@ -13552,7 +13574,8 @@ void CGvisR2R_PunchView::DoMark1All()
 		break;
 	case 3:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
 		{
 			ptPnt = GetMkPnt1(m_nMkPcs[3]);
 
@@ -13627,7 +13650,8 @@ void CGvisR2R_PunchView::DoMark1All()
 		break;
 	case 8:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
 		{
 			m_nStepMk[3] = 3;
 		}
@@ -13645,7 +13669,8 @@ void CGvisR2R_PunchView::DoMark1All()
 		if (!WaitDelay1(1))		// F:Done, T:On Waiting....
 		{
 			//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
-			if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
+			//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
+			if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
 			{
 				if (m_nMkPcs[2] > 0)
 				{
@@ -13706,7 +13731,8 @@ void CGvisR2R_PunchView::DoMark0()
 	int nSerial, nIdx, nErrCode, nRtn;
 	CfPoint ptPnt;
 	CString sMsg;
-	double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	//double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	//double dStripOut = (pDoc->m_Master[0].m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	int nStripOut = int(dStripOut);
 	if (dStripOut > nStripOut)
@@ -14393,7 +14419,8 @@ void CGvisR2R_PunchView::DoMark1()
 	int nSerial, nIdx, nErrCode, nRtn;
 	CfPoint ptPnt;
 	CString sMsg;
-	double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	//double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	//double dStripOut = (pDoc->m_Master[0].m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	int nStripOut = int(dStripOut);
 	if (dStripOut > nStripOut)
@@ -21885,7 +21912,8 @@ void CGvisR2R_PunchView::CntMk()
 BOOL CGvisR2R_PunchView::IsOnMarking0()
 {
 	//if (m_nMkPcs[0] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
-	if (m_nMkPcs[0] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+	//if (m_nMkPcs[0] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+	if (m_nMkPcs[0] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
 		return TRUE;
 
 	return FALSE;
@@ -21894,7 +21922,8 @@ BOOL CGvisR2R_PunchView::IsOnMarking0()
 BOOL CGvisR2R_PunchView::IsOnMarking1()
 {
 	//if (m_nMkPcs[1] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
-	if (m_nMkPcs[1] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+	//if (m_nMkPcs[1] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
+	if (m_nMkPcs[1] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
 		return TRUE;
 
 	return FALSE;

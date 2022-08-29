@@ -565,13 +565,13 @@ void CDlgMenu01::DispMkInfoUp()
 		nMaxMaxDispDefImg = _tstoi(pDoc->WorkingInfo.System.sMaxDispDefImg);
 
 	if(nMaxMaxDispDefImg > 0 && pDoc->m_pPcr[0][nIdx]->m_nTotDef - nMaxMaxDispDefImg > 0)
-		m_nIdxDef[0] = pDoc->m_pPcr[0][nIdx]->m_nTotDef - nMaxMaxDispDefImg; // 불량이미지 인덱스.
+		m_nIdxDef[0] = pDoc->m_pPcr[0][nIdx]->m_nTotDef - nMaxMaxDispDefImg; // 불량이미지 인덱스. (nMaxMaxDispDefImg수만큼만 표시)
 	else
 		m_nIdxDef[0] = 0; // 불량이미지 인덱스.
 
 	if(bDualTest)
 	{
-		if(m_nIdxMkInfo[0] > MENU01_STC_DEFINFO_HARF)
+		if(m_nIdxMkInfo[0] > MENU01_STC_DEFINFO_HARF)	// 화면 표시 인덱스 [0] : Up
 			m_nIdxMkInfo[0] = MENU01_STC_DEFINFO_HARF;
 	}
 	else
@@ -1348,12 +1348,12 @@ void CDlgMenu01::DispMkInfoUp(int nSerial)
 	{
 		if(pView->m_pVision[0])
 		{
- 			int nIdxMkInfo = (m_nIdxMkInfo[0] < MENU01_STC_DEFINFO_HARF) ? m_nIdxMkInfo[0] : (MENU01_STC_DEFINFO_HARF-1);	
+ 			int nIdxMkInfo = (m_nIdxMkInfo[0] < MENU01_STC_DEFINFO_HARF) ? m_nIdxMkInfo[0] : (MENU01_STC_DEFINFO_HARF-1);	// 화면 표시 인덱스
 			//int nIdxMkInfo = (MENU01_STC_DEFINFO_HARF-1);	
 
-			int nIdx = pDoc->GetPcrIdx0(nSerial);
+			int nIdx = pDoc->GetPcrIdx0(nSerial); // 릴맵화면버퍼 인덱스
 			int nDefImg;
-			if(pDoc->m_pPcr[0])
+			if(pDoc->m_pPcr[0]) // [0] : Up
 			{
 				if(pDoc->m_pPcr[0][nIdx])
 				{
@@ -1366,7 +1366,7 @@ void CDlgMenu01::DispMkInfoUp(int nSerial)
 								if(m_nIdxMkInfo[0] >= MENU01_STC_DEFINFO_HARF)
 									ShiftDefInfoUp();
  								pView->m_pVision[0]->ShowDispCad(nIdxMkInfo, nSerial, 0, m_nIdxDef[0]);
-								pView->m_pVision[0]->ShowOvrCad(nIdxMkInfo, nSerial);
+								pView->m_pVision[0]->ShowOvrCad(nIdxMkInfo, nSerial); // Overlay Serial표시
 								nDefImg = pDoc->m_pPcr[0][nIdx]->m_pImg[m_nIdxDef[0]];
 								pView->m_pVision[0]->ShowDispDef(nIdxMkInfo, nSerial, 0, nDefImg);
 								ShowDefInfoUp(nIdxMkInfo);
@@ -1541,7 +1541,7 @@ void CDlgMenu01::ShiftDefInfoDn()
 #endif
 }
 
-void CDlgMenu01::ShowDefInfoUp(int nIdx) // nIdx : 0 ~ 11 (12ea)
+void CDlgMenu01::ShowDefInfoUp(int nIdx) // nIdx : 0 ~ 11 (12ea) // 화면표시 인덱스
 {
 	if(!pView->m_bDrawGL)
 		return;

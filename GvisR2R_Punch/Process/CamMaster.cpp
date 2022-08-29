@@ -1067,8 +1067,9 @@ BOOL CCamMaster::LoadPcsRgnFromCam()
 		}
 		nCol++;
 
-		m_pPcsRgn->nCol = nCol;
-		m_pPcsRgn->nRow = nPieceRgnNum/nCol;
+		m_pPcsRgn->SetShotRowCol(nPieceRgnNum / nCol, nCol);
+		//m_pPcsRgn->nCol = nCol;
+		//m_pPcsRgn->nRow = nPieceRgnNum/nCol;
 
 		double dWidth = rtFrm.right - rtFrm.left;
 		double dHeight =  rtFrm.bottom - rtFrm.top;
@@ -1076,10 +1077,14 @@ BOOL CCamMaster::LoadPcsRgnFromCam()
 		double dMarginH = dHeight * 0.05;
 		double dMargin = (dMarginW > dMarginH) ? dMarginH : dMarginW;
 
-		m_pPcsRgn->rtFrm.left = rtFrm.left - dMargin;
-		m_pPcsRgn->rtFrm.top = rtFrm.top - dMargin;
-		m_pPcsRgn->rtFrm.right = rtFrm.right + dMargin;
-		m_pPcsRgn->rtFrm.bottom = rtFrm.bottom + dMargin;
+		CRect rt;
+		rt.left = rtFrm.left - dMargin;		rt.top = rtFrm.top - dMargin;
+		rt.right = rtFrm.right + dMargin;	rt.bottom = rtFrm.bottom + dMargin;
+		m_pPcsRgn->SetShotRgn(rt);
+		//m_pPcsRgn->rtFrm.left = rtFrm.left - dMargin;
+		//m_pPcsRgn->rtFrm.top = rtFrm.top - dMargin;
+		//m_pPcsRgn->rtFrm.right = rtFrm.right + dMargin;
+		//m_pPcsRgn->rtFrm.bottom = rtFrm.bottom + dMargin;
 	}
 
 	if(PieceRegionsPix)
@@ -1287,8 +1292,9 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 
 	nCol++;
 
-	m_pPcsRgn->nCol = nCol;
-	m_pPcsRgn->nRow = nPieceRgnNum / nCol;
+	m_pPcsRgn->SetShotRowCol(nPieceRgnNum / nCol, nCol);
+	//m_pPcsRgn->nCol = nCol;
+	//m_pPcsRgn->nRow = nPieceRgnNum / nCol;
 
 	double dWidth = rtFrm.right - rtFrm.left;
 	double dHeight = rtFrm.bottom - rtFrm.top;
@@ -1296,10 +1302,14 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 	double dMarginH = dHeight * 0.05;
 	double dMargin = (dMarginW > dMarginH) ? dMarginH : dMarginW;
 
-	m_pPcsRgn->rtFrm.left = rtFrm.left - dMargin;
-	m_pPcsRgn->rtFrm.top = rtFrm.top - dMargin;
-	m_pPcsRgn->rtFrm.right = rtFrm.right + dMargin;
-	m_pPcsRgn->rtFrm.bottom = rtFrm.bottom + dMargin;
+	CRect rt;
+	rt.left = rtFrm.left - dMargin;		rt.top = rtFrm.top - dMargin;
+	rt.right = rtFrm.right + dMargin;	rt.bottom = rtFrm.bottom + dMargin;
+	m_pPcsRgn->SetShotRgn(rt);
+	//m_pPcsRgn->rtFrm.left = rtFrm.left - dMargin;
+	//m_pPcsRgn->rtFrm.top = rtFrm.top - dMargin;
+	//m_pPcsRgn->rtFrm.right = rtFrm.right + dMargin;
+	//m_pPcsRgn->rtFrm.bottom = rtFrm.bottom + dMargin;
 	//end for previous pcs info.
 	
 	file.Close();
@@ -1321,10 +1331,15 @@ void CCamMaster::SetMasterPanelInfo()
 	MstPnl.nPcsCorner = m_nCornerNum;
 	MstPnl.nTotalAlignPos = MasterInfo.nNumOfAlignPoint;
 
-	MstPnl.Area.dLeft = m_pPcsRgn->rtFrm.left;		// [mm]
-	MstPnl.Area.dTop = m_pPcsRgn->rtFrm.top;		// [mm]
-	MstPnl.Area.dRight = m_pPcsRgn->rtFrm.right;	// [mm]
-	MstPnl.Area.dBottom = m_pPcsRgn->rtFrm.bottom;	// [mm]
+	CRect rt = m_pPcsRgn->GetShotRgn();
+	MstPnl.Area.dLeft = rt.left;		// [mm]
+	MstPnl.Area.dTop = rt.top;		// [mm]
+	MstPnl.Area.dRight = rt.right;	// [mm]
+	MstPnl.Area.dBottom = rt.bottom;	// [mm]
+	//MstPnl.Area.dLeft = m_pPcsRgn->rtFrm.left;		// [mm]
+	//MstPnl.Area.dTop = m_pPcsRgn->rtFrm.top;		// [mm]
+	//MstPnl.Area.dRight = m_pPcsRgn->rtFrm.right;	// [mm]
+	//MstPnl.Area.dBottom = m_pPcsRgn->rtFrm.bottom;	// [mm]
 
 	nSMaxR = 0; nSMaxC = 0;
 	for (j = 0; j < FrameRgnNum; j++)

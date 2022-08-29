@@ -9,9 +9,10 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // CDataMarking window
+// pcr파일의 내용을 받아서 릴맵화면을 표시하고, 마킹작업 정보로 활용.
 
-class CDataMarking : public CWnd
-{
+class CDataMarking : public CWnd 
+{	
 
 	void FreeMem();
 
@@ -30,7 +31,7 @@ public:
 	int *m_pDefPcs;
 	int *m_pDefType;
 	int *m_pCell;
-	int *m_pImgSz;
+	int *m_pImgSz; 
 	int *m_pImg;
 	int *m_pMk;
 	CPoint *m_pDefPos;

@@ -339,29 +339,37 @@ BOOL CPcsRgn::GetMkMatrix(int nPcsId, int &nC, int &nR)
 
 BOOL CPcsRgn::GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR) // nStrip:0~3 , nC:0~ , nR:0~
 {
-	int nNodeX = nCol;
-	int nNodeY = nRow;
-	int nStPcsY = nNodeY / 4;
-	int nRow;// , nCol;
+	int nNodeX, nNodeY, nStPcsY , Row, Col;
 
-	if(-1 < nPcsId && nPcsId < (nNodeX*nNodeY))
+	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
 	{
-		nC = int(nPcsId/nNodeY);
-		if(nC%2)	// È¦¼ö.
-			nRow = nNodeY*(nC+1)-1-nPcsId;
-		else		// Â¦¼ö.
-			nRow = nPcsId-nC*nNodeY;
+
 	}
 	else
 	{
-		nC = -1;
-		nR = -1;
-		return FALSE;
+		nNodeX = nCol;
+		nNodeY = nRow;
+		nStPcsY = nNodeY / 4;
+
+		if(-1 < nPcsId && nPcsId < (nNodeX*nNodeY))
+		{
+			nC = int(nPcsId/nNodeY);
+			if(nC%2)	// È¦¼ö.
+				Row = nNodeY*(nC+1)-1-nPcsId;
+			else		// Â¦¼ö.
+				Row = nPcsId-nC*nNodeY;
+		}
+		else
+		{
+			nC = -1;
+			nR = -1;
+			return FALSE;
+		}
+
+		nStrip = int(nRow / nStPcsY);
+		nR = nRow % nStPcsY;
 	}
-
-	nStrip = int(nRow / nStPcsY);
-	nR = nRow % nStPcsY;
-
+	
 	return TRUE;
 }
 
@@ -384,3 +392,32 @@ void CPcsRgn::SetPinPos(int nCam, CfPoint ptPnt)
 	m_ptPinPos[nCam].y = ptPnt.y;
 }
 
+void CPcsRgn::GetShotRowCol(int& nR, int& nC)
+{
+	nR = nRow;
+	nC = nCol;
+}
+
+void CPcsRgn::SetShotRowCol(int nR, int nC)
+{
+	nRow = nR;
+	nCol = nC;
+}
+
+void CPcsRgn::SetShotRgn(CRect rect)
+{
+	rtFrm.left = rect.left;
+	rtFrm.top = rect.top;
+	rtFrm.right = rect.right;
+	rtFrm.bottom = rect.bottom;
+}
+
+CRect CPcsRgn::GetShotRgn()
+{
+	return rtFrm;
+}
+
+int CPcsRgn::GetTotPcs()
+{
+	return nTotPcs;
+}
