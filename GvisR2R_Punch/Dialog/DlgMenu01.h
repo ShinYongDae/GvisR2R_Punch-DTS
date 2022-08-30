@@ -18,7 +18,7 @@
 #define MAX_MENU01_BTN				23
 
 #define TIM_DISP_DEF_IMG			100
-#define TIM_DISP_MK_INFO			101
+#define TIM_START_DISP_MK_INFO		101
 #define TIM_DISP_MK_CNT				102
 #define TIM_WINK_MK_L				103
 #define TIM_WINK_MK_R				104
@@ -68,9 +68,9 @@ class CDlgMenu01 : public CDialog
 
 	void ShowDefInfoUp(int nIdx); // nIdx : 0 ~ 11 (12ea)
 	void ShowDefInfoDn(int nIdx); // nIdx : 0 ~ 11 (12ea)
-	void DispMkInfo();
-	void DispMkInfoUp();
-	void DispMkInfoDn();
+	void StartDispMkInfo();
+	void InitDispMkInfoUp();
+	void InitDispMkInfoDn();
 	void DispMkInfo(int nSerial);
 	void DispMkInfoUp(int nSerial);
 	void DispMkInfoDn(int nSerial);

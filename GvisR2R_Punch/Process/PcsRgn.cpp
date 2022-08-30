@@ -20,9 +20,9 @@ extern CGvisR2R_PunchView* pView;
 /////////////////////////////////////////////////////////////////////////////
 // CPcsRgn
 
-CPcsRgn::CPcsRgn(int nPcs, struct _MasterPanel* pMstPnl)
+CPcsRgn::CPcsRgn(int nPcs)//, struct _MasterPanel* pMstPnl)
 {
-	m_pMstPnl = pMstPnl;
+	//m_pMstPnl = pMstPnl;
 	pPcs = NULL;
 	pCenter = NULL;
 	pMkPnt[0] = NULL;
@@ -298,51 +298,23 @@ void CPcsRgn::GetPcsRgn(int nC, int nR, int &nPcsId, CRect &ptRect)
 {
 	int nNodeX, nNodeY;
 
-	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+	nNodeX = nCol;
+	nNodeY = nRow;
+
+	if (nC < nNodeX && nR < nNodeY)
 	{
-		if (!m_pMstPnl)
-		{ 
-			AfxMessageBox(_T("GetPcsRgn - m_pMstPnl is NULL."));
-			return;
-		}
+		if (nC % 2)	// È¦¼ö.
+			nPcsId = nNodeY * (nC + 1) - 1 - nR;
+		else		// Â¦¼ö.
+			nPcsId = nNodeY * nC + nR;
 
-		int nStripIdx = int(nR / m_pMstPnl->Strip[0].nTotalPieceRow);
-		int nStripPcsRow = nR % m_pMstPnl->Strip[0].nTotalPieceRow;
-		int nStripPcsCol = nC;
-
-		nNodeX = m_pMstPnl->Strip[0].nTotalPieceCol;
-		nNodeY = m_pMstPnl->nTotalPiece / nNodeX;
-
-		nPcsId = m_pMstPnl->Strip[nStripIdx].Piece[nStripPcsRow][nStripPcsCol].nMstPcsIdx;
-		ptRect.left = (long)m_pMstPnl->Strip[nStripIdx].Piece[nStripPcsRow][nStripPcsCol].Area.dLeft;
-		ptRect.top = (long)m_pMstPnl->Strip[nStripIdx].Piece[nStripPcsRow][nStripPcsCol].Area.dTop;
-		ptRect.right = (long)m_pMstPnl->Strip[nStripIdx].Piece[nStripPcsRow][nStripPcsCol].Area.dRight;
-		ptRect.bottom = (long)m_pMstPnl->Strip[nStripIdx].Piece[nStripPcsRow][nStripPcsCol].Area.dBottom;
-		//ptRect.left = (long)m_pMstPnl->Piece[nPcsId].Area.dLeft;
-		//ptRect.top = (long)m_pMstPnl->Piece[nPcsId].Area.dTop;
-		//ptRect.right = (long)m_pMstPnl->Piece[nPcsId].Area.dRight;
-		//ptRect.bottom = (long)m_pMstPnl->Piece[nPcsId].Area.dBottom;
+		ptRect.left = pPcs[nPcsId].left;
+		ptRect.top = pPcs[nPcsId].top;
+		ptRect.right = pPcs[nPcsId].right;
+		ptRect.bottom = pPcs[nPcsId].bottom;
 	}
 	else
-	{
-		nNodeX = nCol;
-		nNodeY = nRow;
-
-		if (nC < nNodeX && nR < nNodeY)
-		{
-			if (nC % 2)	// È¦¼ö.
-				nPcsId = nNodeY * (nC + 1) - 1 - nR;
-			else		// Â¦¼ö.
-				nPcsId = nNodeY * nC + nR;
-
-			ptRect.left = pPcs[nPcsId].left;
-			ptRect.top = pPcs[nPcsId].top;
-			ptRect.right = pPcs[nPcsId].right;
-			ptRect.bottom = pPcs[nPcsId].bottom;
-		}
-		else
-			nPcsId = -1;
-	}
+		nPcsId = -1;
 }
 
 BOOL CPcsRgn::GetMkMatrix(int nPcsId, int &nC, int &nR)
@@ -372,39 +344,27 @@ BOOL CPcsRgn::GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR) // nStrip:0
 {
 	int nNodeX, nNodeY, nStPcsY , Row, Col;
 
-	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
-	{
-		if (!m_pMstPnl)
-			return FALSE;
+	nNodeX = nCol;
+	nNodeY = nRow;
+	nStPcsY = nNodeY / 4;
 
-		nStrip = m_pMstPnl->Piece[nPcsId].nMstStripRow;
-		nR = m_pMstPnl->Piece[nPcsId].nMstPcsRow;
-		nC = m_pMstPnl->Piece[nPcsId].nMstPcsCol;
+	if(-1 < nPcsId && nPcsId < (nNodeX*nNodeY))
+	{
+		nC = int(nPcsId/nNodeY);
+		if(nC%2)	// È¦¼ö.
+			Row = nNodeY*(nC+1)-1-nPcsId;
+		else		// Â¦¼ö.
+			Row = nPcsId-nC*nNodeY;
 	}
 	else
 	{
-		nNodeX = nCol;
-		nNodeY = nRow;
-		nStPcsY = nNodeY / 4;
-
-		if(-1 < nPcsId && nPcsId < (nNodeX*nNodeY))
-		{
-			nC = int(nPcsId/nNodeY);
-			if(nC%2)	// È¦¼ö.
-				Row = nNodeY*(nC+1)-1-nPcsId;
-			else		// Â¦¼ö.
-				Row = nPcsId-nC*nNodeY;
-		}
-		else
-		{
-			nC = -1;
-			nR = -1;
-			return FALSE;
-		}
-
-		nStrip = int(nRow / nStPcsY);
-		nR = nRow % nStPcsY;
+		nC = -1;
+		nR = -1;
+		return FALSE;
 	}
+
+	nStrip = int(nRow / nStPcsY);
+	nR = nRow % nStPcsY;
 	
 	return TRUE;
 }

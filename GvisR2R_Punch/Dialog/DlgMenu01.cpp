@@ -491,12 +491,12 @@ void CDlgMenu01::DispReelmap(int nSerial, BOOL bDumy)
 // 	if(pView->GetLotEndSerial() % 2)
 // 	{
 // 		if(nSerial <= pView->GetLotEndSerial() || !pView->GetLotEndSerial())
-// 			DispMkInfo();
+// 			StartDispMkInfo();
 // 	}
 // 	else
 // 	{
 // 		if(nSerial < pView->GetLotEndSerial() || !pView->GetLotEndSerial())
-// 			DispMkInfo();
+// 			StartDispMkInfo();
 // 	}
 }
 
@@ -512,46 +512,46 @@ void CDlgMenu01::SetPnlDefNum()
 		m_pMyGL->SetPnlDefNum();
 }
 
-void CDlgMenu01::DispMkInfo()	// m_bTIM_DISP_DEF_IMG == FALSE 일때까지 계속 호출함.
+void CDlgMenu01::StartDispMkInfo()	// m_bTIM_DISP_DEF_IMG == FALSE 일때까지 계속 호출함.
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	if(bDualTest)
 	{
-		DispMkInfoUp();
-		DispMkInfoDn();
-
 		if(m_nDef[0] > 0 || m_nDef[1] > 0)
 		{
 			if(!m_bTIM_DISP_DEF_IMG)
 			{
+				InitDispMkInfoUp();
+				InitDispMkInfoDn();
+
 				m_nSerialDispMkInfo = m_nSerial;
 				m_bTIM_DISP_DEF_IMG = TRUE;
-				SetTimer(TIM_DISP_DEF_IMG, 10, NULL);
+				SetTimer(TIM_DISP_DEF_IMG, 10, NULL); // 불량이미지 표시 시작
 			}
 			else
-				SetTimer(TIM_DISP_MK_INFO, 10, NULL);
+				SetTimer(TIM_START_DISP_MK_INFO, 10, NULL); // Recall
 		}
 	}
 	else
 	{
-		DispMkInfoUp();
-
 		if(m_nDef[0] > 0)
 		{
 			if(!m_bTIM_DISP_DEF_IMG)
 			{
+				InitDispMkInfoUp();
+
 				m_nSerialDispMkInfo = m_nSerial;
 				m_bTIM_DISP_DEF_IMG = TRUE;
-				SetTimer(TIM_DISP_DEF_IMG, 10, NULL);
+				SetTimer(TIM_DISP_DEF_IMG, 10, NULL); // 불량이미지 표시 시작
 			}
 			else
-				SetTimer(TIM_DISP_MK_INFO, 10, NULL);
+				SetTimer(TIM_START_DISP_MK_INFO, 10, NULL); // Recall
 		}
 	}
 }
 
-void CDlgMenu01::DispMkInfoUp()
+void CDlgMenu01::InitDispMkInfoUp()
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
@@ -594,7 +594,7 @@ void CDlgMenu01::DispMkInfoUp()
 #endif
 }
 
-void CDlgMenu01::DispMkInfoDn()
+void CDlgMenu01::InitDispMkInfoDn()
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	if(!bDualTest)
@@ -1370,12 +1370,12 @@ void CDlgMenu01::DispMkInfoUp(int nSerial)
 								nDefImg = pDoc->m_pPcr[0][nIdx]->m_pImg[m_nIdxDef[0]];
 								pView->m_pVision[0]->ShowDispDef(nIdxMkInfo, nSerial, 0, nDefImg);
 								ShowDefInfoUp(nIdxMkInfo);
-								m_nIdxMkInfo[0]++;
-								m_nIdxDef[0]++;
-								(pDoc->m_pPcr[0][nIdx]->m_nTotRealDef)++;
+								m_nIdxMkInfo[0]++;	// 화면 표시 인덱스를 증가시킴.  (설비 최초 초기화시: ClrMkInfo(); // 20220420 - Happen Release Trouble)
+								m_nIdxDef[0]++;		// 불량이미지 인덱스를 증가시킴. (타이머 시작시: m_nIdxDef[0] = 0; // 불량이미지 인덱스.)
+								(pDoc->m_pPcr[0][nIdx]->m_nTotRealDef)++; // (타이머 시작시: pDoc->m_pPcr[0][nIdx]->m_nTotRealDef = 0;) - 사용하지 않음.
 							}
-							else
-								m_nIdxMkInfo[0]++;
+							//else
+							//	m_nIdxMkInfo[0]++;	// 화면 표시 인덱스를 증가시킴.
 						}
 						else
 							m_nIdxDef[0]++;
@@ -1414,8 +1414,8 @@ void CDlgMenu01::DispMkInfoUp(int nSerial)
 								m_nIdxDef[0]++;
 								(pDoc->m_pPcr[0][nIdx]->m_nTotRealDef)++;
 							}
-							else
-								m_nIdxMkInfo[0]++;
+							//else
+							//	m_nIdxMkInfo[0]++;
 						}
 						else
 							m_nIdxDef[0]++;
@@ -1469,8 +1469,8 @@ void CDlgMenu01::DispMkInfoDn(int nSerial)
 							m_nIdxDef[1]++;
 							(pDoc->m_pPcr[1][nIdx]->m_nTotRealDef)++;
 						}
-						else
-							m_nIdxMkInfo[1]++;
+						//else
+						//	m_nIdxMkInfo[1]++;
 					}
 					else
 						m_nIdxDef[1]++;
@@ -2314,7 +2314,7 @@ void CDlgMenu01::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 			DispMkInfo(m_nSerialDispMkInfo);	// DispMkInfo(m_nSerial);
 
 //	 		if(m_nIdxMkInfo < m_nDef)
-			if(m_nIdxDef[0] < m_nDef[0] || m_nIdxDef[1] < m_nDef[1])
+			if(m_nIdxDef[0] < m_nDef[0] || m_nIdxDef[1] < m_nDef[1]) // m_nIdxDef(불량이미지 인덱스) , m_nDef[0] = pDoc->m_pPcr[0][nIdx]->m_nTotDef; // m_nDef[up] : 릴맵 화면 표시 인덱스의 Display Def Num.
 			{
 				if(m_bTIM_DISP_DEF_IMG)
 					SetTimer(TIM_DISP_DEF_IMG, 100, NULL);
@@ -2325,13 +2325,13 @@ void CDlgMenu01::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 		else
 			m_bTIM_DISP_DEF_IMG = FALSE;
 	}
-	if(nIDEvent == TIM_DISP_MK_INFO) // SetSerial() ---> if m_bTIM_DISP_DEF_IMG == FALSE then Wait to call SetTimer(TIM_DISP_MK_INFO)
+	if(nIDEvent == TIM_START_DISP_MK_INFO) // SetSerial() ---> if m_bTIM_DISP_DEF_IMG == FALSE then Wait to call SetTimer(TIM_DISP_MK_INFO)
 	{
-		KillTimer(TIM_DISP_MK_INFO);
-		if(m_bTIM_DISP_DEF_IMG)
-			SetTimer(TIM_DISP_MK_INFO, 100, NULL);
+		KillTimer(TIM_START_DISP_MK_INFO);
+		if(m_bTIM_DISP_DEF_IMG) // 이전 불량이미지 표시가 끝날 따까지 확인.
+			SetTimer(TIM_START_DISP_MK_INFO, 100, NULL);
 		else
-			DispMkInfo();
+			StartDispMkInfo(); // (불량이미지 표시 타이머 시작함수.)
 	}
 	if(nIDEvent == TIM_DISP_MK_CNT)
 	{
@@ -2656,12 +2656,12 @@ BOOL CDlgMenu01::SetSerial(int nSerial, BOOL bDumy)
 			if(pView->m_nLotEndSerial%2)
 			{
 				if(nSerial <= pView->m_nLotEndSerial || !pView->m_nLotEndSerial)
-					DispMkInfo();
+					StartDispMkInfo();
 			}
 			else
 			{
 				if(nSerial < pView->m_nLotEndSerial || !pView->m_nLotEndSerial)
-					DispMkInfo();
+					StartDispMkInfo();
 			}
 		}
 		return TRUE;
@@ -2710,7 +2710,7 @@ BOOL CDlgMenu01::SetSerialMkInfo(int nSerial, BOOL bDumy)
 
 			//if(nSerial < pView->GetLotEndSerial() || !pView->GetLotEndSerial())
 			if(nSerial <= pView->m_nLotEndSerial || !pView->m_nLotEndSerial)
-				DispMkInfo();
+				StartDispMkInfo();
 		}
 		return TRUE;
 	}

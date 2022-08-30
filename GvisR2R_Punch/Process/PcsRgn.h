@@ -7,7 +7,7 @@
 // PcsRgn.h : header file
 //
 #include "../Global/MyData.h"
-#include "CamMasterDefine.h"
+//#include "CamMasterDefine.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CPcsRgn window
@@ -19,11 +19,11 @@ class CPcsRgn : public CWnd
 	int nCol, nRow;
 	int nTotPcs;
 	CRect rtFrm;
-	_MasterPanel* m_pMstPnl;
+	//_MasterPanel* m_pMstPnl;
 
 // Construction
 public:
-	CPcsRgn(int nPcs=0, struct _MasterPanel* pMstPnl=NULL);
+	CPcsRgn(int nPcs = 0);// , struct _MasterPanel* pMstPnl = NULL);
 
 // Attributes
 public:

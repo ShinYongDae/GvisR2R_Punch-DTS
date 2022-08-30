@@ -1253,7 +1253,7 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 	{
 		if (m_pPcsRgn)
 			delete m_pPcsRgn;
-		m_pPcsRgn = new CPcsRgn(nPieceRgnNum, &MstPnl);
+		m_pPcsRgn = new CPcsRgn(nPieceRgnNum);// , &MstPnl);
 	}
 	else
 	{
@@ -2010,7 +2010,14 @@ BOOL CCamMaster::GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR)	// nStri
 		return bRtn; 
 	}
 
-	bRtn = m_pPcsRgn->GetMkMatrix(nPcsId, nStrip, nC, nR);
+	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+	{
+		nStrip = MstPnl.Piece[nPcsId].nMstStripRow;
+		nR = MstPnl.Piece[nPcsId].nMstPcsRow;
+		nC = MstPnl.Piece[nPcsId].nMstPcsCol;
+	}
+	else
+		bRtn = m_pPcsRgn->GetMkMatrix(nPcsId, nStrip, nC, nR);
 
 	return bRtn;
 }
@@ -2068,7 +2075,24 @@ void CCamMaster::GetPcsRgn(int nC, int nR, int &nPcsId, CRect &ptRect)		// nC, n
 		return;
 	}
 
-	m_pPcsRgn->GetPcsRgn(nC, nR, nPcsId, ptRect);
+	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+	{
+		int nStripIdx = int(nR / MstPnl.Strip[0].nTotalPieceRow);
+		int nStripPcsRow = nR % MstPnl.Strip[0].nTotalPieceRow;
+		int nStripPcsCol = nC;
+
+		nPcsId = MstPnl.Strip[nStripIdx].Piece[nStripPcsRow][nStripPcsCol].nMstPcsIdx;
+		ptRect.left = (long)MstPnl.Strip[nStripIdx].Piece[nStripPcsRow][nStripPcsCol].Area.dLeft;
+		ptRect.top = (long)MstPnl.Strip[nStripIdx].Piece[nStripPcsRow][nStripPcsCol].Area.dTop;
+		ptRect.right = (long)MstPnl.Strip[nStripIdx].Piece[nStripPcsRow][nStripPcsCol].Area.dRight;
+		ptRect.bottom = (long)MstPnl.Strip[nStripIdx].Piece[nStripPcsRow][nStripPcsCol].Area.dBottom;
+		//ptRect.left = (long)MstPnl.Piece[nPcsId].Area.dLeft;
+		//ptRect.top = (long)MstPnl.Piece[nPcsId].Area.dTop;
+		//ptRect.right = (long)MstPnl.Piece[nPcsId].Area.dRight;
+		//ptRect.bottom = (long)MstPnl.Piece[nPcsId].Area.dBottom;
+	}
+	else
+		m_pPcsRgn->GetPcsRgn(nC, nR, nPcsId, ptRect);
 }
 
 CfPoint CCamMaster::GetMkPnt(int nCam, int nPcsId)							// nCam : [0]-LeftCamera, [1]-RightCamera
