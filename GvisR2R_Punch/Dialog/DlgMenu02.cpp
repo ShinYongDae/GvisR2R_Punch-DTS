@@ -2332,8 +2332,9 @@ void CDlgMenu02::SetPinPos(int nCam, CfPoint ptPnt)
 {
 	if(pView->m_pMotion)
 		pView->m_pMotion->SetPinPos(nCam, ptPnt.x, ptPnt.y);
-	if(pDoc->m_MasterDB.m_pPcsRgn)
-		pDoc->m_MasterDB.m_pPcsRgn->SetPinPos(nCam, ptPnt);
+	pDoc->m_MasterDB.SetPinPos(nCam, ptPnt);
+	//if(pDoc->m_MasterDB.m_pPcsRgn)
+	//	pDoc->m_MasterDB.m_pPcsRgn->SetPinPos(nCam, ptPnt);
 	//if(pDoc->m_MasterDB.m_pPcsRgn)
 	//	pDoc->m_MasterDB.m_pPcsRgn->SetPinPos(nCam, ptPnt);
 	if(pDoc->m_pSpecLocal)
@@ -4655,12 +4656,13 @@ BOOL CDlgMenu02::Do2PtAlign0(int nPos, BOOL bDraw)
 		//	nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
 		//	nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 		//}
-		if (pDoc->m_MasterDB.m_pPcsRgn)
-		{
-			pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
-			//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-			//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
-		}
+		pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+		//if (pDoc->m_MasterDB.m_pPcsRgn)
+		//{
+		//	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+		//	//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+		//	//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+		//}
 
 		pView->m_Align[0].SetAlignData(dRefAlignX0, dRefAlignY0, dRefAlignX1, dRefAlignY1, dTgtAlignX0, dTgtAlignY0, dTgtAlignX1, dTgtAlignY1);
 
@@ -4675,11 +4677,12 @@ BOOL CDlgMenu02::Do2PtAlign0(int nPos, BOOL bDraw)
 				//ptRef.x = pDoc->m_MasterDB.m_stPcsMk[idx].X + pView->m_pMotion->m_dPinPosX[0];
 				//ptRef.y = pDoc->m_MasterDB.m_stPcsMk[idx].Y + pView->m_pMotion->m_dPinPosY[0];
 				pView->m_Align[0].LinearAlignment(ptRef, ptTgt);
-				if (pDoc->m_MasterDB.m_pPcsRgn)
-				{
-					pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[0][idx].x = ptTgt.x;
-					pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[0][idx].y = ptTgt.y;
-				}
+				pDoc->m_MasterDB.SetMkPnt(0, idx, ptTgt); // int nCam, int nMkIdx, CfPoint fPt
+				//if (pDoc->m_MasterDB.m_pPcsRgn)
+				//{
+				//	pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[0][idx].x = ptTgt.x;
+				//	pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[0][idx].y = ptTgt.y;
+				//}
 				//if (pDoc->m_MasterDB.m_pPcsRgn)
 				//{
 				//	pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[0][idx].x = ptTgt.x;
@@ -4816,12 +4819,13 @@ BOOL CDlgMenu02::Do2PtAlign1(int nPos, BOOL bDraw)
 		double dTgtAlignY1 = (pDoc->m_MasterDB.m_stAlignMk.Y1 + pView->m_pMotion->m_dPinPosY[1]) - dMkFdOffsetY;
 
 		int nNodeX = 0, nNodeY = 0;
-		if (pDoc->m_MasterDB.m_pPcsRgn)
-		{
-			pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
-			//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-			//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
-		}
+		pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+		//if (pDoc->m_MasterDB.m_pPcsRgn)
+		//{
+		//	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+		//	//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+		//	//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+		//}
 
 		pView->m_Align[1].SetAlignData(dRefAlignX0, dRefAlignY0, dRefAlignX1, dRefAlignY1, dTgtAlignX0, dTgtAlignY0, dTgtAlignX1, dTgtAlignY1);
 
@@ -4834,11 +4838,12 @@ BOOL CDlgMenu02::Do2PtAlign1(int nPos, BOOL bDraw)
 				ptRef.x = pDoc->m_MasterDB.m_stPcsMk[idx].X + pView->m_pMotion->m_dPinPosX[1];
 				ptRef.y = pDoc->m_MasterDB.m_stPcsMk[idx].Y + pView->m_pMotion->m_dPinPosY[1];
 				pView->m_Align[1].LinearAlignment(ptRef, ptTgt);
-				if (pDoc->m_MasterDB.m_pPcsRgn)
-				{
-					pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[1][idx].x = ptTgt.x;
-					pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[1][idx].y = ptTgt.y;
-				}
+				pDoc->m_MasterDB.SetMkPnt(1, idx, ptTgt); // int nCam, int nMkIdx, CfPoint fPt
+				//if (pDoc->m_MasterDB.m_pPcsRgn)
+				//{
+				//	pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[1][idx].x = ptTgt.x;
+				//	pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[1][idx].y = ptTgt.y;
+				//}
 				idx++;
 			}
 		}
@@ -5001,12 +5006,13 @@ BOOL CDlgMenu02::Do4PtAlign0(int nPos, BOOL bDraw)
 		double dTgtAlignY3 = (pDoc->m_MasterDB.m_stAlignMk2.Y3 + pView->m_pMotion->m_dPinPosY[0]) - m_dMkFdOffsetY[0][3];
 
 		int nNodeX = 0, nNodeY = 0;
-		if (pDoc->m_MasterDB.m_pPcsRgn)
-		{
-			pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
-			//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-			//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
-		}
+		pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+		//if (pDoc->m_MasterDB.m_pPcsRgn)
+		//{
+		//	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+		//	//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+		//	//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+		//}
 
 		//pView->m_Align[0].SetAlignData(dRefAlignX0, dRefAlignY0, dRefAlignX1, dRefAlignY1, dRefAlignX2, dRefAlignY2, dRefAlignX3, dRefAlignY3,
 		//								dTgtAlignX0, dTgtAlignY0, dTgtAlignX1, dTgtAlignY1, dTgtAlignX2, dTgtAlignY2, dTgtAlignX3, dTgtAlignY3);
@@ -5022,11 +5028,12 @@ BOOL CDlgMenu02::Do4PtAlign0(int nPos, BOOL bDraw)
 				pView->m_Align[0].BilinearAlignment(dRefAlignX0, dRefAlignY0, dRefAlignX1, dRefAlignY1, dRefAlignX2, dRefAlignY2, dRefAlignX3, dRefAlignY3,
 													dTgtAlignX0, dTgtAlignY0, dTgtAlignX1, dTgtAlignY1, dTgtAlignX2, dTgtAlignY2, dTgtAlignX3, dTgtAlignY3, 
 													ptRef.x, ptRef.y, &ptTgt.x, &ptTgt.y);
-				if (pDoc->m_MasterDB.m_pPcsRgn)
-				{
-					pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[0][idx].x = ptTgt.x;
-					pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[0][idx].y = ptTgt.y;
-				}
+				pDoc->m_MasterDB.SetMkPnt(0, idx, ptTgt); // int nCam, int nMkIdx, CfPoint fPt
+				//if (pDoc->m_MasterDB.m_pPcsRgn)
+				//{
+				//	pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[0][idx].x = ptTgt.x;
+				//	pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[0][idx].y = ptTgt.y;
+				//}
 				idx++;
 			}
 		}
@@ -5173,12 +5180,13 @@ BOOL CDlgMenu02::Do4PtAlign1(int nPos, BOOL bDraw)
 		double dTgtAlignY3 = (pDoc->m_MasterDB.m_stAlignMk2.Y1 + pView->m_pMotion->m_dPinPosY[1]) - m_dMkFdOffsetY[1][3];
 
 		int nNodeX = 0, nNodeY = 0;
-		if (pDoc->m_MasterDB.m_pPcsRgn)
-		{
-			pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
-			//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-			//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
-		}
+		pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+		//if (pDoc->m_MasterDB.m_pPcsRgn)
+		//{
+		//	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+		//	//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+		//	//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+		//}
 
 		//pView->m_Align[1].SetAlignData(dRefAlignX0, dRefAlignY0, dRefAlignX1, dRefAlignY1, dTgtAlignX0, dTgtAlignY0, dTgtAlignX1, dTgtAlignY1);
 
@@ -5193,11 +5201,12 @@ BOOL CDlgMenu02::Do4PtAlign1(int nPos, BOOL bDraw)
 				pView->m_Align[0].BilinearAlignment(dRefAlignX0, dRefAlignY0, dRefAlignX1, dRefAlignY1, dRefAlignX2, dRefAlignY2, dRefAlignX3, dRefAlignY3,
 													dTgtAlignX0, dTgtAlignY0, dTgtAlignX1, dTgtAlignY1, dTgtAlignX2, dTgtAlignY2, dTgtAlignX3, dTgtAlignY3,
 													ptRef.x, ptRef.y, &ptTgt.x, &ptTgt.y);
-				if (pDoc->m_MasterDB.m_pPcsRgn)
-				{
-					pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[1][idx].x = ptTgt.x;
-					pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[1][idx].y = ptTgt.y;
-				}
+				pDoc->m_MasterDB.SetMkPnt(1, idx, ptTgt); // int nCam, int nMkIdx, CfPoint fPt
+				//if (pDoc->m_MasterDB.m_pPcsRgn)
+				//{
+				//	pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[1][idx].x = ptTgt.x;
+				//	pDoc->m_MasterDB.m_pPcsRgn->pMkPnt[1][idx].y = ptTgt.y;
+				//}
 				idx++;
 			}
 		}

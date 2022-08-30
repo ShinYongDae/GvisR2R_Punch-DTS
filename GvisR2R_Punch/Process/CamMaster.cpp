@@ -850,9 +850,11 @@ void CCamMaster::SetCad2PntAlignMkPos()
 		{
 			for(i = 0; i < nPMaxC; i++)		// i is piece col.
 			{
-				nPcsIdx = MstPnl.Strip[k].Piece[j][i].nMstPieceIndex;
+				nPcsIdx = MstPnl.Strip[k].Piece[j][i].nMstPcsIdx;
 				MstPnl.Strip[k].Piece[j][i].MkPos.dX = m_stPcsMk[nPcsIdx].X; // [mm]
 				MstPnl.Strip[k].Piece[j][i].MkPos.dY = m_stPcsMk[nPcsIdx].Y; // [mm]
+				MstPnl.Piece[nPcsIdx].MkPos.dX = m_stPcsMk[nPcsIdx].X; // [mm]
+				MstPnl.Piece[nPcsIdx].MkPos.dY = m_stPcsMk[nPcsIdx].Y; // [mm]
 			}
 		}
 	}
@@ -889,9 +891,11 @@ void CCamMaster::SetCad4PntAlignMkPos()
 		{
 			for (i = 0; i < nPMaxC; i++)		// i is piece col.
 			{
-				nPcsIdx = MstPnl.Strip[k].Piece[j][i].nMstPieceIndex;
+				nPcsIdx = MstPnl.Strip[k].Piece[j][i].nMstPcsIdx;
 				MstPnl.Strip[k].Piece[j][i].MkPos.dX = m_stPcsMk[nPcsIdx].X; // [mm]
 				MstPnl.Strip[k].Piece[j][i].MkPos.dY = m_stPcsMk[nPcsIdx].Y; // [mm]
+				MstPnl.Piece[nPcsIdx].MkPos.dX = m_stPcsMk[nPcsIdx].X; // [mm]
+				MstPnl.Piece[nPcsIdx].MkPos.dY = m_stPcsMk[nPcsIdx].Y; // [mm]
 			}
 		}
 	}
@@ -946,7 +950,7 @@ void CCamMaster::SetCad4PntAlignMkPos()
  	return sRes;
  }
 
-BOOL CCamMaster::LoadPcsRgnFromCam()
+BOOL CCamMaster::LoadPcsRgnFromCam() // 기존 RTR
 {
 	//char FileN[200];
 	TCHAR FileN[200];
@@ -1249,7 +1253,7 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 	{
 		if (m_pPcsRgn)
 			delete m_pPcsRgn;
-		m_pPcsRgn = new CPcsRgn(nPieceRgnNum);
+		m_pPcsRgn = new CPcsRgn(nPieceRgnNum, &MstPnl);
 	}
 	else
 	{
@@ -1323,6 +1327,7 @@ void CCamMaster::SetMasterPanelInfo()
 	int i, j, k;
 	int nR, nC, nRow, nCol, nSMaxR, nSMaxC, nPMaxR, nPMaxC;
 	int nPieceCount = 0;
+	int nMstPcsIdx = -1;
 
 	double mmPxl = MasterInfo.dPixelSize / 1000.0; // [mm]
 
@@ -1349,7 +1354,7 @@ void CCamMaster::SetMasterPanelInfo()
 		if (nSMaxR < nRow) nSMaxR = nRow;
 		if (nSMaxC < nCol) nSMaxC = nCol;
 
-		MstPnl.Strip[nRow].nMstStripIndex = FrameRgnID[j].nId;
+		MstPnl.Strip[nRow].nMstStripIdx = FrameRgnID[j].nId;
 
 		MstPnl.Strip[nRow].Area.dLeft = (double)FrameRgnPix[j].iStartX * mmPxl;
 		MstPnl.Strip[nRow].Area.dTop = (double)FrameRgnPix[j].iStartY * mmPxl;
@@ -1364,11 +1369,29 @@ void CCamMaster::SetMasterPanelInfo()
 			nC = PieceRgnPix[i + nPieceCount].Col - 1; // Cammaster Row, Col : (1, 1) 부터시작
 			if (nPMaxR < nR) nPMaxR = nR;
 			if (nPMaxC < nC) nPMaxC = nC;
-			MstPnl.Strip[nRow].Piece[nR][nC].nMstPieceIndex = PieceRgnPix[i + nPieceCount].nId; // Cammaster ID : 0 부터시작
+
+			nMstPcsIdx = PieceRgnPix[i + nPieceCount].nId;												// Cammaster ID : 0 부터시작
+			MstPnl.Strip[nRow].Piece[nR][nC].nMstPcsIdx = nMstPcsIdx;									// Cammaster ID : 0 부터시작
+			MstPnl.Strip[nRow].Piece[nR][nC].nMstStripIdx = FrameRgnID[j].nId;							// Cammaster ID : 0 부터시작
+			MstPnl.Strip[nRow].Piece[nR][nC].nMstStripRow = nRow;										// Cammaster ID : 0 부터시작
+			MstPnl.Strip[nRow].Piece[nR][nC].nMstStripCol = nCol;										// Cammaster ID : 0 부터시작
+			MstPnl.Strip[nRow].Piece[nR][nC].nMstPcsRow = nR;											// Cammaster ID : 0 부터시작
+			MstPnl.Strip[nRow].Piece[nR][nC].nMstPcsCol = nC;											// Cammaster ID : 0 부터시작
 			MstPnl.Strip[nRow].Piece[nR][nC].Area.dLeft = PieceRgnPix[i + nPieceCount].iStartX * mmPxl;
 			MstPnl.Strip[nRow].Piece[nR][nC].Area.dTop = PieceRgnPix[i + nPieceCount].iStartY * mmPxl;
 			MstPnl.Strip[nRow].Piece[nR][nC].Area.dRight = PieceRgnPix[i + nPieceCount].iEndX * mmPxl;
 			MstPnl.Strip[nRow].Piece[nR][nC].Area.dBottom = PieceRgnPix[i + nPieceCount].iEndY * mmPxl;
+
+			MstPnl.Piece[nMstPcsIdx].nMstPcsIdx = nMstPcsIdx;									// Cammaster ID : 0 부터시작
+			MstPnl.Piece[nMstPcsIdx].nMstStripIdx = FrameRgnID[j].nId;							// Cammaster ID : 0 부터시작
+			MstPnl.Piece[nMstPcsIdx].nMstStripRow = nRow;										// Cammaster ID : 0 부터시작
+			MstPnl.Piece[nMstPcsIdx].nMstStripCol = nCol;										// Cammaster ID : 0 부터시작
+			MstPnl.Piece[nMstPcsIdx].nMstPcsRow = nR;											// Cammaster ID : 0 부터시작
+			MstPnl.Piece[nMstPcsIdx].nMstPcsCol = nC;											// Cammaster ID : 0 부터시작
+			MstPnl.Piece[nMstPcsIdx].Area.dLeft = PieceRgnPix[i + nPieceCount].iStartX * mmPxl;	// Cammaster ID : 0 부터시작
+			MstPnl.Piece[nMstPcsIdx].Area.dTop = PieceRgnPix[i + nPieceCount].iStartY * mmPxl;	// Cammaster ID : 0 부터시작
+			MstPnl.Piece[nMstPcsIdx].Area.dRight = PieceRgnPix[i + nPieceCount].iEndX * mmPxl;	// Cammaster ID : 0 부터시작
+			MstPnl.Piece[nMstPcsIdx].Area.dBottom = PieceRgnPix[i + nPieceCount].iEndY * mmPxl;	// Cammaster ID : 0 부터시작
 		}
 		nPieceCount += m_nPieceNum[j];
 
@@ -1977,4 +2000,146 @@ BOOL CCamMaster::AlignImgBufAlloc(TCHAR *sAlignImg, int nPos)
 	return TRUE;
 }
 
+//for PcsRgn
+BOOL CCamMaster::GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR)	// nStrip:0~3 , nC:0~ , nR:0~
+{
+	BOOL bRtn = FALSE;
+	if (!m_pPcsRgn)
+	{
+		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
+		return bRtn; 
+	}
 
+	bRtn = m_pPcsRgn->GetMkMatrix(nPcsId, nStrip, nC, nR);
+
+	return bRtn;
+}
+
+void CCamMaster::SetPinPos(int nCam, CfPoint ptPnt)
+{
+	if (!m_pPcsRgn)
+	{
+		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
+		return;
+	}
+
+	m_pPcsRgn->SetPinPos(nCam, ptPnt);
+}
+
+void CCamMaster::GetShotRowCol(int& nR, int& nC)
+{
+	if (!m_pPcsRgn)
+	{
+		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
+		return;
+	}
+
+	m_pPcsRgn->GetShotRowCol(nR, nC);
+}
+
+void CCamMaster::SetMkPnt(int nCam, int nMkIdx, CfPoint fPt)				// nCam : [0]-LeftCamera, [1]-RightCamera
+{
+	if (!m_pPcsRgn)
+	{
+		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
+		return;
+	}
+
+	m_pPcsRgn->pMkPnt[nCam][nMkIdx].x = fPt.x;
+	m_pPcsRgn->pMkPnt[nCam][nMkIdx].y = fPt.y;
+}
+
+void CCamMaster::GetMkPnt(int nC, int nR, int &nPcsId, CfPoint &ptPnt)		// nC, nR : Cam(or Reelmap) 기준
+{
+	if (!m_pPcsRgn)
+	{
+		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
+		return;
+	}
+
+	m_pPcsRgn->GetMkPnt(nC, nR, nPcsId, ptPnt);
+}
+
+void CCamMaster::GetPcsRgn(int nC, int nR, int &nPcsId, CRect &ptRect)		// nC, nR : Cam(or Reelmap) 기준
+{
+	if (!m_pPcsRgn)
+	{
+		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
+		return;
+	}
+
+	m_pPcsRgn->GetPcsRgn(nC, nR, nPcsId, ptRect);
+}
+
+CfPoint CCamMaster::GetMkPnt(int nCam, int nPcsId)							// nCam : [0]-LeftCamera, [1]-RightCamera
+{
+	CfPoint fPt(0.0, 0.0);
+
+	if (!m_pPcsRgn)
+	{
+		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
+		return fPt;
+	}
+
+	switch (nCam)
+	{
+	case 0:
+		fPt = m_pPcsRgn->GetMkPnt0(nPcsId);
+		break;
+	case 1:
+		fPt = m_pPcsRgn->GetMkPnt1(nPcsId);
+		break;
+	}
+
+	//fPt.x = m_pPcsRgn->pMkPnt[nCam][nPcsId].x;
+	//fPt.y = m_pPcsRgn->pMkPnt[nCam][nPcsId].y;
+
+	return fPt;
+}
+int CCamMaster::GetTotPcs()
+{
+	if (!m_pPcsRgn)
+	{
+		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
+		return 0;
+	}
+
+	int nTot;
+	nTot = m_pPcsRgn->GetTotPcs();
+
+	return nTot;
+}
+
+double CCamMaster::GetPcsWidth()
+{
+	if (!m_pPcsRgn)
+	{
+		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
+		return 0.0;
+	}
+
+	return (double)(m_pPcsRgn->pPcs[0].right - m_pPcsRgn->pPcs[0].left);
+}
+
+double CCamMaster::GetPcsHeight()
+{
+	if (!m_pPcsRgn)
+	{
+		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
+		return 0.0;
+	}
+
+	return (double)(m_pPcsRgn->pPcs[0].bottom - m_pPcsRgn->pPcs[0].top);
+}
+
+CRect CCamMaster::GetPcsRgn(int nPcsId)
+{
+	CRect rt;
+
+	rt.left = (long)MstPnl.Piece[nPcsId].Area.dLeft;
+	rt.top = (long)MstPnl.Piece[nPcsId].Area.dTop;
+	rt.right = (long)MstPnl.Piece[nPcsId].Area.dRight;
+	rt.bottom = (long)MstPnl.Piece[nPcsId].Area.dBottom;
+
+	return rt;
+}

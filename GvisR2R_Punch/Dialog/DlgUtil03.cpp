@@ -203,7 +203,8 @@ void CDlgUtil03::OnShowWindow(BOOL bShow, UINT nStatus)
 void CDlgUtil03::AtDlgShow()
 {
 	int nNodeX, nNodeY;
-	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
 
 	if(pDoc->m_MasterDB.m_pPcsRgn)
 		SetScrlBarMax(nNodeX, nNodeY); // ROT_NONE
@@ -257,7 +258,8 @@ BOOL CDlgUtil03::OnInitDialog()
 	InitBtn();
 
 	int nNodeX, nNodeY;
-	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
 
 	if(pDoc->m_MasterDB.m_pPcsRgn)
 		SetScrlBarMax(nNodeX, nNodeY); // ROT_NONE
@@ -430,8 +432,9 @@ void CDlgUtil03::Disp(int nDir)
 			{
 				if(!bChk)
 				{
-					if (pDoc->m_MasterDB.m_pPcsRgn)
-						pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt(nC + nScrlH, nR + nScrlV, nP, ptMk);
+					pDoc->m_MasterDB.GetMkPnt(nC + nScrlH, nR + nScrlV, nP, ptMk); // int nC, int nR, int &nPcsId, CfPoint &ptPnt
+					//if (pDoc->m_MasterDB.m_pPcsRgn)
+					//	pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt(nC + nScrlH, nR + nScrlV, nP, ptMk);
 					str = _T("");
 					if (nP >= 0)
 					{
@@ -442,13 +445,15 @@ void CDlgUtil03::Disp(int nDir)
 				{
 					if (!bChk2) // 상면 PCS
 					{
-						if (pDoc->m_MasterDB.m_pPcsRgn)
-							pDoc->m_MasterDB.m_pPcsRgn->GetPcsRgn(nC + nScrlH, nR + nScrlV, nP, ptRect);
+						pDoc->m_MasterDB.GetPcsRgn(nC + nScrlH, nR + nScrlV, nP, ptRect);
+						//if (pDoc->m_MasterDB.m_pPcsRgn)
+						//	pDoc->m_MasterDB.m_pPcsRgn->GetPcsRgn(nC + nScrlH, nR + nScrlV, nP, ptRect);
 					}
 					else		// 하면 PCS
 					{
-						if (pDoc->m_MasterDB.m_pPcsRgn)
-							pDoc->m_MasterDB.m_pPcsRgn->GetPcsRgn(nC + nScrlH, nR + nScrlV, nP, ptRect);
+						pDoc->m_MasterDB.GetPcsRgn(nC + nScrlH, nR + nScrlV, nP, ptRect);
+						//if (pDoc->m_MasterDB.m_pPcsRgn)
+						//	pDoc->m_MasterDB.m_pPcsRgn->GetPcsRgn(nC + nScrlH, nR + nScrlV, nP, ptRect);
 						//if (pDoc->m_Master[1].m_pPcsRgn)
 						//	pDoc->m_Master[1].m_pPcsRgn->GetPcsRgn(nC + nScrlH, nR + nScrlV, nP, ptRect);
 					}
@@ -524,8 +529,9 @@ void CDlgUtil03::MoveMkPos(int nStcId)
 		str = myStcData[nStcId].GetText();
 		nPos = str.Find('(', 0);
 		nPcsId = _tstoi(str.Left(nPos));
-		if(pDoc->m_MasterDB.m_pPcsRgn)
-			ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nPcsId);
+		ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nPcsId);
+		//if (pDoc->m_MasterDB.m_pPcsRgn)
+		//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nPcsId);
 
 		dCurrX = pView->m_dEnc[AXIS_X0]; // pView->m_pMotion->GetActualPosition(AXIS_X);
 		dCurrY = pView->m_dEnc[AXIS_Y0]; // pView->m_pMotion->GetActualPosition(AXIS_Y);
@@ -546,8 +552,9 @@ void CDlgUtil03::MoveMkPos(int nStcId)
 		str = myStcData[nStcId].GetText();
 		nPos = str.Find('(', 0);
 		nPcsId = _tstoi(str.Left(nPos));
-		if(pDoc->m_MasterDB.m_pPcsRgn)
-			ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nPcsId);
+		ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nPcsId);
+		//if(pDoc->m_MasterDB.m_pPcsRgn)
+		//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nPcsId);
 
 		dCurrX = pView->m_dEnc[AXIS_X1]; // pView->m_pMotion->GetActualPosition(AXIS_X);
 		dCurrY = pView->m_dEnc[AXIS_Y1]; // pView->m_pMotion->GetActualPosition(AXIS_Y);
@@ -568,8 +575,9 @@ void CDlgUtil03::MoveMkPos(int nStcId)
 		str = myStcData[nStcId].GetText();
 		nPos = str.Find('(', 0);
 		nPcsId = _tstoi(str.Left(nPos));
-		if(pDoc->m_MasterDB.m_pPcsRgn)
-			ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nPcsId);
+		ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nPcsId);
+		//if(pDoc->m_MasterDB.m_pPcsRgn)
+		//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nPcsId);
 
 		dCurrX = pView->m_dEnc[AXIS_X0]; // pView->m_pMotion->GetActualPosition(AXIS_X);
 		dCurrY = pView->m_dEnc[AXIS_Y0]; // pView->m_pMotion->GetActualPosition(AXIS_Y);
@@ -587,8 +595,9 @@ void CDlgUtil03::MoveMkPos(int nStcId)
 
 		nPos = str.Find('(', 0);
 		nPcsId = _tstoi(str.Left(nPos));
-		if(pDoc->m_MasterDB.m_pPcsRgn)
-			ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nPcsId);
+		ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nPcsId);
+		//if(pDoc->m_MasterDB.m_pPcsRgn)
+		//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nPcsId);
 
 		dCurrX = pView->m_dEnc[AXIS_X1]; // pView->m_pMotion->GetActualPosition(AXIS_X);
 		dCurrY = pView->m_dEnc[AXIS_Y1]; // pView->m_pMotion->GetActualPosition(AXIS_Y);

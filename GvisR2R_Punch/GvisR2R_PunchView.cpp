@@ -1292,14 +1292,16 @@ BOOL CGvisR2R_PunchView::InitAct()
 
 
 		CfPoint ptPnt0(dX[0], dY[0]);
-		if (pDoc->m_MasterDB.m_pPcsRgn)
-			pDoc->m_MasterDB.m_pPcsRgn->SetPinPos(0, ptPnt0);
+		pDoc->m_MasterDB.SetPinPos(0, ptPnt0);
+		//if (pDoc->m_MasterDB.m_pPcsRgn)
+		//	pDoc->m_MasterDB.m_pPcsRgn->SetPinPos(0, ptPnt0);
 		//if (pDoc->m_Master[0].m_pPcsRgn)
 		//	pDoc->m_Master[0].m_pPcsRgn->SetPinPos(0, ptPnt0);
 
 		CfPoint ptPnt1(dX[1], dY[1]);
-		if (pDoc->m_MasterDB.m_pPcsRgn)
-			pDoc->m_MasterDB.m_pPcsRgn->SetPinPos(1, ptPnt1);
+		pDoc->m_MasterDB.SetPinPos(1, ptPnt1);
+		//if (pDoc->m_MasterDB.m_pPcsRgn)
+		//	pDoc->m_MasterDB.m_pPcsRgn->SetPinPos(1, ptPnt1);
 		//if (pDoc->m_Master[0].m_pPcsRgn)
 		//	pDoc->m_Master[0].m_pPcsRgn->SetPinPos(1, ptPnt1);
 
@@ -10643,8 +10645,9 @@ CfPoint CGvisR2R_PunchView::GetMkPnt(int nMkPcs)
 	ptPnt.y = -1.0;
 
 #ifndef TEST_MODE
-	if (pDoc->m_MasterDB.m_pPcsRgn)
-		ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt(nMkPcs); // Cam0의 Mk 포인트.
+	ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nMkPcs);
+	//if (pDoc->m_MasterDB.m_pPcsRgn)
+	//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt(nMkPcs); // Cam0의 Mk 포인트.
 	//if (pDoc->m_Master[0].m_pPcsRgn)
 	//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt(nMkPcs); // Cam0의 Mk 포인트.
 #else
@@ -10662,8 +10665,9 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nMkPcs)
 	ptPnt.y = -1.0;
 
 #ifndef TEST_MODE
-	if (pDoc->m_MasterDB.m_pPcsRgn)
-		ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nMkPcs); // Cam0의 Mk 포인트.
+	ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nMkPcs);
+	//if (pDoc->m_MasterDB.m_pPcsRgn)
+	//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nMkPcs); // Cam0의 Mk 포인트.
 	//if (pDoc->m_Master[0].m_pPcsRgn)
 	//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt0(nMkPcs); // Cam0의 Mk 포인트.
 #else
@@ -10681,8 +10685,9 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nMkPcs)
 	ptPnt.y = -1.0;
 
 #ifndef TEST_MODE
-	if (pDoc->m_MasterDB.m_pPcsRgn)
-		ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nMkPcs); // Cam1의 Mk 포인트.
+	ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nMkPcs);
+	//if (pDoc->m_MasterDB.m_pPcsRgn)
+	//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nMkPcs); // Cam1의 Mk 포인트.
 	//if (pDoc->m_Master[0].m_pPcsRgn)
 	//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt1(nMkPcs); // Cam1의 Mk 포인트.
 #else
@@ -10754,8 +10759,9 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs)
 					if (pDoc->m_pPcr[2][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
 						nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
-						if (pDoc->m_MasterDB.m_pPcsRgn)
-							ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
+						ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nDefPcsId);
+						//if (pDoc->m_MasterDB.m_pPcsRgn)
+						//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
 						//if (pDoc->m_Master[0].m_pPcsRgn)
 						//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
 					}
@@ -10774,8 +10780,9 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs)
 					if (pDoc->m_pPcr[0][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
 						nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
-						if (pDoc->m_MasterDB.m_pPcsRgn)
-							ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
+						ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nDefPcsId);
+						//if (pDoc->m_MasterDB.m_pPcsRgn)
+						//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
 						//if (pDoc->m_Master[0].m_pPcsRgn)
 						//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
 					}
@@ -10794,7 +10801,8 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs)
 int CGvisR2R_PunchView::GetMkStripIdx0(int nDefPcsId) // 0 : Fail , 1~4 : Strip Idx
 {
 	int nNodeX, nNodeY;
-	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
 	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
@@ -10822,7 +10830,8 @@ int CGvisR2R_PunchView::GetMkStripIdx0(int nDefPcsId) // 0 : Fail , 1~4 : Strip 
 int CGvisR2R_PunchView::GetMkStripIdx1(int nDefPcsId) // 0 : Fail , 1~4 : Strip Idx
 {
 	int nNodeX, nNodeY;
-	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
 	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
@@ -10858,7 +10867,8 @@ int CGvisR2R_PunchView::GetMkStripIdx0(int nSerial, int nMkPcs) // 0 : Fail , 1~
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nIdx = pDoc->GetPcrIdx0(nSerial);
 	int nNodeX, nNodeY;
-	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
 	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
@@ -10945,10 +10955,11 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs)
 					if (pDoc->m_pPcr[2][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
 						nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
-						if (pDoc->m_MasterDB.m_pPcsRgn)
-						{
-							ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
-						}
+						ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nDefPcsId);
+						//if (pDoc->m_MasterDB.m_pPcsRgn)
+						//{
+						//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
+						//}
 						//if (pDoc->m_Master[0].m_pPcsRgn)
 						//{
 						//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
@@ -10969,10 +10980,11 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs)
 					if (pDoc->m_pPcr[0][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
 						nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
-						if (pDoc->m_MasterDB.m_pPcsRgn)
-						{
-							ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
-						}
+						ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nDefPcsId);
+						//if (pDoc->m_MasterDB.m_pPcsRgn)
+						//{
+						//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
+						//}
 						//if (pDoc->m_Master[0].m_pPcsRgn)
 						//{
 						//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
@@ -11001,7 +11013,8 @@ int CGvisR2R_PunchView::GetMkStripIdx1(int nSerial, int nMkPcs) // 0 : Fail , 1~
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nIdx = pDoc->GetPcrIdx1(nSerial);
 	int nNodeX, nNodeY;
-	pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
 	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
@@ -12237,7 +12250,8 @@ BOOL CGvisR2R_PunchView::IsFixPcsUp(int nSerial)
 	if (pDoc->m_pReelMapUp->IsFixPcs(nSerial, pCol, pRow, nTot))
 	{
 		int nNodeX, nNodeY;
-		pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+		pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+		//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
 		//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
 		//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 		//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
@@ -12280,7 +12294,8 @@ BOOL CGvisR2R_PunchView::IsFixPcsDn(int nSerial)
 	if (pDoc->m_pReelMapDn->IsFixPcs(nSerial, pCol, pRow, nTot))
 	{
 		int nNodeX, nNodeY;
-		pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+		pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+		//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
 		//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
 		//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 		//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
@@ -12869,7 +12884,8 @@ void CGvisR2R_PunchView::DoReject0()
 	case 1:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
 		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.GetTotPcs())
 		{
 			m_nStepMk[2]++;
 		}
@@ -12884,7 +12900,8 @@ void CGvisR2R_PunchView::DoReject0()
 	case 3:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.GetTotPcs())	// 마킹완료Check
 		{
 			ptPnt = GetMkPnt0(m_nMkPcs[2]);
 
@@ -13058,7 +13075,8 @@ void CGvisR2R_PunchView::DoReject0()
 	case 13:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.GetTotPcs())	// 마킹완료Check
 		{
 			m_nStepMk[2] = 3;
 		}
@@ -13139,7 +13157,8 @@ void CGvisR2R_PunchView::DoReject1()
 	case 1:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
 		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.GetTotPcs())
 		{
 			m_nStepMk[3]++;
 		}
@@ -13154,7 +13173,8 @@ void CGvisR2R_PunchView::DoReject1()
 	case 3:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.GetTotPcs())	// 마킹완료Check
 		{
 			ptPnt = GetMkPnt1(m_nMkPcs[3]);
 
@@ -13327,7 +13347,8 @@ void CGvisR2R_PunchView::DoReject1()
 	case 13:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.GetTotPcs())	// 마킹완료Check
 		{
 			m_nStepMk[3] = 3;
 		}
@@ -13399,7 +13420,8 @@ void CGvisR2R_PunchView::DoMark0All()
 	case 1:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
 		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.GetTotPcs())
 		{
 			m_nStepMk[2]++;
 		}
@@ -13414,7 +13436,8 @@ void CGvisR2R_PunchView::DoMark0All()
 	case 3:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.GetTotPcs())	// 마킹완료Check
 		{
 			ptPnt = GetMkPnt0(m_nMkPcs[2]);
 
@@ -13490,7 +13513,8 @@ void CGvisR2R_PunchView::DoMark0All()
 	case 8:
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.GetTotPcs())	// 마킹완료Check
 		{
 			m_nStepMk[2] = 3;
 		}
@@ -13560,7 +13584,8 @@ void CGvisR2R_PunchView::DoMark1All()
 	case 1:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
 		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.GetTotPcs())
 		{
 			m_nStepMk[3]++;
 		}
@@ -13575,7 +13600,8 @@ void CGvisR2R_PunchView::DoMark1All()
 	case 3:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.GetTotPcs())
 		{
 			ptPnt = GetMkPnt1(m_nMkPcs[3]);
 
@@ -13651,7 +13677,8 @@ void CGvisR2R_PunchView::DoMark1All()
 	case 8:
 		//if (m_nMkPcs[3] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
-		if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		//if (m_nMkPcs[3] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+		if (m_nMkPcs[3] < pDoc->m_MasterDB.GetTotPcs())	// 마킹완료Check
 		{
 			m_nStepMk[3] = 3;
 		}
@@ -13670,7 +13697,8 @@ void CGvisR2R_PunchView::DoMark1All()
 		{
 			//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)
 			//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)
-			if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+			//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())
+			if (m_nMkPcs[2] < pDoc->m_MasterDB.GetTotPcs())
 			{
 				if (m_nMkPcs[2] > 0)
 				{
@@ -13731,7 +13759,8 @@ void CGvisR2R_PunchView::DoMark0()
 	int nSerial, nIdx, nErrCode, nRtn;
 	CfPoint ptPnt;
 	CString sMsg;
-	double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	double dStripOut = (pDoc->m_MasterDB.GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	//double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	//double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	//double dStripOut = (pDoc->m_Master[0].m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	int nStripOut = int(dStripOut);
@@ -14419,7 +14448,8 @@ void CGvisR2R_PunchView::DoMark1()
 	int nSerial, nIdx, nErrCode, nRtn;
 	CfPoint ptPnt;
 	CString sMsg;
-	double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	double dStripOut = (pDoc->m_MasterDB.GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	//double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	//double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	//double dStripOut = (pDoc->m_Master[0].m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	int nStripOut = int(dStripOut);
@@ -21913,7 +21943,8 @@ BOOL CGvisR2R_PunchView::IsOnMarking0()
 {
 	//if (m_nMkPcs[0] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
 	//if (m_nMkPcs[0] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
-	if (m_nMkPcs[0] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+	//if (m_nMkPcs[0] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+	if (m_nMkPcs[0] < pDoc->m_MasterDB.GetTotPcs())	// 마킹완료Check
 		return TRUE;
 
 	return FALSE;
@@ -21923,7 +21954,8 @@ BOOL CGvisR2R_PunchView::IsOnMarking1()
 {
 	//if (m_nMkPcs[1] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
 	//if (m_nMkPcs[1] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
-	if (m_nMkPcs[1] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+	//if (m_nMkPcs[1] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
+	if (m_nMkPcs[1] < pDoc->m_MasterDB.GetTotPcs())	// 마킹완료Check
 		return TRUE;
 
 	return FALSE;

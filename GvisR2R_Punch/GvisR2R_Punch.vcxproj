@@ -291,6 +291,7 @@
     <ClInclude Include="GvisR2R_PunchView.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Process\CamMaster.h" />
+    <ClInclude Include="Process\CamMasterDefine.h" />
     <ClInclude Include="Process\DataFile.h" />
     <ClInclude Include="Process\DataMarking.h" />
     <ClInclude Include="Process\freeimage.h" />

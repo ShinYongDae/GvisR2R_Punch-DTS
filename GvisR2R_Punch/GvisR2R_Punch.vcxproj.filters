@@ -348,6 +348,9 @@
     <ClInclude Include="Device\User.h">
       <Filter>Device</Filter>
     </ClInclude>
+    <ClInclude Include="Process\CamMasterDefine.h">
+      <Filter>Process</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GvisR2R_Punch.cpp">
