@@ -527,7 +527,7 @@ BOOL CReelMap::Open(CString sPath)
 			fprintf(fp, "%d=\n", i); // m_cBigDef[i]
 		fprintf(fp, "\n");
 
-		for(k=0; k<4; k++)
+		for(k=0; k<MAX_STRIP_NUM; k++)
 		{
 			fprintf(fp, "[Strip%d]\n", k);
 			for(i=1; i<MAX_DEF; i++)
@@ -537,7 +537,7 @@ BOOL CReelMap::Open(CString sPath)
 
 		fprintf(fp, "[StripOut]\n");
 		fprintf(fp, "Total=\n");
-		for(k=0; k<4; k++)
+		for(k=0; k<MAX_STRIP_NUM; k++)
 			fprintf(fp, "%d=\n", k);
 		fprintf(fp, "\n");
 	}
@@ -657,7 +657,7 @@ BOOL CReelMap::OpenUser(CString sPath)
 			fprintf(fp, "%d=\n", i); // m_cBigDef[i]
 		fprintf(fp, "\n");
 
-		for(k=0; k<4; k++)
+		for(k=0; k<MAX_STRIP_NUM; k++)
 		{
 			fprintf(fp, "[Strip%d]\n", k);
 			for(i=1; i<MAX_DEF; i++)
@@ -768,7 +768,7 @@ BOOL CReelMap::Open(CString sPath, CString sModel, CString sLayer, CString sLot)
 			fprintf(fp, "%d=\n", i); // m_cBigDef[i]
 		fprintf(fp, "\n");
 
-		for(k=0; k<4; k++)
+		for(k=0; k<MAX_STRIP_NUM; k++)
 		{
 			fprintf(fp, "[Strip%d]\n", k);
 			for(i=1; i<MAX_DEF; i++)
@@ -893,7 +893,7 @@ BOOL CReelMap::OpenUser(CString sPath, CString sModel, CString sLayer, CString s
 			fprintf(fp, "%d=\n", i); // m_cBigDef[i]
 		fprintf(fp, "\n");
 
-		for(k=0; k<4; k++)
+		for(k=0; k<MAX_STRIP_NUM; k++)
 		{
 			fprintf(fp, "[Strip%d]\n", k);
 			for(i=1; i<MAX_DEF; i++)
@@ -960,14 +960,17 @@ BOOL CReelMap::Write(int nSerial, int nLayer)
 		return 0;
 	}
 
-	int nIdx = pDoc->GetPcrIdx1(nSerial, pDoc->m_bNewLotShare[1]);
+	int nIdx = pDoc->GetPcrIdx1(nSerial, pDoc->m_bNewLotShare[1]);		// 릴맵화면버퍼 인덱스
 	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
-	//int nStripY = pDoc->m_MasterDB.m_pPcsRgn->nRow / 4; // Strip(1~4);
+	//int nStripY = pDoc->m_MasterDB.m_pPcsRgn->nRow / MAX_STRIP_NUM; // Strip(1~4);
 	int nNodeX, nNodeY;
 	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
 	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
-	int nStripY = nNodeY / 4; // Strip(1~4);
+
+	// Strip(1~MAX_STRIP_NUM);
+	int nStripY = nNodeY / MAX_STRIP_NUM;								// 스트립의 Y방향 피스 수.
+
 	int nTotDefPcs = 0;
 	if(pDoc->m_pPcr[nLayer])
 	{
@@ -976,7 +979,9 @@ BOOL CReelMap::Write(int nSerial, int nLayer)
 	}
 
 	short **pPnlBuf;
-	int i, nC, nR, nPcsId, nDefCode;//, nTot, nDef, nGood;
+	int i, nC, nR, nPcsIdx, nDefCode;
+	int nStrip, nCol, nRow;
+
 	pPnlBuf = new short*[nNodeY];
 	for (i = 0; i < nNodeY; i++)
 	{
@@ -991,17 +996,25 @@ BOOL CReelMap::Write(int nSerial, int nLayer)
 	{
 		if(pDoc->m_pPcr[nLayer][nIdx]->m_pMk[i] != -2) // -2 (NoMarking)
 		{
-			nPcsId = pDoc->m_pPcr[nLayer][nIdx]->m_pDefPcs[i];
+			nPcsIdx = pDoc->m_pPcr[nLayer][nIdx]->m_pDefPcs[i];
 			nDefCode = pDoc->m_pPcr[nLayer][nIdx]->m_pDefType[i];
 
-			nC = int(nPcsId / nNodeY);
-			if(nC%2)	// 홀수.
-				nR = nNodeY * (nC+1) - nPcsId - 1;
-			else		// 짝수.
-				nR = nPcsId - nNodeY * nC;
-			pPnlBuf[nR][nC] = (short)nDefCode;	// nPnl의 열 정보.
+			if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+			{
+				pDoc->m_MasterDB.GetMkMatrix(nPcsIdx, nC, nR);	// Shot에서 nC:0~ , nR:0~
+			}
+			else
+			{
+				nC = int(nPcsIdx / nNodeY);
+				if(nC%2)	// 홀수.
+					nR = nNodeY * (nC+1) - nPcsIdx - 1;
+				else		// 짝수.
+					nR = nPcsIdx - nNodeY * nC;
+			}
+
+			pPnlBuf[nR][nC] = (short)nDefCode;					// nPnl의 열 정보.
 			if(m_pPnlBuf)
-				m_pPnlBuf[nSerial-1][nR][nC] = pPnlBuf[nR][nC]; // DefCode
+				m_pPnlBuf[nSerial-1][nR][nC] = pPnlBuf[nR][nC]; // DefCode 3D Array : [nSerial][nRow][nCol] - 릴맵 정보용.
 		}
 	}
 
@@ -1011,20 +1024,17 @@ BOOL CReelMap::Write(int nSerial, int nLayer)
 	strData.Format(_T("%d"), nTotDefPcs);
 	::WritePrivateProfileString(sPnl, _T("Total Defects"), strData, m_sPathShare);
 
-	for(int nRow=0; nRow<nNodeX; nRow++)
+	for(nRow=0; nRow<nNodeX; nRow++)			// 릴맵 Text(90도 시계방향으로 회전한 모습) 상의 Row : Shot의 첫번째 Col부터 시작해서 밑으로 내려감.
 	{
 		sRow.Format(_T("%02d"), nRow);
-// 		sRow.Format(_T("%2d"), nRow+1);
+ 		//sRow.Format(_T("%2d"), nRow+1);
 		strData.Format(_T(""));
 		strTemp.Format(_T(""));
 
-// 		if(nRow==26)
-// 			int brk=0;
-
-		for(int nCol=0; nCol<nNodeY; nCol++)
+		for(nCol=0; nCol<nNodeY; nCol++)		// 릴맵 Text(90도 시계방향으로 회전한 모습) 상의 Col : 4열 3열 2열 1열 스트립으로 표시됨.
 		{
-			nR = (nNodeY-1)-nCol;
-			nC = nRow;
+			nR = (nNodeY-1)-nCol;				// 릴맵상의 Row
+			nC = nRow;							// 릴맵상의 Col
 
 			if(pDoc->m_pPcr[nLayer][nIdx]->m_nErrPnl == -1 || pDoc->m_pPcr[nLayer][nIdx]->m_nErrPnl == -2)
 			{
@@ -1034,14 +1044,14 @@ BOOL CReelMap::Write(int nSerial, int nLayer)
 			else
 				nDefCode = (int)pPnlBuf[nR][nC] < 0 ? 0 : (int)pPnlBuf[nR][nC];
 
-			strTemp.Format(_T("%2d,"), nDefCode);
+			strTemp.Format(_T("%2d,"), nDefCode);	// 불량코드를 2칸으로 설정
 			
-			if(!nCol)
+			if(!nCol)								// strData에 처음으로 데이터를 추가
 				strData.Insert(0, strTemp);
 			else
 			{
 				int nLen = strData.GetLength();
-				if( !(nCol%nStripY) ) // Separate Strip
+				if( !(nCol%nStripY) )				// Separate Strip (스트립 마다)
 				{
 					strData.Insert(nLen, _T("  "));
 					nLen = strData.GetLength();
@@ -1050,10 +1060,10 @@ BOOL CReelMap::Write(int nSerial, int nLayer)
 			}
 		}
 
-		int nPos = strData.ReverseFind(',');
+		int nPos = strData.ReverseFind(',');		// 릴맵 Text 맨 우측의 ','를 삭제
 		strData.Delete(nPos, 1);
-		::WritePrivateProfileString(sPnl, sRow, strData, m_sPathShare);
-	}
+		::WritePrivateProfileString(sPnl, sRow, strData, m_sPathShare); // 한 라인씩 릴맵 Text를 기록.
+	}	// 릴맵 Text(90도 시계방향으로 회전한 모습) 상의 Row : Shot의 마지막 Col까지 기록하고 끝남.
 
 	for(i=0; i<nNodeY; i++)
 		delete[]  pPnlBuf[i];
@@ -1076,11 +1086,11 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 	int nIdx = pDoc->GetPcrIdx1(nSerial, pDoc->m_bNewLotShare[1]);
 	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
-	//int nStripY = pDoc->m_MasterDB.m_pPcsRgn->nRow / 4; // Strip(1~4);
+	//int nStripY = pDoc->m_MasterDB.m_pPcsRgn->nRow / MAX_STRIP_NUM; // Strip(1~MAX_STRIP_NUM);
 	int nNodeX, nNodeY;
 	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
 	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
-	int nStripY = nNodeY / 4; // Strip(1~4);
+	int nStripY = nNodeY / MAX_STRIP_NUM; // Strip(1~MAX_STRIP_NUM);
 	int nTotDefPcs = 0;
 	if(pDoc->m_pPcr[nLayer])
 	{
@@ -1090,6 +1100,8 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 
 	short **pPnlBuf;
 	int i, nC, nR, nPcsId, nDefCode;//, nTot, nDef, nGood;
+	int nPcsIdx, nRow, nCol;
+
 	pPnlBuf = new short*[nNodeY];
 	for(i=0; i<nNodeY; i++)
 	{ 
@@ -1107,14 +1119,22 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 			nPcsId = pDoc->m_pPcr[nLayer][nIdx]->m_pDefPcs[i];
 			nDefCode = pDoc->m_pPcr[nLayer][nIdx]->m_pDefType[i];
 
-			nC = int(nPcsId / nNodeY);
-			if(nC%2)	// 홀수.
-				nR = nNodeY * (nC+1) - nPcsId - 1;
-			else		// 짝수.
-				nR = nPcsId - nNodeY * nC;
+			if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+			{
+				pDoc->m_MasterDB.GetMkMatrix(nPcsIdx, nC, nR);	// Shot에서 nC:0~ , nR:0~
+			}
+			else
+			{
+				nC = int(nPcsId / nNodeY);
+				if (nC % 2)	// 홀수.
+					nR = nNodeY * (nC + 1) - nPcsId - 1;
+				else		// 짝수.
+					nR = nPcsId - nNodeY * nC;
+			}
+
 			pPnlBuf[nR][nC] = (short)nDefCode;	// nPnl의 열 정보.
 			if(m_pPnlBuf)
-				m_pPnlBuf[nSerial-1][nR][nC] = pPnlBuf[nR][nC]; // DefCode
+				m_pPnlBuf[nSerial-1][nR][nC] = pPnlBuf[nR][nC];  // DefCode 3D Array : [nSerial][nRow][nCol] - 릴맵 정보용.
 		}
 	}
 
@@ -1124,7 +1144,7 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 	strData.Format(_T("%d"), nTotDefPcs);
 	::WritePrivateProfileString(sPnl, _T("Total Defects"), strData, sPath);
 
-	for(int nRow=0; nRow<nNodeX; nRow++)
+	for(nRow=0; nRow<nNodeX; nRow++)
 	{
 		sRow.Format(_T("%02d"), nRow);
 // 		sRow.Format(_T("%2d"), nRow+1);
@@ -1134,7 +1154,7 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 // 		if(nRow==26)
 // 			int brk=0;
 
-		for(int nCol=0; nCol<nNodeY; nCol++)
+		for(nCol=0; nCol<nNodeY; nCol++)
 		{
 			nR = (nNodeY-1)-nCol;
 			nC = nRow;
@@ -1746,7 +1766,7 @@ BOOL CReelMap::InitRst()
 		m_nDef[i] = 0;
 
 	m_nTotStOut = 0;
-	for(k=0; k<4; k++)
+	for(k=0; k<MAX_STRIP_NUM; k++)
 	{
 		m_nStripOut[k] = 0;
 		m_nDefStrip[k] = 0;
@@ -1791,7 +1811,7 @@ void CReelMap::ClrRst()
 		m_nDef[i] = 0;
 
 	m_nTotStOut = 0;
-	for(k=0; k<4; k++)
+	for(k=0; k<MAX_STRIP_NUM; k++)
 	{
 		m_nStripOut[k] = 0;
 		m_nDefStrip[k] = 0;
@@ -1965,7 +1985,7 @@ void CReelMap::ResetYield()
 	{
 		m_stYield.nDefA[k] = 0;
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < MAX_STRIP_NUM; i++)
 		{
 			m_stYield.nDefPerStrip[i][k] = 0;
 		}
@@ -2028,7 +2048,7 @@ BOOL CReelMap::ReadYield(int nSerial, CString sPath)
 		return FALSE;
 	}
 
-	for (k = 0; k < 4; k++)
+	for (k = 0; k < MAX_STRIP_NUM; k++)
 	{
 		strItem.Format(_T("Strip%d"), k);
 		if (0 < ::GetPrivateProfileString(strMenu, strItem, NULL, szData, sizeof(szData), sPath))
@@ -2096,7 +2116,7 @@ BOOL CReelMap::WriteYield(int nSerial, CString sPath)
 	CString sDefNum, strData;
 	int nPnl, nRow, nCol, nDefCode, nStrip;
 	int nTotPcs = nNodeX * nNodeY;
-	int nStripPcs = nTotPcs / 4;
+	int nStripPcs = nTotPcs / MAX_STRIP_NUM;
 	double dStOutRto = _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	nPnl = nSerial - 1;
 
@@ -2122,7 +2142,7 @@ BOOL CReelMap::WriteYield(int nSerial, CString sPath)
 	{
 		nDefA[k] = 0;
 
-		for (i = 0; i < 4; i++)
+		for (i = 0; i < MAX_STRIP_NUM; i++)
 		{
 			nDefPerStrip[i][k] = 0;
 		}
@@ -2137,8 +2157,8 @@ BOOL CReelMap::WriteYield(int nSerial, CString sPath)
 				nDefCode = (int)m_pPnlBuf[nPnl][nRow][nCol] < 0 ? 0 : (int)m_pPnlBuf[nPnl][nRow][nCol];
 				nDefA[nDefCode]++;
 
-				nStrip = int(nRow / (nNodeY / 4));
-				if (nStrip > -1 && nStrip < 4)
+				nStrip = int(nRow / (nNodeY / MAX_STRIP_NUM));
+				if (nStrip > -1 && nStrip < MAX_STRIP_NUM)
 				{
 					if (nDefCode > 0)
 					{
@@ -2150,7 +2170,7 @@ BOOL CReelMap::WriteYield(int nSerial, CString sPath)
 		}
 	}
 
-	for (nStrip = 0; nStrip < 4; nStrip++)
+	for (nStrip = 0; nStrip < MAX_STRIP_NUM; nStrip++)
 	{
 		if (nDefStrip[nStrip] >= nStripPcs * dStOutRto)
 			nStripOut[nStrip]++;
@@ -2184,7 +2204,7 @@ BOOL CReelMap::WriteYield(int nSerial, CString sPath)
 	::WritePrivateProfileString(_T("Info"), _T("Bad Pcs"), strData, sPath);
 	::WritePrivateProfileString(strMenu, _T("Bad Pcs"), strData, sPath);
 
-	for (k = 0; k < 4; k++)
+	for (k = 0; k < MAX_STRIP_NUM; k++)
 	{
 		strItem.Format(_T("Strip%d"), k);
 		m_stYield.nDefStrip[k] = m_stYield.nDefStrip[k] + nDefStrip[k];
@@ -2277,7 +2297,7 @@ BOOL CReelMap::UpdateYield(int nSerial)
 		fprintf(fp, "Strip3=\n");
 		fprintf(fp, "\n");
 
-		for (k = 0; k < 4; k++)
+		for (k = 0; k < MAX_STRIP_NUM; k++)
 		{
 			for (i = 1; i < MAX_DEF; i++)
 				fprintf(fp, "Strip%d_%d=\n", k, i);
@@ -2285,7 +2305,7 @@ BOOL CReelMap::UpdateYield(int nSerial)
 		}
 
 		fprintf(fp, "StripOut_Total=\n");
-		for (k = 0; k < 4; k++)
+		for (k = 0; k < MAX_STRIP_NUM; k++)
 			fprintf(fp, "StripOut_%d=\n", k);
 		fprintf(fp, "\n");
 
@@ -2354,7 +2374,7 @@ BOOL CReelMap::UpdateRst(int nSerial)
 	}
 
 	int nTotStOut = 0;
-	for (k = 0; k < 4; k++)
+	for (k = 0; k < MAX_STRIP_NUM; k++)
 	{
 		strItem.Format(_T("Strip%d"), k);
 		m_nDefStrip[k] = m_stYield.nDefStrip[k];
@@ -2384,7 +2404,7 @@ BOOL CReelMap::UpdateRst(int nSerial)
 	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
 	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	int nTotPcs = nNodeX * nNodeY;
-	int nStripPcs = nTotPcs / 4;
+	int nStripPcs = nTotPcs / MAX_STRIP_NUM;
 
 	int nDefStrip[4];
 	nDefStrip[0] = 0; nDefStrip[1] = 0; nDefStrip[2] = 0; nDefStrip[3] = 0;
@@ -2402,7 +2422,7 @@ BOOL CReelMap::UpdateRst(int nSerial)
 					nDefCode = (int)m_pPnlBuf[nPnl][nRow][nCol] < 0 ? 0 : (int)m_pPnlBuf[nPnl][nRow][nCol];
 					m_nDef[nDefCode]++;
 
-					nStrip = int(nRow / (nNodeY/4));
+					nStrip = int(nRow / (nNodeY/MAX_STRIP_NUM));
 					if(nStrip > -1 && nStrip < 4)
 					{
 						if(nDefCode > 0)
@@ -3460,7 +3480,7 @@ BOOL CReelMap::RemakeReelmap()
 		//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow; // on Cam
 	}
 
-	nStripNumY = 4;
+	nStripNumY = MAX_STRIP_NUM;
 	nPieceNumPerStrip = nNodeY/nStripNumY;
 
 // 	double dRatio=0.0;
@@ -3739,7 +3759,7 @@ BOOL CReelMap::ReloadRst(int nTo)
 		return FALSE;
 	}
 
-	int nPnl, nRow, nCol, nDefCode, nStrip, nC, nR;
+	int nPnl, nRow, nCol, nDefCode, nStrip, nC, nR, i;
 	CString sPnl, sRow, sVal;
 	//char sep[] = {",/;\r\n\t"};
 	//char szData[MAX_PATH];
@@ -3752,9 +3772,9 @@ BOOL CReelMap::ReloadRst(int nTo)
 	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
 	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
 	int nTotPcs = nNodeX * nNodeY;
-	int nStripPcs = nTotPcs / 4;
+	int nStripPcs = nTotPcs / MAX_STRIP_NUM;
 
-	int nDefStrip[4];
+	int nDefStrip[MAX_STRIP_NUM];
 	
 
 //  InitRst();
@@ -3768,7 +3788,8 @@ BOOL CReelMap::ReloadRst(int nTo)
 
 	for(nPnl=0; nPnl<nTo; nPnl++)
 	{
-		nDefStrip[0] = 0; nDefStrip[1] = 0; nDefStrip[2] = 0; nDefStrip[3] = 0;
+		for(i=0; i<MAX_STRIP_NUM; i++)
+			nDefStrip[i] = 0;
 
 		for(nRow=0; nRow<nNodeX; nRow++)
 		{
@@ -3794,8 +3815,8 @@ BOOL CReelMap::ReloadRst(int nTo)
 					m_pPnlBuf[nPnl][nR][nC] = (short)nDefCode;
 					m_nDef[nDefCode]++;
 
-					nStrip = int(nR / (nNodeY/4));
-					if(nStrip > -1 && nStrip < 4)
+					nStrip = int(nR / (nNodeY / MAX_STRIP_NUM));
+					if(nStrip > -1 && nStrip < MAX_STRIP_NUM)
 					{
 						if(nDefCode > 0)
 						{
@@ -3815,7 +3836,7 @@ BOOL CReelMap::ReloadRst(int nTo)
 		}
 
 		double dStOutRto = _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0; //atof
-		for(nStrip=0; nStrip<4; nStrip++)
+		for(nStrip=0; nStrip<MAX_STRIP_NUM; nStrip++)
 		{
 			m_nPregressReloadRst++;
 
@@ -3829,7 +3850,7 @@ BOOL CReelMap::ReloadRst(int nTo)
 
 	// Piece infomation..............
 	CString strData, strMenu, strItem;
-	int k, i;
+	int k;
 
 	strData.Format(_T("%d"), m_nTotPcs);
 	::WritePrivateProfileString(_T("Info"), _T("Total Pcs"), strData, m_sPathBuf);
@@ -3841,7 +3862,7 @@ BOOL CReelMap::ReloadRst(int nTo)
 	::WritePrivateProfileString(_T("Info"), _T("Bad Pcs"), strData, m_sPathBuf);
 
 	int nTotStOut = 0;
-	for(k=0; k<4; k++)
+	for(k=0; k<MAX_STRIP_NUM; k++)
 	{
 		strMenu.Format(_T("Strip%d"), k);
 		strData.Format(_T("%d"), m_nDefStrip[k]);

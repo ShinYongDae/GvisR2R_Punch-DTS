@@ -23,8 +23,11 @@ CYield::CYield()
 	nCol=0; nRow=0;
 	m_nSerial=0;
 	dYieldAll = 0.0;
-	dYield[0]=0.0; dYield[1]=0.0; dYield[2]=0.0; dYield[3]=0.0;
-	nTotDef[0]=0; nTotDef[1]=0; nTotDef[2]=0; nTotDef[3]=0;
+	for(int i=0; i < MAX_STRIP_NUM; i++)
+	{ 
+		dYield[i]=0.0;
+		nTotDef[i]=0;
+	}
 
 	nTot=0;
 	nAllDef=0;
@@ -49,8 +52,8 @@ void CYield::SetDef(int nSerial, int *pDef)	// int pDef[4];
 		m_nSerial = nSerial;
 		nTot = nCol*nRow*m_nSerial;
 		nAllDef=0;
-		int nTotSt = nTot/4;
-		for(int i=0; i<4; i++)
+		int nTotSt = nTot/ MAX_STRIP_NUM;
+		for(int i=0; i<MAX_STRIP_NUM; i++)
 		{
 			nTotDef[i] += pDef[i];
 			dYield[i] = 100.0*(double)(nTotSt-nTotDef[i])/(double)nTotSt;
@@ -92,6 +95,6 @@ int CYield::GetGood()
 
 int CYield::GetGood(int nStrip)
 {
-	int nTotSt = nTot/4;
+	int nTotSt = nTot/ MAX_STRIP_NUM;
 	return ((int)(nTotSt-nTotDef[nStrip]));
 }

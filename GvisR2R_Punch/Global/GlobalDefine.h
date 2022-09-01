@@ -10,8 +10,11 @@
 #endif // _MSC_VER > 1000
 
 
-#define TEST_MODE		1
+#define TEST_MODE					1
 
+#define MAX_STRIP_NUM				4
+#define MAX_PCE_COL					100
+#define MAX_PCE_ROW					100
 
 #ifdef TEST_MODE
 	#define TEST_SHOT				2
@@ -1032,7 +1035,7 @@ struct stYield
 {
 	int nTot, nGood, nDef;
 	int nTotSriptOut;
-	int nDefStrip[4], nDefA[MAX_DEF], nDefPerStrip[4][MAX_DEF], nStripOut[4];
+	int nDefStrip[MAX_STRIP_NUM], nDefA[MAX_DEF], nDefPerStrip[MAX_STRIP_NUM][MAX_DEF], nStripOut[MAX_STRIP_NUM];
 
 	stYield()
 	{
@@ -1045,7 +1048,7 @@ struct stYield
 		{
 			nDefA[k] = 0;
 
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < MAX_STRIP_NUM; i++)
 			{
 				nDefPerStrip[i][k] = 0;
 			}

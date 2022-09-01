@@ -136,8 +136,8 @@ class CGvisR2R_PunchView : public CFormView
 	int m_nRtnMyMsgBoxIdx;
 
 	int m_nPrevStepAuto, m_nPrevMkStAuto;
-	int m_nStepMk[4], m_nMkPcs[4]; 	// [0] Auto-Left, [1] Auto-Right, [2] Manual-Left, [3] Manual-Right 
-	int m_nMkStrip[2][4]; // [nCam][nStrip]
+	int m_nStepMk[4], m_nMkPcs[4]; 	// [0] Auto-Left, [1] Auto-Right, [2] Manual-Left, [3] Manual-Right ; m_nStepMk(마킹Sequence), m_nMkPcs(마킹한 count)
+	int m_nMkStrip[2][4]; // [nCam][nStrip] - [좌/우][] : 스트립에 펀칭한 피스 수 count
 	int m_nErrCnt;
 	int m_nStepInitView;
 
@@ -335,7 +335,7 @@ public:
 	int m_nLotEndSerial;
 
 	BOOL m_bTIM_INIT_VIEW;
-	BOOL m_bCam, m_bReview;
+	BOOL m_bCam;
 
 	DWORD m_dwThreadTick[3];
 	BOOL m_bThread[3];
@@ -394,30 +394,31 @@ public:
 	int m_nShareUpCnt;
 	int m_nShareDnCnt;
 
-	int m_nBufUpSerial[2]; // [nCam]
-	int m_nBufDnSerial[2]; // [nCam]
+	int m_nBufUpSerial[2];		// [nCam]
+	int m_nBufDnSerial[2];		// [nCam]
 	int m_nBufUpCnt;
 	int m_nBufDnCnt;
 
-	//BOOL m_bFailAlign[2][2]; // [nCam][nPos] 
-	//BOOL m_bReAlign[2][2]; // [nCam][nPos] 
-	//BOOL m_bSkipAlign[2][2]; // [nCam][nPos] 
-	BOOL m_bFailAlign[2][4]; // [nCam][nPos] 
-	BOOL m_bReAlign[2][4]; // [nCam][nPos] 
-	BOOL m_bSkipAlign[2][4]; // [nCam][nPos] 
+	//BOOL m_bFailAlign[2][2];	// [nCam][nPos] 
+	//BOOL m_bReAlign[2][2];	// [nCam][nPos] 
+	//BOOL m_bSkipAlign[2][2];	// [nCam][nPos] 
+	BOOL m_bFailAlign[2][4];	// [nCam][nPos] 
+	BOOL m_bReAlign[2][4];		// [nCam][nPos] 
+	BOOL m_bSkipAlign[2][4];	// [nCam][nPos] 
 
-	BOOL m_bDoMk[2], m_bDoneMk[2]; // [nCam]
-	BOOL m_bReMark[2]; // [nCam]
+	BOOL m_bDoMk[2];			// [nCam] : TRUE(Punching), FALSE(Stop Punching)
+	BOOL m_bDoneMk[2];			// [nCam] : TRUE(Punching 완료), FALSE(Punching 미완료)
+	BOOL m_bReMark[2];			// [nCam] : TRUE(Punching 다시시작), FALSE(pass)
 
 	int m_nMonAlmF, m_nClrAlmF;
 	BOOL m_bMkSt, m_bLotEnd, m_bLastProc, m_bLastProcFromUp;
 	BOOL m_bMkStSw;
 	int m_nMkStAuto, m_nLotEndAuto, m_nLastProcAuto;
-	BOOL m_bLoadShare[2]; // [Up/Dn]
+	BOOL m_bLoadShare[2];								// [Up/Dn]
 	CString m_sNewLotUp, m_sNewLotDn;
 
-	BOOL m_bAoiFdWrite[2], m_bAoiFdWriteF[2]; // [Up/Dn]
-	BOOL m_bAoiTest[2], m_bAoiTestF[2], m_bWaitPcr[2]; // [Up/Dn]
+	BOOL m_bAoiFdWrite[2], m_bAoiFdWriteF[2];			// [Up/Dn]
+	BOOL m_bAoiTest[2], m_bAoiTestF[2], m_bWaitPcr[2];	// [Up/Dn]
 
 	BOOL m_bCycleStop, m_bContDiffLot;
 	CString m_sDispMain;
@@ -425,7 +426,7 @@ public:
 	BOOL m_bShowMyMsg;
 	CWnd *m_pMyMsgForeground;
 
-	BOOL m_bRejectDone[2][4]; // Shot[2], Strip[4]
+	BOOL m_bRejectDone[2][MAX_STRIP_NUM]; // Shot[2], Strip[4] - [좌/우][] : 스트립에 펀칭한 피스 수 count가 스트립 폐기 설정수 완료 여부 
 
 	CString m_sDispSts[2];
 
@@ -568,6 +569,7 @@ public:
 	void SetTest0(BOOL bOn);
 	void SetTest1(BOOL bOn);
 	BOOL SetMk(BOOL bRun = TRUE);
+	BOOL SetMkFirst(int nCam, BOOL bRun = TRUE);
 	void SetReMk(BOOL bMk0 = FALSE, BOOL bMk1 = FALSE);
 	BOOL InitMk();
 	void InitAuto(BOOL bInit = TRUE);
@@ -623,8 +625,8 @@ public:
 	int GetBufferUp1(int *pPrevSerial = NULL);
 	int GetBufferDn1(int *pPrevSerial = NULL);
 
-	//	BOOL ChkLotEnd(CString sPath);
-	BOOL ChkMkTmpStop();
+	//BOOL ChkLotEnd(CString sPath);
+	BOOL ChkMkTmpStop(); // 사용하지않음.
 	BOOL IsMkTmpStop();
 	BOOL IsAuto();
 	void Marking();
@@ -656,7 +658,7 @@ public:
 	int GetTotDefPcsUp1(int nSerial);
 	int GetTotDefPcsDn1(int nSerial);
 
-	CfPoint GetMkPnt(int nMkPcs);
+	//CfPoint GetMkPnt(int nMkPcs);
 	CfPoint GetMkPnt0(int nMkPcs);
 	CfPoint GetMkPnt1(int nMkPcs);
 	// 	CfPoint GetMkPnt(int nSerial, int nMkPcs);
@@ -807,6 +809,8 @@ public:
 	BOOL IsRdyTest1();
 	BOOL LoadPcrUp(int nSerial, BOOL bFromShare = FALSE);
 	BOOL LoadPcrDn(int nSerial, BOOL bFromShare = FALSE);
+	BOOL OrederingMkUp(int nSerial);
+	BOOL OrederingMkDn(int nSerial);
 	void MoveAoi(double dOffset);
 	void MoveMk(double dOffset);
 	BOOL IsMk0Done();

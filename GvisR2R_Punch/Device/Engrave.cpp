@@ -2227,21 +2227,21 @@ void CEngrave::SetStripRatio()
 	SOCKET_DATA SocketData;
 	SocketData.nCmdCode = _SetData;
 	CString str;
-	int nGood = 0, nBad = 0, nTot = 0, nStTot = 0, nSum = 0, nVal[2][4];
-	int nMer[4];
+	int nGood = 0, nBad = 0, nTot = 0, nStTot = 0, nSum = 0, nVal[2][MAX_STRIP_NUM];
+	int nMer[MAX_STRIP_NUM];
 	double dRatio = 0.0;
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	for (int i = 0; i < 2; i++)
 	{
-		for (int k = 0; k < 4; k++)
+		for (int k = 0; k < MAX_STRIP_NUM; k++)
 			nVal[i][k] = 0;
 	}
 
 	// < 스트립 별 수율 >
 	pDoc->m_pReelMapUp->GetPcsNum(nGood, nBad);
 	nTot = nGood + nBad;
-	nStTot = nTot / 4;
+	nStTot = nTot / MAX_STRIP_NUM;
 
 	// 상면
 	nSum = 0;

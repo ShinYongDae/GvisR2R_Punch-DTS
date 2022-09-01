@@ -2001,6 +2001,30 @@ BOOL CCamMaster::AlignImgBufAlloc(TCHAR *sAlignImg, int nPos)
 }
 
 //for PcsRgn
+BOOL CCamMaster::GetMkMatrix(int nPcsId, int &nC, int &nR)	// nC:0~ , nR:0~
+{
+	BOOL bRtn = FALSE;
+	int nStrip, nPMaxR;
+
+	if (!m_pPcsRgn)
+	{
+		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
+		return bRtn; 
+	}
+
+	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+	{
+		nStrip = MstPnl.Piece[nPcsId].nMstStripRow;
+		nPMaxR = MstPnl.Strip[nStrip].nTotalPieceRow;
+		nR = MstPnl.Piece[nPcsId].nMstPcsRow + nStrip * nPMaxR;
+		nC = MstPnl.Piece[nPcsId].nMstPcsCol;
+	}
+	else
+		bRtn = m_pPcsRgn->GetMkMatrix(nPcsId, nC, nR);
+
+	return bRtn;
+}
+
 BOOL CCamMaster::GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR)	// nStrip:0~3 , nC:0~ , nR:0~
 {
 	BOOL bRtn = FALSE;

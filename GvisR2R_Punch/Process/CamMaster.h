@@ -107,7 +107,8 @@ public:
 	virtual ~CCamMaster();
 
 	//for PcsRgn
-	BOOL GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR);	// nStrip:0~3 , nC:0~ , nR:0~
+	BOOL GetMkMatrix(int nPcsId, int &nC, int &nR);					// Shot에서 nC:0~ , nR:0~
+	BOOL GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR);	// nStrip:0~3 , Strip에서 nC:0~ , nR:0~
 	void SetPinPos(int nCam, CfPoint ptPnt);
 	void GetShotRowCol(int& nR, int& nC);
 	CfPoint GetMkPnt(int nCam, int nPcsId);							// nCam : [0]-LeftCamera, [1]-RightCamera

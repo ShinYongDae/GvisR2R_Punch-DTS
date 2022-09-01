@@ -346,7 +346,7 @@ BOOL CPcsRgn::GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR) // nStrip:0
 
 	nNodeX = nCol;
 	nNodeY = nRow;
-	nStPcsY = nNodeY / 4;
+	nStPcsY = nNodeY / MAX_STRIP_NUM;
 
 	if(-1 < nPcsId && nPcsId < (nNodeX*nNodeY))
 	{

@@ -9,13 +9,15 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "GlobalDefine.h"
+
 class CYield  
 {
 	BOOL bValid;
 	int nCol, nRow;		// Panel의 Col, Row 의 Pcs수.
 	int m_nSerial;
-	double dYield[4], dYieldAll;	// 4열
-	int nTotDef[4];
+	double dYield[MAX_STRIP_NUM], dYieldAll;	// 4열
+	int nTotDef[MAX_STRIP_NUM];					// 4열
 
 	int nTot;
 	int nAllDef;

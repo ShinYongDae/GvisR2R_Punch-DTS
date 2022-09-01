@@ -17,6 +17,7 @@ static char THIS_FILE[] = __FILE__;
 CDataMarking::CDataMarking(CWnd* pParent /*=NULL*/)
 {
 	m_pLayer = NULL;
+	m_pDefPcsMk = NULL;
 	m_pDefPcs = NULL;
 	m_pDefPos = NULL;
 	m_pDefType = NULL;
@@ -39,6 +40,12 @@ void CDataMarking::FreeMem()
 	{
 		delete[] m_pLayer;
 		m_pLayer = NULL;
+	}
+
+	if (m_pDefPcsMk)
+	{
+		delete[] m_pDefPcsMk;
+		m_pDefPcsMk = NULL;
 	}
 
 	if (m_pDefPcs)
@@ -94,8 +101,9 @@ END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CDataMarking message handlers
-void CDataMarking::Init(int nSerial, int nTot) // m_nIdx : From 0 to nTot.....
-{
+void CDataMarking::Init(int nSerial, int nTot) // 제품시리얼, Shot내 총불량 피스수
+{ 
+	// m_nIdx : From 0 to nTot.....
 	int i = 0;
 
 	if(nSerial <= 0)
@@ -112,6 +120,7 @@ void CDataMarking::Init(int nSerial, int nTot) // m_nIdx : From 0 to nTot.....
 	if(nTot > 0)
 	{
 		m_pLayer = new int[nTot];
+		m_pDefPcsMk = new int[nTot];
 		m_pDefPcs = new int[nTot];
 		m_pDefPos = new CPoint[nTot];
 
@@ -125,6 +134,7 @@ void CDataMarking::Init(int nSerial, int nTot) // m_nIdx : From 0 to nTot.....
 	for (i = 0; i < nTot; i++)
 	{
 		m_pLayer[i] = -1;
+		m_pDefPcsMk[i] = -1;
 		m_pDefPcs[i] = -1;
 		m_pDefPos[i] = CPoint(0,0);
 

@@ -235,7 +235,6 @@ CGvisR2R_PunchView::CGvisR2R_PunchView()
 	m_bDrawGL = TRUE;
 	m_bCont = FALSE;
 	m_bCam = FALSE;
-	m_bReview = FALSE;
 
 	m_bChkBufIdx[0] = TRUE;
 	m_nChkBufIdx[0] = 0;
@@ -345,7 +344,7 @@ CGvisR2R_PunchView::CGvisR2R_PunchView()
 
 	for (int a = 0; a < 2; a++)
 	{
-		for (int b = 0; b < 4; b++)
+		for (int b = 0; b < MAX_STRIP_NUM; b++)
 		{
 			m_nMkStrip[a][b] = 0;
 			m_bRejectDone[a][b] = FALSE;
@@ -8786,119 +8785,38 @@ void CGvisR2R_PunchView::SetReMk(BOOL bMk0, BOOL bMk1)
 	}
 }
 
-BOOL CGvisR2R_PunchView::SetMk(BOOL bRun)
+BOOL CGvisR2R_PunchView::SetMk(BOOL bRun)	// Marking Start
 {
 	CfPoint ptPnt;
 	int nSerial, nTot, a, b;
 
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	//BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	for (a = 0; a<2; a++)
 	{
-		for (b = 0; b<4; b++)
+		for (b = 0; b<MAX_STRIP_NUM; b++)
 		{
-			m_nMkStrip[a][b] = 0;
-			m_bRejectDone[a][b] = FALSE;
+			m_nMkStrip[a][b] = 0;			// [nCam][nStrip]:[2][4] - [좌/우][] : 스트립에 펀칭한 피스 수 count
+			m_bRejectDone[a][b] = FALSE;	// [nCam][nStrip]:[2][4] - [좌/우][] : 스트립에 펀칭한 피스 수 count가 스트립 폐기 설정수 완료 여부 
 		}
 	}
 
 	if (bRun)
 	{
-		// 		if(m_nStepMk[0]==0 && m_nStepMk[1]==0)
-		// 		{
-		// 			if(!m_bCam) // 마킹 후 비젼확인이 아닌 경우.
-		// 			{
-		// 				if(!TwoPointAlign())
-		// 					return FALSE;
-		// 			}
-		// 		}
-
 		if (m_bDoMk[0])
 		{
-			if (!m_bTHREAD_MK[0])
-			{
-				m_nStepMk[0] = 0;
-				m_nMkPcs[0] = 0;
-				m_bDoneMk[0] = FALSE;
-				//m_bReMark[0] = FALSE;
-				m_bTHREAD_MK[0] = TRUE;
-
-				if (bDualTest)
-					nSerial = m_nBufDnSerial[0];
-				else
-					nSerial = m_nBufUpSerial[0];
-
-				m_nTotMk[0] = nTot = GetTotDefPcs0(nSerial);
-				m_nCurMk[0] = 0;
-				if (nTot>0)
-				{
-					ptPnt = GetMkPnt0(nSerial, 0);
-					m_dTarget[AXIS_X0] = ptPnt.x;
-					m_dTarget[AXIS_Y0] = ptPnt.y;
-					if (nTot>1)
-					{
-						ptPnt = GetMkPnt0(nSerial, 1);
-						m_dNextTarget[AXIS_X0] = ptPnt.x;
-						m_dNextTarget[AXIS_Y0] = ptPnt.y;
-					}
-					else
-					{
-						m_dNextTarget[AXIS_X0] = -1.0;
-						m_dNextTarget[AXIS_Y0] = -1.0;
-					}
-				}
-				else
-				{
-					m_dTarget[AXIS_X0] = -1.0;
-					m_dTarget[AXIS_Y0] = -1.0;
-					m_dNextTarget[AXIS_X0] = -1.0;
-					m_dNextTarget[AXIS_Y0] = -1.0;
-				}
-			}
+			if (!m_bTHREAD_MK[0])			// Punching Idle상태
+				SetMkFirst(0, bRun);
+			else
+				return FALSE;
 		}
 
 		if (m_bDoMk[1])
 		{
-			if (!m_bTHREAD_MK[1])
-			{
-				m_nStepMk[1] = 0;
-				m_nMkPcs[1] = 0;
-				m_bDoneMk[1] = FALSE;
-				//m_bReMark[1] = FALSE;
-				m_bTHREAD_MK[1] = TRUE;
-
-				if (bDualTest)
-					nSerial = m_nBufDnSerial[1];
-				else
-					nSerial = m_nBufUpSerial[1];
-
-				m_nTotMk[1] = nTot = GetTotDefPcs1(nSerial);
-				m_nCurMk[1] = 0;
-				if (nTot>0)
-				{
-					ptPnt = GetMkPnt1(nSerial, 0);
-					m_dTarget[AXIS_X1] = ptPnt.x;
-					m_dTarget[AXIS_Y1] = ptPnt.y;
-					if (nTot>1)
-					{
-						ptPnt = GetMkPnt1(nSerial, 1);
-						m_dNextTarget[AXIS_X1] = ptPnt.x;
-						m_dNextTarget[AXIS_Y1] = ptPnt.y;
-					}
-					else
-					{
-						m_dNextTarget[AXIS_X1] = -1.0;
-						m_dNextTarget[AXIS_Y1] = -1.0;
-					}
-				}
-				else
-				{
-					m_dTarget[AXIS_X1] = -1.0;
-					m_dTarget[AXIS_Y1] = -1.0;
-					m_dNextTarget[AXIS_X1] = -1.0;
-					m_dNextTarget[AXIS_Y1] = -1.0;
-				}
-			}
+			if (!m_bTHREAD_MK[1])			// Punching Idle상태
+				SetMkFirst(1, bRun);
+			else
+				return FALSE;
 		}
 	}
 	else
@@ -8906,6 +8824,116 @@ BOOL CGvisR2R_PunchView::SetMk(BOOL bRun)
 		m_bTHREAD_MK[0] = FALSE;
 		m_bTHREAD_MK[1] = FALSE;
 	}
+
+	return TRUE;
+}
+
+BOOL CGvisR2R_PunchView::SetMkFirst(int nCam, BOOL bRun)
+{
+	CfPoint ptPnt;
+	int nSerial, nTot, a, b;
+
+	m_nStepMk[nCam] = 0;							// Punching Sequence Index : DoMark0()
+	m_nMkPcs[nCam] = 0;								// Punching Sequence에서 Punching한 피스수 count.
+	m_bDoneMk[nCam] = FALSE;						// Punching완료여부
+													//m_bReMark[0] = FALSE;
+	m_bTHREAD_MK[nCam] = TRUE;						// Punching Run상태
+
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+
+	if (nCam == 0)
+	{
+		if (bDualTest)
+			nSerial = m_nBufDnSerial[0];
+		else
+			nSerial = m_nBufUpSerial[0];
+
+		nTot = GetTotDefPcs0(nSerial);	// pcr파일의 총불량 피스 수
+	}
+	else if (nCam == 1)
+	{
+		if (bDualTest)
+			nSerial = m_nBufDnSerial[1];
+		else
+			nSerial = m_nBufUpSerial[1];
+
+		nTot = GetTotDefPcs1(nSerial);	// pcr파일의 총불량 피스 수
+	}
+	else
+	{
+		AfxMessageBox(_T("Failed-SetMkFirst()"));
+		return FALSE;
+	}
+
+	m_nTotMk[nCam] = nTot;
+	m_nCurMk[nCam] = 0;								// Punching Sequence에서 Punching동작 count. 사용안함 (실제 불량마킹 피스수와 다를 수 있음) --> m_nMkPcs[0] 사용
+
+	if (nTot > 0)
+	{
+		if (nCam == 0)
+		{
+			// pcr파일의 첫번째 불량 피스의 Punching 위치
+			ptPnt = GetMkPnt0(nSerial, 0);				// (pcr 시리얼, pcr 불량 피스 인덱스) // ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nDefPcsId);
+			m_dTarget[AXIS_X0] = ptPnt.x;
+			m_dTarget[AXIS_Y0] = ptPnt.y;
+			if (nTot > 1)
+			{
+				ptPnt = GetMkPnt0(nSerial, 1);			// (pcr 시리얼, pcr 불량 피스 인덱스) // ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nDefPcsId);
+				m_dNextTarget[AXIS_X0] = ptPnt.x;
+				m_dNextTarget[AXIS_Y0] = ptPnt.y;
+			}
+			else
+			{
+				m_dNextTarget[AXIS_X0] = -1.0;
+				m_dNextTarget[AXIS_Y0] = -1.0;
+
+				AfxMessageBox(_T("Failed-SetMkFirst()"));
+				return FALSE;
+			}
+		}
+		else if (nCam == 1)
+		{
+			// pcr파일의 첫번째 불량 피스의 Punching 위치
+			ptPnt = GetMkPnt1(nSerial, 0);				// (pcr 시리얼, pcr 불량 피스 인덱스) // ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nDefPcsId);
+			m_dTarget[AXIS_X1] = ptPnt.x;
+			m_dTarget[AXIS_Y1] = ptPnt.y;
+			if (nTot > 1)
+			{
+				ptPnt = GetMkPnt1(nSerial, 1);			// (pcr 시리얼, pcr 불량 피스 인덱스) // ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nDefPcsId);
+				m_dNextTarget[AXIS_X1] = ptPnt.x;
+				m_dNextTarget[AXIS_Y1] = ptPnt.y;
+			}
+			else
+			{
+				m_dNextTarget[AXIS_X1] = -1.0;
+				m_dNextTarget[AXIS_Y1] = -1.0;
+
+				AfxMessageBox(_T("Failed-SetMkFirst()"));
+				return FALSE;
+			}
+		}
+	}
+	else
+	{
+		if (nCam == 0)
+		{
+			m_dTarget[AXIS_X0] = -1.0;
+			m_dTarget[AXIS_Y0] = -1.0;
+			m_dNextTarget[AXIS_X0] = -1.0;
+			m_dNextTarget[AXIS_Y0] = -1.0;
+		}
+		else if(nCam == 1)
+		{
+			m_dTarget[AXIS_X1] = -1.0;
+			m_dTarget[AXIS_Y1] = -1.0;
+			m_dNextTarget[AXIS_X1] = -1.0;
+			m_dNextTarget[AXIS_Y1] = -1.0;
+		}
+
+		AfxMessageBox(_T("Failed-SetMkFirst()"));
+		return FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -9261,8 +9289,6 @@ int CGvisR2R_PunchView::GetBufferDn1(int *pPrevSerial)
 	return 0;
 }
 
-
-
 BOOL CGvisR2R_PunchView::IsShare()
 {
 	// 	if(IsShareUp() || IsShareDn())
@@ -9442,20 +9468,21 @@ BOOL CGvisR2R_PunchView::ChkLotEndDn(int nSerial)
 	return pDoc->ChkLotEnd(sPath);
 }
 
-BOOL CGvisR2R_PunchView::ChkMkTmpStop()
+BOOL CGvisR2R_PunchView::ChkMkTmpStop() // 사용하지않음.
 {
-	if (IsStop() && IsMk())
-	{
-		m_bMkTmpStop = TRUE;
-		SetMk(FALSE);	// Marking 일시정지
-	}
-	else if (IsRun() && m_bMkTmpStop)
-	{
-		m_bMkTmpStop = FALSE;
-		SetMk(TRUE);	// Marking Start
-	}
+	//if (IsStop() && IsMk())
+	//{
+	//	m_bMkTmpStop = TRUE;
+	//	SetMk(FALSE);	// Marking 일시정지
+	//}
+	//else if (IsRun() && m_bMkTmpStop)
+	//{
+	//	m_bMkTmpStop = FALSE;
+	//	SetMk(TRUE);	// Marking Start
+	//}
 
-	return m_bMkTmpStop;
+	//return m_bMkTmpStop;
+	return FALSE;
 }
 
 BOOL CGvisR2R_PunchView::IsMkTmpStop()
@@ -9524,7 +9551,6 @@ void CGvisR2R_PunchView::InitAuto(BOOL bInit)
 	m_bNewModel = FALSE;
 	m_nLotEndSerial = 0;
 	m_bCam = FALSE;
-	m_bReview = FALSE;
 	m_bChkBufIdx[0] = TRUE;
 	m_bChkBufIdx[0] = TRUE;
 
@@ -9652,7 +9678,7 @@ void CGvisR2R_PunchView::InitAuto(BOOL bInit)
 	pView->m_nDebugStep = 11; pView->DispThreadTick();
 	for (int a = 0; a<2; a++)
 	{
-		for (int b = 0; b<4; b++)
+		for (int b = 0; b<MAX_STRIP_NUM; b++)
 		{
 			m_nMkStrip[a][b] = 0;
 			m_bRejectDone[a][b] = FALSE;
@@ -10638,27 +10664,27 @@ int CGvisR2R_PunchView::GetTotDefPcsDn1(int nSerial)
 }
 
 
-CfPoint CGvisR2R_PunchView::GetMkPnt(int nMkPcs)
-{
-	CfPoint ptPnt;
-	ptPnt.x = -1.0;
-	ptPnt.y = -1.0;
+//CfPoint CGvisR2R_PunchView::GetMkPnt(int nMkPcs)  // pcr 불량 피스 읽은 순서 인덱스
+//{
+//	CfPoint ptPnt;
+//	ptPnt.x = -1.0;
+//	ptPnt.y = -1.0;
+//
+//#ifndef TEST_MODE
+//	ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nMkPcs);
+//	//if (pDoc->m_MasterDB.m_pPcsRgn)
+//	//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt(nMkPcs); // Cam0의 Mk 포인트.
+//	//if (pDoc->m_Master[0].m_pPcsRgn)
+//	//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt(nMkPcs); // Cam0의 Mk 포인트.
+//#else
+//	ptPnt.x = 1.0;
+//	ptPnt.y = 1.0;
+//#endif
+//
+//	return ptPnt;
+//}
 
-#ifndef TEST_MODE
-	ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nMkPcs);
-	//if (pDoc->m_MasterDB.m_pPcsRgn)
-	//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt(nMkPcs); // Cam0의 Mk 포인트.
-	//if (pDoc->m_Master[0].m_pPcsRgn)
-	//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt(nMkPcs); // Cam0의 Mk 포인트.
-#else
-	ptPnt.x = 1.0;
-	ptPnt.y = 1.0;
-#endif
-
-	return ptPnt;
-}
-
-CfPoint CGvisR2R_PunchView::GetMkPnt0(int nMkPcs)
+CfPoint CGvisR2R_PunchView::GetMkPnt0(int nMkPcs) // pcr 불량 피스 읽은 순서 인덱스
 {
 	CfPoint ptPnt;
 	ptPnt.x = -1.0;
@@ -10678,7 +10704,7 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nMkPcs)
 	return ptPnt;
 }
 
-CfPoint CGvisR2R_PunchView::GetMkPnt1(int nMkPcs)
+CfPoint CGvisR2R_PunchView::GetMkPnt1(int nMkPcs) // pcr 불량 피스 읽은 순서 인덱스
 {
 	CfPoint ptPnt;
 	ptPnt.x = -1.0;
@@ -10731,7 +10757,7 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nMkPcs)
 // 	return ptPnt;
 // }
 
-CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs)
+CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs) // pcr 시리얼, pcr 불량 피스 읽은 순서 인덱스
 {
 	if (nSerial <= 0)
 	{
@@ -10758,7 +10784,8 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs)
 				{
 					if (pDoc->m_pPcr[2][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
-						nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
+						nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcsMk[nMkPcs];
+						//nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
 						ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nDefPcsId);
 						//if (pDoc->m_MasterDB.m_pPcsRgn)
 						//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
@@ -10779,7 +10806,8 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs)
 				{
 					if (pDoc->m_pPcr[0][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
-						nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
+						nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[nMkPcs];
+						//nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
 						ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nDefPcsId);
 						//if (pDoc->m_MasterDB.m_pPcsRgn)
 						//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
@@ -10798,7 +10826,7 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs)
 	return ptPnt;
 }
 
-int CGvisR2R_PunchView::GetMkStripIdx0(int nDefPcsId) // 0 : Fail , 1~4 : Strip Idx
+int CGvisR2R_PunchView::GetMkStripIdx0(int nDefPcsId) // 0 : Fail , 1~4 : Strip Idx : nDefPcsId (마킹순서 인덱스)
 {
 	int nNodeX, nNodeY;
 	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
@@ -10807,7 +10835,7 @@ int CGvisR2R_PunchView::GetMkStripIdx0(int nDefPcsId) // 0 : Fail , 1~4 : Strip 
 	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-	int nStripY = int(nNodeY / 4);
+	int nStripY = int(nNodeY / MAX_STRIP_NUM);
 	int nStripIdx = 0; 
 
 #ifndef TEST_MODE
@@ -10836,7 +10864,7 @@ int CGvisR2R_PunchView::GetMkStripIdx1(int nDefPcsId) // 0 : Fail , 1~4 : Strip 
 	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-	int nStripY = int(nNodeY / 4);
+	int nStripY = int(nNodeY / MAX_STRIP_NUM);
 	int nStripIdx = 0;
 
 #ifndef TEST_MODE
@@ -10858,12 +10886,51 @@ int CGvisR2R_PunchView::GetMkStripIdx1(int nDefPcsId) // 0 : Fail , 1~4 : Strip 
 
 int CGvisR2R_PunchView::GetMkStripIdx0(int nSerial, int nMkPcs) // 0 : Fail , 1~4 : Strip Idx
 {
+#ifdef TEST_MODE
+	return 1;
+#endif
+
 	if (nSerial <= 0)
 	{
 		AfxMessageBox(_T("Serial Error.48"));
 		return 0;
 	}
 
+	int nPcsId, nStrip, nCol, nRow;
+	int nIdx = pDoc->GetPcrIdx0(nSerial); // 릴맵화면버퍼 인덱스
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+
+	if (bDualTest)
+	{
+		if (pDoc->m_pPcr[2])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+		{
+			if (pDoc->m_pPcr[2][nIdx]->m_pDefPcs)
+				nPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
+			else
+			{
+				AfxMessageBox(_T("Serial Error.48"));
+				return 0;
+			}
+		}
+	}
+	else
+	{
+		if (pDoc->m_pPcr[0])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+		{
+			if (pDoc->m_pPcr[0][nIdx]->m_pDefPcs)
+				nPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
+			else
+			{
+				AfxMessageBox(_T("Serial Error.48"));
+				return 0;
+			}
+		}
+	}
+
+	pDoc->m_MasterDB.GetMkMatrix(nPcsId, nStrip, nCol, nRow); // nStrip:0~3 , nC:0~ , nR:0~
+
+	return(nStrip + 1);
+/*
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nIdx = pDoc->GetPcrIdx0(nSerial);
 	int nNodeX, nNodeY;
@@ -10873,7 +10940,7 @@ int CGvisR2R_PunchView::GetMkStripIdx0(int nSerial, int nMkPcs) // 0 : Fail , 1~
 	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-	int nStripY = int(nNodeY / 4);
+	int nStripY = int(nNodeY / MAX_STRIP_NUM);
 	int nStripIdx = 0;
 
 #ifndef TEST_MODE
@@ -10926,9 +10993,10 @@ int CGvisR2R_PunchView::GetMkStripIdx0(int nSerial, int nMkPcs) // 0 : Fail , 1~
 #endif
 
 	return nStripIdx;
+*/
 }
 
-CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs)
+CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs) // pcr 시리얼, pcr 불량 피스 읽은 순서 인덱스
 {
 	if (nSerial <= 0)
 	{
@@ -10954,7 +11022,8 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs)
 				{
 					if (pDoc->m_pPcr[2][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
-						nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
+						nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcsMk[nMkPcs];
+						//nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
 						ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nDefPcsId);
 						//if (pDoc->m_MasterDB.m_pPcsRgn)
 						//{
@@ -10979,7 +11048,8 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs)
 				{
 					if (pDoc->m_pPcr[0][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
-						nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
+						nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[nMkPcs];
+						//nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
 						ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nDefPcsId);
 						//if (pDoc->m_MasterDB.m_pPcsRgn)
 						//{
@@ -11019,7 +11089,7 @@ int CGvisR2R_PunchView::GetMkStripIdx1(int nSerial, int nMkPcs) // 0 : Fail , 1~
 	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-	int nStripY = int(nNodeY / 4);
+	int nStripY = int(nNodeY / MAX_STRIP_NUM);
 	int nStripIdx = 0;
 
 #ifndef TEST_MODE
@@ -11408,10 +11478,10 @@ BOOL CGvisR2R_PunchView::LoadPcrUp(int nSerial, BOOL bFromShare)
 	if (nSerial <= 0)
 	{
 		AfxMessageBox(_T("Serial Error.52"));
-		return 0;
+		return FALSE;
 	}
 
-	int nHeadInfo = pDoc->LoadPCR0(nSerial); // 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	int nHeadInfo = pDoc->LoadPCR0(nSerial, bFromShare);			// 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
 	if (nHeadInfo >= 2)
 	{
 		MsgBox(_T("Error-LoadPCR0()"));
@@ -11432,12 +11502,138 @@ BOOL CGvisR2R_PunchView::LoadPcrDn(int nSerial, BOOL bFromShare)
 		return 0;
 	}
 
-	int nHeadInfo = pDoc->LoadPCR1(nSerial); // 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	int nHeadInfo = pDoc->LoadPCR1(nSerial, bFromShare);			// 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
 	if (nHeadInfo >= 2)
 	{
 		MsgBox(_T("Error-LoadPCR1()"));
 		return FALSE;
 	}
+	return TRUE;
+}
+
+BOOL CGvisR2R_PunchView::OrederingMkUp(int nSerial)
+{
+	int i, nIdx, nTotDef;
+
+	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+	{
+		int nPcsIdx;
+		int nCol, nRow, nC, nR, nRrev;
+		int nArrangTable[MAX_PCE_ROW][MAX_PCE_COL] = { -1 };
+
+		nIdx = pDoc->GetPcrIdx0(nSerial);													// 릴맵화면버퍼 인덱스
+		nTotDef = pDoc->m_pPcr[0][nIdx]->m_nTotDef;											// 상면 불량 피스 수
+
+		for (i = 0; i < nTotDef; i++)														// 상면 불량 피스 수
+		{
+			nPcsIdx = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[i];									// nPcsIdx : CamMaster Pcs Index , nIdx : 릴맵화면 버퍼 인덱스
+			pDoc->m_MasterDB.GetMkMatrix(nPcsIdx, nCol, nRow);
+			nArrangTable[nRow][nCol] = nPcsIdx;												// ArrangTable에 불량 피스의 인덱스를 펼쳐 놓음.
+		}
+
+		i = 0;																				// 마킹순서 인덱스
+		for (nC = 0; nC < MAX_PCE_COL; nC++)
+		{
+			for (nR = 0; nR < MAX_PCE_ROW; nR++)
+			{
+				if (nC % 2)																	// NodeY방향으로 인덱스가 증가하도록 정렬할 때 
+				{
+					if (nArrangTable[nR][nC] > -1)
+					{
+						pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[i] = nArrangTable[nR][nC];		// Y축 +방향(nR 증가방향)으로 불량피스 인덱스를 정렬
+						i++;
+					}
+				}
+				else																		// NodeY방향으로 인덱스가 감소하도록 정렬할 때 
+				{
+					nRrev = MAX_PCE_ROW - nR - 1;
+					if (nArrangTable[nRrev][nC] > -1)
+					{
+						pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[i] = nArrangTable[nRrev][nC];	// Y축 -방향(nR 감소방향)으로 불량피스 인덱스를 정렬
+						i++;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		nIdx = pDoc->GetPcrIdx0(nSerial);													// 릴맵화면버퍼 인덱스
+		nTotDef = pDoc->m_pPcr[0][nIdx]->m_nTotDef;											// 상면 불량 피스 수
+
+		for (i = 0; i < nTotDef; i++)														// 상면 불량 피스 수
+		{
+			pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[i] = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[i];	// nPcsIdx : CamMaster Pcs Index , nIdx : 릴맵화면 버퍼 인덱스
+		}
+	}
+
+	return TRUE;
+}
+
+BOOL CGvisR2R_PunchView::OrederingMkDn(int nSerial)
+{
+	int i, nIdx, nTotDef;
+
+	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+	{
+		int nPcsIdx;
+		int nCol, nRow, nC, nR, nRrev;
+		int nArrangTable[MAX_PCE_ROW][MAX_PCE_COL] = { -1 };
+
+		nIdx = pDoc->GetPcrIdx1(nSerial);													// 릴맵화면버퍼 인덱스
+		nTotDef = pDoc->m_pPcr[1][nIdx]->m_nTotDef;											// 하면 불량 피스 수
+
+		for (i = 0; i < nTotDef; i++)														// 하면 불량 피스 수
+		{
+			nPcsIdx = pDoc->m_pPcr[1][nIdx]->m_pDefPcs[i];									// nPcsIdx : CamMaster Pcs Index , nIdx : 릴맵화면 버퍼 인덱스
+			pDoc->m_MasterDB.GetMkMatrix(nPcsIdx, nCol, nRow);
+			nArrangTable[nRow][nCol] = nPcsIdx;												// ArrangTable에 불량 피스의 인덱스를 펼쳐 놓음.
+		}
+
+		i = 0;																				// 마킹순서 인덱스
+		for (nC = 0; nC < MAX_PCE_COL; nC++)
+		{
+			for (nR = 0; nR < MAX_PCE_ROW; nR++)
+			{
+				if (nC % 2)																	// NodeY방향으로 인덱스가 증가하도록 정렬할 때 
+				{
+					if (nArrangTable[nR][nC] > -1)
+					{
+						pDoc->m_pPcr[1][nIdx]->m_pDefPcsMk[i] = nArrangTable[nR][nC];		// Y축 +방향(nR 증가방향)으로 불량피스 인덱스를 정렬
+						i++;
+					}
+				}
+				else																		// NodeY방향으로 인덱스가 감소하도록 정렬할 때 
+				{
+					nRrev = MAX_PCE_ROW - nR - 1;
+					if (nArrangTable[nRrev][nC] > -1)
+					{
+						pDoc->m_pPcr[1][nIdx]->m_pDefPcsMk[i] = nArrangTable[nRrev][nC];	// Y축 -방향(nR 감소방향)으로 불량피스 인덱스를 정렬
+						i++;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		nIdx = pDoc->GetPcrIdx1(nSerial);													// 릴맵화면버퍼 인덱스
+		nTotDef = pDoc->m_pPcr[1][nIdx]->m_nTotDef;											// 하면 불량 피스 수
+
+		for (i = 0; i < nTotDef; i++)														// 하면 불량 피스 수
+		{
+			pDoc->m_pPcr[1][nIdx]->m_pDefPcsMk[i] = pDoc->m_pPcr[1][nIdx]->m_pDefPcs[i];	// nPcsIdx : CamMaster Pcs Index , nIdx : 릴맵화면 버퍼 인덱스
+		}
+	}
+
+	int nRtn[2] = { 1 };
+	nRtn[0] = pDoc->LoadPCRAllDn(nSerial);											// 상하면 불량피스 인덱스를 하면기준으로 Merge함.
+	nRtn[1] = pDoc->LoadPCRAllUp(nSerial);											// 상하면 불량피스 인덱스를 상면기준으로 Merge함.
+	if (nRtn[0] != 1)
+		return FALSE;
+	if (nRtn[1] != 1)
+		return FALSE;
+
 	return TRUE;
 }
 
@@ -12256,7 +12452,7 @@ BOOL CGvisR2R_PunchView::IsFixPcsUp(int nSerial)
 		//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 		//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 		//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-		int nStPcsY = nNodeY / 4;
+		int nStPcsY = nNodeY / MAX_STRIP_NUM;
 
 		sMsg.Format(_T("상면 고정불량 발생"));
 		for (int i = 0; i<nTot; i++)
@@ -12300,7 +12496,7 @@ BOOL CGvisR2R_PunchView::IsFixPcsDn(int nSerial)
 		//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 		//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
 		//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-		int nStPcsY = nNodeY / 4;
+		int nStPcsY = nNodeY / MAX_STRIP_NUM;
 
 		sMsg.Format(_T("하면 고정불량 발생"));
 		for (int i = 0; i<nTot; i++)
@@ -12901,9 +13097,9 @@ void CGvisR2R_PunchView::DoReject0()
 		//if (m_nMkPcs[2] < pDoc->m_Master[0].m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->nTotPcs)	// 마킹완료Check
 		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
-		if (m_nMkPcs[2] < pDoc->m_MasterDB.GetTotPcs())	// 마킹완료Check
+		if (m_nMkPcs[2] < pDoc->m_MasterDB.GetTotPcs())	// 모든 피스 마킹완료Check
 		{
-			ptPnt = GetMkPnt0(m_nMkPcs[2]);
+			ptPnt = GetMkPnt0(m_nMkPcs[2]);	// 0 ~ 모든 피스 인덱스로 순차적용
 
 			if (ptPnt.x < 0.0 && ptPnt.y < 0.0) // 양품화.
 			{
@@ -12911,7 +13107,7 @@ void CGvisR2R_PunchView::DoReject0()
 				break;
 			}
 
-			nIdx = GetMkStripIdx0(m_nMkPcs[2]);
+			nIdx = GetMkStripIdx0(m_nMkPcs[2]); // 0 ~ 모든 피스 인덱스로 순차적용
 			if (nIdx > 0)
 			{
 				if (!IsMkStrip(nIdx)) // Strip[] Mk Off
@@ -13439,7 +13635,7 @@ void CGvisR2R_PunchView::DoMark0All()
 		//if (m_nMkPcs[2] < pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs())	// 마킹완료Check
 		if (m_nMkPcs[2] < pDoc->m_MasterDB.GetTotPcs())	// 마킹완료Check
 		{
-			ptPnt = GetMkPnt0(m_nMkPcs[2]);
+			ptPnt = GetMkPnt0(m_nMkPcs[2]);	// 0 ~ 모든 피스 인덱스로 순차적용
 
 			if (ptPnt.x < 0.0 && ptPnt.y < 0.0) // 양품화.
 			{
@@ -13754,31 +13950,30 @@ void CGvisR2R_PunchView::DoMark0()
 	if (!m_bAuto)
 		return;
 
-
 	//BOOL bOn;
 	int nSerial, nIdx, nErrCode, nRtn;
 	CfPoint ptPnt;
 	CString sMsg;
-	double dStripOut = (pDoc->m_MasterDB.GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	double dStripOut = (pDoc->m_MasterDB.GetTotPcs() / MAX_STRIP_NUM) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0; // 스트립 양폐 비율
 	//double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	//double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	//double dStripOut = (pDoc->m_Master[0].m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	int nStripOut = int(dStripOut);
 	if (dStripOut > nStripOut)
-		nStripOut++;
+		nStripOut++;			// 스트립 양폐 비율
 
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
-	if (!IsRun())
+	if (!IsRun())																		// 정지상태에서
 	{
-		if (IsOnMarking0())
+		if (IsOnMarking0())																// 마킹중에
 		{
-			if (m_pMotion->IsEnable(MS_X0) && m_pMotion->IsEnable(MS_Y0))
+			if (m_pMotion->IsEnable(MS_X0) && m_pMotion->IsEnable(MS_Y0))				// 모션이 Enable상태이고
 			{
-				if (m_pMotion->IsMotionDone(MS_X0) && m_pMotion->IsMotionDone(MS_Y0))
+				if (m_pMotion->IsMotionDone(MS_X0) && m_pMotion->IsMotionDone(MS_Y0))	// 모션 Done상태이면,
 				{
-					if (!IsInitPos0() && !IsPinPos0())
-						MoveInitPos0();
+					if (!IsInitPos0() && !IsPinPos0())									// 초기위치가 아니거나, 핀위치가 아닐때
+						MoveInitPos0();													// 초기위치로 이동
 				}
 			}
 
@@ -13811,8 +14006,6 @@ void CGvisR2R_PunchView::DoMark0()
 		else
 			nSerial = m_nBufUpSerial[0];//GetBuffer0();
 
-		//nSerial = 1;
-
 		if (nSerial > 0)
 		{
 			if ((nErrCode = GetErrCode0(nSerial)) != 1)
@@ -13844,33 +14037,27 @@ void CGvisR2R_PunchView::DoMark0()
 		m_nStepMk[0]++;
 		break;
 	case 6:
-
 		if (bDualTest)
 			nSerial = m_nBufDnSerial[0];//GetBuffer0();
 		else
 			nSerial = m_nBufUpSerial[0];//GetBuffer0();
 
-		//nSerial = 1;
-
-
 		if (m_nMkPcs[0] < GetTotDefPcs0(nSerial))
 		{
-			if (!IsNoMk0())
+			if (!IsNoMk0())										// Punching On이면
 			{
 				;
-			}
-			else
+			}	
+			else												// Punching이 Off이고
 			{
-				if (!IsReview0())
+				if (!IsReview0())								// Review도 아니면
 				{
-					if (m_bReview)
-					{
-						m_nMkPcs[0] = GetTotDefPcs0(nSerial);
-						m_nStepMk[0] = MK_END;
-						break;
-					}
+					m_nMkPcs[0] = GetTotDefPcs0(nSerial);
+					m_nStepMk[0] = MK_END;						// Punching 종료.
+					break;
 				}
 			}
+			// Punching On이거나 Review이면 다음으로 진행
 			SetDelay0(100, 1);		// [mSec]
 			m_nStepMk[0]++;
 		}
@@ -13880,29 +14067,24 @@ void CGvisR2R_PunchView::DoMark0()
 		}
 		break;
 	case 7:
-		if (!WaitDelay0(1))		// F:Done, T:On Waiting....
+		if (!WaitDelay0(1))		// F:Done, T:On Waiting....		// Delay후에
 		{
 			m_nMkPcs[0] = 0;
 
-			if (!IsNoMk0())
+			if (!IsNoMk0())										// Punching On이면
 			{
 				m_nStepMk[0]++;
 			}
-			else
+			else												// Punching이 Off이고
 			{
-				if (IsReview0())
+				if (IsReview0())								// Review이면 다음으로
 				{
 					m_nStepMk[0]++;
 				}
-				else
+				else											// Review가 아니면
 				{
-					if (m_bReview)
-					{
-						m_nMkPcs[0] = GetTotDefPcs0(nSerial);
-						m_nStepMk[0] = MK_END;
-					}
-					else
-						m_nStepMk[0]++;
+					m_nMkPcs[0] = GetTotDefPcs0(nSerial);
+					m_nStepMk[0] = MK_END;						// Punching 종료.
 				}
 			}
 		}
@@ -13917,30 +14099,30 @@ void CGvisR2R_PunchView::DoMark0()
 		//nSerial = 1;
 
 
-		if (m_nMkPcs[0] < GetTotDefPcs0(nSerial))	// 마킹완료Check
+		if (m_nMkPcs[0] < GetTotDefPcs0(nSerial))				// 마킹완료Check
 		{
-			if (m_nMkPcs[0] + 1 < GetTotDefPcs0(nSerial))
+			if (m_nMkPcs[0] + 1 < GetTotDefPcs0(nSerial))		// 다음 마킹위치가 있으면
 			{
-				ptPnt = GetMkPnt0(nSerial, m_nMkPcs[0] + 1);
+				ptPnt = GetMkPnt0(nSerial, m_nMkPcs[0] + 1);	// 다음 마킹위치
 				m_dNextTarget[AXIS_X0] = ptPnt.x;
 				m_dNextTarget[AXIS_Y0] = ptPnt.y;
 			}
-			else
+			else												// 다음 마킹위치가 없으면
 			{
 				m_dNextTarget[AXIS_X0] = -1.0;
 				m_dNextTarget[AXIS_Y0] = -1.0;
 			}
 
-			ptPnt = GetMkPnt0(nSerial, m_nMkPcs[0]);
-			if (ptPnt.x < 0.0 && ptPnt.y < 0.0) // 양품화.
+			ptPnt = GetMkPnt0(nSerial, m_nMkPcs[0]);			// 이번 마킹위치
+			if (ptPnt.x < 0.0 && ptPnt.y < 0.0)					// 양품화. (마킹하지 않음)
 			{
 				m_nMkPcs[0]++;
 				m_nStepMk[0] = MK_DONE_CHECK;
 				break;
 			}
 
-			nIdx = GetMkStripIdx0(nSerial, m_nMkPcs[0]);
-			if (nIdx > 0)
+			nIdx = GetMkStripIdx0(nSerial, m_nMkPcs[0]);		// 1 ~ 4 : strip index
+			if (nIdx > 0)										// Strip index가 정상이면,
 			{
 				if (!IsMkStrip(nIdx)) // Strip[] Mk Off
 				{
@@ -14448,7 +14630,7 @@ void CGvisR2R_PunchView::DoMark1()
 	int nSerial, nIdx, nErrCode, nRtn;
 	CfPoint ptPnt;
 	CString sMsg;
-	double dStripOut = (pDoc->m_MasterDB.GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
+	double dStripOut = (pDoc->m_MasterDB.GetTotPcs() / MAX_STRIP_NUM) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	//double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->GetTotPcs() / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	//double dStripOut = (pDoc->m_MasterDB.m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
 	//double dStripOut = (pDoc->m_Master[0].m_pPcsRgn->nTotPcs / 4) * _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0;
@@ -14554,12 +14736,9 @@ void CGvisR2R_PunchView::DoMark1()
 			{
 				if (!IsReview1())
 				{
-					if (m_bReview)
-					{
-						m_nMkPcs[1] = GetTotDefPcs1(nSerial);
-						m_nStepMk[1] = MK_END;
-						break;
-					}
+					m_nMkPcs[1] = GetTotDefPcs1(nSerial);
+					m_nStepMk[1] = MK_END;
+					break;
 				}
 			}
 			SetDelay1(100, 6);		// [mSec]
@@ -14588,13 +14767,8 @@ void CGvisR2R_PunchView::DoMark1()
 				}
 				else
 				{
-					if (m_bReview)
-					{
-						m_nMkPcs[1] = GetTotDefPcs1(nSerial);
-						m_nStepMk[1] = MK_END;
-					}
-					else
-						m_nStepMk[1]++;
+					m_nMkPcs[1] = GetTotDefPcs1(nSerial);
+					m_nStepMk[1] = MK_END;
 				}
 			}
 		}
@@ -16177,7 +16351,10 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 						OpenReelmapFromBuf(m_nShareUpS);
 				}
 			}
-			LoadPcrUp(m_nShareUpS);
+			if (LoadPcrUp(m_nShareUpS))				// Default: From Buffer, TRUE: From Share
+			{
+				OrederingMkUp(m_nShareUpS);
+			}
 
 			if (!bDualTest)
 				UpdateReelmap(m_nShareUpS);
@@ -16312,7 +16489,10 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 				}
 			}
 
-			LoadPcrDn(m_nShareDnS);
+			if (LoadPcrDn(m_nShareDnS))				// Default: From Buffer, TRUE: From Share
+			{
+				OrederingMkDn(m_nShareDnS);
+			}
 
 			if (bDualTest)
 				UpdateReelmap(m_nShareDnS); // After inspect bottom side.
@@ -17336,8 +17516,8 @@ void CGvisR2R_PunchView::Mk2PtDoMarking()
 		switch (m_nMkStAuto)
 		{
 		case MK_ST + (Mk2PtIdx::DoMk) :			// Mk 마킹 시작
-			SetMk(TRUE);						// Mk 마킹 시작
-			m_nMkStAuto++;
+			if(SetMk(TRUE))						// Mk 마킹 시작
+				m_nMkStAuto++;
 			break;
 
 		case MK_ST + (Mk2PtIdx::DoMk) + 1:
@@ -17437,7 +17617,7 @@ void CGvisR2R_PunchView::Mk2PtDoMarking()
 
 			for (a = 0; a < 2; a++)
 			{
-				for (b = 0; b < 4; b++)
+				for (b = 0; b < MAX_STRIP_NUM; b++)
 				{
 					m_nMkStrip[a][b] = 0;
 					m_bRejectDone[a][b] = FALSE;
@@ -17673,7 +17853,7 @@ void CGvisR2R_PunchView::Mk2PtReject()
 
 					for (a = 0; a < 2; a++)
 					{
-						for (b = 0; b < 4; b++)
+						for (b = 0; b < MAX_STRIP_NUM; b++)
 						{
 							m_nMkStrip[a][b] = 0;
 							m_bRejectDone[a][b] = FALSE;
@@ -19120,8 +19300,8 @@ void CGvisR2R_PunchView::Mk4PtDoMarking()
 		switch (m_nMkStAuto)
 		{
 		case MK_ST + (Mk4PtIdx::DoMk) :			// Mk 마킹 시작
-			SetMk(TRUE);						// Mk 마킹 시작
-			m_nMkStAuto++;
+			if(SetMk(TRUE))						// Mk 마킹 시작
+				m_nMkStAuto++;
 			break;
 
 		case MK_ST + (Mk4PtIdx::DoMk) + 1:
@@ -19211,7 +19391,7 @@ void CGvisR2R_PunchView::Mk4PtDoMarking()
 
 			for (a = 0; a < 2; a++)
 			{
-				for (b = 0; b < 4; b++)
+				for (b = 0; b < MAX_STRIP_NUM; b++)
 				{
 					m_nMkStrip[a][b] = 0;
 					m_bRejectDone[a][b] = FALSE;
@@ -19444,7 +19624,7 @@ void CGvisR2R_PunchView::Mk4PtReject()
 
 					for (a = 0; a < 2; a++)
 					{
-						for (b = 0; b < 4; b++)
+						for (b = 0; b < MAX_STRIP_NUM; b++)
 						{
 							m_nMkStrip[a][b] = 0;
 							m_bRejectDone[a][b] = FALSE;
@@ -21068,7 +21248,7 @@ void CGvisR2R_PunchView::LoadPcrFromBuf()
 	{
 		for (int i = 0; i < m_nBufTot[0]; i++)
 		{
-			LoadPcrUp(m_pBufSerial[0][i]);
+			LoadPcrUp(m_pBufSerial[0][i], FALSE);
 			if (!bDualTest)
 				UpdateReelmap(m_pBufSerial[0][i]);
 		}
@@ -21164,7 +21344,7 @@ void  CGvisR2R_PunchView::SetLotLastShot()
 
 BOOL CGvisR2R_PunchView::IsMkStrip(int nStripIdx)
 {
-	if (!m_pDlgMenu01 || nStripIdx < 1 || nStripIdx > 4)
+	if (!m_pDlgMenu01 || nStripIdx < 1 || nStripIdx > MAX_STRIP_NUM)
 		return TRUE;
 
 	return (m_pDlgMenu01->GetChkStrip(nStripIdx - 1));
