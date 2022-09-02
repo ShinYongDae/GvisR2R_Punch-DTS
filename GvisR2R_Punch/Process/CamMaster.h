@@ -19,16 +19,17 @@ class CCamMaster : public CWnd
 {
 	_MasterPanel MstPnl;
 
-	short FrameRgnNum;
-	int PieceRgnNum;
-	int m_nCornerNum;
+	short FrameRgnNum;									// Panel내 총 스트립 수
+	int PieceRgnNum;									// Panel내 총 피스 수
+	int m_nCornerNum;									// 피스의 꼭지점 수
 	int m_nDummy[MAX_PATH];
-	int m_nPieceNum[MAX_PATH];
+	int m_nPieceNum[MAX_PATH];							// Strip내 총 피스 수
 	REGIONS_FRAME FrameRgnPix[MAX_FRAME_RGN_NUM];
 	REGIONS_FRAME_ID FrameRgnID[MAX_FRAME_RGN_NUM];
 	REGIONS_PIECE_2 PieceRgnPix[MAX_PIECE_RGN_NUM];
 //	REGIONS_PIECE_ID PieceRgnID[MAX_PIECE_RGN_NUM];
 	CPoint	**PolygonPoints;
+	int m_PnlMkPcsIdx[MAX_PIECE_RGN_NUM];				// 마킹순서별 피스 인덱스 (좌상단부터 지그재그로 마킹)
 
 	void AllocPolygonRgnData();
 	void FreePolygonRgnData();
@@ -65,6 +66,7 @@ class CCamMaster : public CWnd
 	BOOL CADImgBufAlloc(TCHAR *strCADImg, int CellNum, BOOL bOppLayerF);
 	void AlignImgFree(int nPos=-1); // -1 : All
 	BOOL AlignImgBufAlloc(TCHAR *strCADImg, int nPos);
+	void InitOrederingMk();
 
 // Construction
 public:
@@ -106,7 +108,7 @@ public:
 public:
 	virtual ~CCamMaster();
 
-	//for PcsRgn
+	// for PcsRgn
 	BOOL GetMkMatrix(int nPcsId, int &nC, int &nR);					// Shot에서 nC:0~ , nR:0~
 	BOOL GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR);	// nStrip:0~3 , Strip에서 nC:0~ , nR:0~
 	void SetPinPos(int nCam, CfPoint ptPnt);
@@ -119,6 +121,9 @@ public:
 	int GetTotPcs();
 	double GetPcsWidth();
 	double GetPcsHeight();
+
+	// for Punching order
+	int GetPnlMkPcsIdx(int nMkIdx);									// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
 
 	// Generated message map functions
 protected:

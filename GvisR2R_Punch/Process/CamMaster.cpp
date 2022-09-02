@@ -118,8 +118,9 @@ BOOL CCamMaster::LoadMstInfo()
 
 		LoadPcsImg();
 		LoadCadImg();
-
 		LoadCadAlignMkPos(); //.pch
+
+		InitOrederingMk();
 	}
 	else
 		return FALSE;
@@ -2190,4 +2191,59 @@ CRect CCamMaster::GetPcsRgn(int nPcsId)
 	rt.bottom = (long)MstPnl.Piece[nPcsId].Area.dBottom;
 
 	return rt;
+}
+
+// for Punching Order
+
+void CCamMaster::InitOrederingMk()
+{
+	int nPcsIdx, nCol, nRow, nInc, nRrev;
+	int nArrangTable[MAX_PCE_ROW][MAX_PCE_COL] = { -1 };
+	int nTotPcs = GetTotPcs();
+
+	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+	{
+		for (nPcsIdx = 0; nPcsIdx < nTotPcs; nPcsIdx++)						// 상면 총 피스 수
+		{
+			GetMkMatrix(nPcsIdx, nCol, nRow);
+			nArrangTable[nRow][nCol] = nPcsIdx;								// ArrangTable에 불량 피스의 인덱스를 펼쳐 놓음.
+		}
+
+		nInc = 0;															// 마킹순서 인덱스
+		for (nCol = 0; nCol < MAX_PCE_COL; nCol++)
+		{
+			for (nRow = 0; nRow < MAX_PCE_ROW; nRow++)
+			{
+				if (nCol % 2)												// NodeY방향으로 인덱스가 증가하도록 정렬할 때 
+				{
+					if (nArrangTable[nRow][nCol] > -1)
+					{
+						m_PnlMkPcsIdx[nInc] = nArrangTable[nRow][nCol];		// Y축 +방향(nRow 증가방향)으로 마킹순서의 피스 인덱스를 정렬
+						nInc++;
+					}
+				}
+				else														// NodeY방향으로 인덱스가 감소하도록 정렬할 때 
+				{
+					nRrev = MAX_PCE_ROW - nRow - 1;
+					if (nArrangTable[nRrev][nCol] > -1)
+					{
+						m_PnlMkPcsIdx[nInc] = nArrangTable[nRrev][nCol];	// Y축 -방향(nRow 감소방향)으로 마킹순서의 피스 인덱스를 정렬
+						nInc++;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		for (nPcsIdx = 0; nPcsIdx < nTotPcs; nPcsIdx++)						// 상면 총 피스 수
+		{
+			m_PnlMkPcsIdx[nPcsIdx] = nPcsIdx;
+		}
+	}
+}
+
+int CCamMaster::GetPnlMkPcsIdx(int nMkIdx)									// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
+{
+	return m_PnlMkPcsIdx[nMkIdx];
 }

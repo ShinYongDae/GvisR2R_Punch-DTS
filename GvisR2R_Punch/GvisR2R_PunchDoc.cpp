@@ -4437,42 +4437,6 @@ BOOL CGvisR2R_PunchDoc::GetAoiInfoDn(int nSerial, int *pNewLot, BOOL bFromBuf) /
 	return FALSE;
 }
 
-//int CGvisR2R_PunchDoc::LoadPCR(int nSerial, BOOL bFromShare)	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
-//{
-//	if (nSerial <= 0)
-//	{
-//		AfxMessageBox(_T("Serial Error.13"));
-//		return 0;
-//	}
-//
-//	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-//
-//	int nRtn[4];
-//	nRtn[0] = LoadPCRUp(nSerial, bFromShare);
-//	if (bDualTest)
-//	{
-//		nRtn[1] = LoadPCRDn(nSerial, bFromShare);
-//#ifndef TEST_MODE
-//		nRtn[2] = LoadPCRAllUp(nSerial, bFromShare);
-//		nRtn[3] = LoadPCRAllDn(nSerial, bFromShare);
-//#endif
-//	}
-//
-//	if (nRtn[0] != 1)
-//		return nRtn[0];
-//	if (bDualTest)
-//	{
-//		if (nRtn[1] != 1)
-//			return nRtn[1];
-//#ifndef TEST_MODE
-//		if (nRtn[2] != 1)
-//			return nRtn[2];
-//#endif
-//	}
-//
-//	return (1); // 1(정상)
-//}
-
 int CGvisR2R_PunchDoc::LoadPCR0(int nSerial, BOOL bFromShare)	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
 {
 	if (nSerial <= 0)
@@ -4483,12 +4447,9 @@ int CGvisR2R_PunchDoc::LoadPCR0(int nSerial, BOOL bFromShare)	// return : 2(Fail
 
 	int nRtn[2] = { 1 };
 	nRtn[0] = LoadPCRUp(nSerial, bFromShare);
-	//	nRtn[1] = LoadPCRAllUp(nSerial, bFromShare);
 
 	if (nRtn[0] != 1)
 		return nRtn[0];
-	// 	if( nRtn[1] != 1 )
-	// 		return nRtn[1];
 
 	return (1); // 1(정상)
 }
@@ -4507,15 +4468,6 @@ int CGvisR2R_PunchDoc::LoadPCR1(int nSerial, BOOL bFromShare)	// return : 2(Fail
 
 	int nRtn[3] = { 1 };
 	nRtn[0] = LoadPCRDn(nSerial, bFromShare);
-	//if (!pDoc->WorkingInfo.System.bStripPcsRgnBin)
-	//{
-	//	nRtn[1] = LoadPCRAllDn(nSerial, bFromShare);	// 상하면 불량피스 인덱스를 하면기준으로 Merge함.
-	//	nRtn[2] = LoadPCRAllUp(nSerial, bFromShare);	// 상하면 불량피스 인덱스를 상면기준으로 Merge함.
-	//	if (nRtn[1] != 1)
-	//		return nRtn[1];
-	//	if (nRtn[2] != 1)
-	//		return nRtn[2];
-	//}
 
 	if (nRtn[0] != 1)
 		return nRtn[0];

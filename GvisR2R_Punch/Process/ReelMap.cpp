@@ -2249,8 +2249,9 @@ BOOL CReelMap::UpdateYield(int nSerial)
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nNodeX = 0, nNodeY = 0;
 #ifndef TEST_MODE
-	nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-	nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	//nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	//nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
 #endif
 
 	int k, i;

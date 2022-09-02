@@ -10684,16 +10684,17 @@ int CGvisR2R_PunchView::GetTotDefPcsDn1(int nSerial)
 //	return ptPnt;
 //}
 
-CfPoint CGvisR2R_PunchView::GetMkPnt0(int nMkPcs) // pcr 불량 피스 읽은 순서 인덱스
+CfPoint CGvisR2R_PunchView::GetMkPnt0(int nMkPcs)	// pcr 불량 피스 읽은 순서 인덱스 ( 0 ~ 불량피스수 ) = 마킹 호출 순서 인덱스와 동일
 {
 	CfPoint ptPnt;
 	ptPnt.x = -1.0;
 	ptPnt.y = -1.0;
 
 #ifndef TEST_MODE
-	ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nMkPcs);
+	int nMkPcsIdx = GetPcsIdxForPnl(nMkPcs);					// nMkPcs(마킹순서 인덱스)에 대한 nMkPcsIdx(CamMaster에서 제공된 판넬 피스 인덱스)
+	ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nMkPcsIdx);			//  마킹 피스 인덱스에대한 위치
 	//if (pDoc->m_MasterDB.m_pPcsRgn)
-	//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nMkPcs); // Cam0의 Mk 포인트.
+	//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nMkPcs);	// Cam0의 Mk 포인트.
 	//if (pDoc->m_Master[0].m_pPcsRgn)
 	//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt0(nMkPcs); // Cam0의 Mk 포인트.
 #else
@@ -10711,7 +10712,8 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nMkPcs) // pcr 불량 피스 읽은 순서 인�
 	ptPnt.y = -1.0;
 
 #ifndef TEST_MODE
-	ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nMkPcs);
+	int nMkPcsIdx = GetPcsIdxForPnl(nMkPcs);					// nMkPcs(마킹순서 인덱스)에 대한 nMkPcsIdx(CamMaster에서 제공된 판넬 피스 인덱스)
+	ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nMkPcsIdx);			//  마킹 피스 인덱스에대한 위치
 	//if (pDoc->m_MasterDB.m_pPcsRgn)
 	//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nMkPcs); // Cam1의 Mk 포인트.
 	//if (pDoc->m_Master[0].m_pPcsRgn)
@@ -10828,63 +10830,33 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs) // pcr 시리얼, pc
 
 int CGvisR2R_PunchView::GetMkStripIdx0(int nDefPcsId) // 0 : Fail , 1~4 : Strip Idx : nDefPcsId (마킹순서 인덱스)
 {
-	int nNodeX, nNodeY;
-	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
-	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
-	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
-	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-	int nStripY = int(nNodeY / MAX_STRIP_NUM);
-	int nStripIdx = 0; 
+	int nPcsIdx, nStrip, nCol, nRow;
 
 #ifndef TEST_MODE
-	int nRow = 0, nNum = 0, nMode = 0;
-	nNum = int(nDefPcsId / nNodeY);
-	nMode = nDefPcsId % nNodeY;
-	if (nNum % 2) 	// 홀수.
-		nRow = nNodeY - (nMode + 1);
-	else		// 짝수.
-		nRow = nMode;
-
-	nStripIdx = int(nRow / nStripY) + 1;
+	nPcsIdx = pDoc->m_MasterDB.GetPnlMkPcsIdx(nDefPcsId);		// (nDefPcsId : 마킹순서 인덱스)
+	pDoc->m_MasterDB.GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);	// nStrip:0~3 , nC:0~ , nR:0~
 #else
-	nStripIdx = 1;
+	nStrip = 0;
 #endif
 
-	return nStripIdx;
+	return (nStrip + 1);
 }
 
 int CGvisR2R_PunchView::GetMkStripIdx1(int nDefPcsId) // 0 : Fail , 1~4 : Strip Idx
 {
-	int nNodeX, nNodeY;
-	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
-	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
-	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
-	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-	int nStripY = int(nNodeY / MAX_STRIP_NUM);
-	int nStripIdx = 0;
+	int nPcsIdx, nStrip, nCol, nRow;
 
 #ifndef TEST_MODE
-	int nRow = 0, nNum = 0, nMode = 0;
-	nNum = int(nDefPcsId / nNodeY);
-	nMode = nDefPcsId % nNodeY;
-	if (nNum % 2) 	// 홀수.
-		nRow = nNodeY - (nMode + 1);
-	else		// 짝수.
-		nRow = nMode;
-
-	nStripIdx = int(nRow / nStripY) + 1;
+	nPcsIdx = pDoc->m_MasterDB.GetPnlMkPcsIdx(nDefPcsId);		// (nDefPcsId : 마킹순서 인덱스)
+	pDoc->m_MasterDB.GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);	// nStrip:0~3 , nC:0~ , nR:0~
 #else
-	nStripIdx = 1;
+	nStrip = 0;
 #endif
 
-	return nStripIdx;
+	return (nStrip + 1);
 }
 
-int CGvisR2R_PunchView::GetMkStripIdx0(int nSerial, int nMkPcs) // 0 : Fail , 1~4 : Strip Idx
+int CGvisR2R_PunchView::GetMkStripIdx0(int nSerial, int nMkPcs) // 0 : Fail , 1~4 : Strip Idx , nMkPcs (마킹순서 인덱스) 
 {
 #ifdef TEST_MODE
 	return 1;
@@ -10896,104 +10868,14 @@ int CGvisR2R_PunchView::GetMkStripIdx0(int nSerial, int nMkPcs) // 0 : Fail , 1~
 		return 0;
 	}
 
-	int nPcsId, nStrip, nCol, nRow;
-	int nIdx = pDoc->GetPcrIdx0(nSerial); // 릴맵화면버퍼 인덱스
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-
-	if (bDualTest)
-	{
-		if (pDoc->m_pPcr[2])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
-		{
-			if (pDoc->m_pPcr[2][nIdx]->m_pDefPcs)
-				nPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
-			else
-			{
-				AfxMessageBox(_T("Serial Error.48"));
-				return 0;
-			}
-		}
-	}
-	else
-	{
-		if (pDoc->m_pPcr[0])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
-		{
-			if (pDoc->m_pPcr[0][nIdx]->m_pDefPcs)
-				nPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
-			else
-			{
-				AfxMessageBox(_T("Serial Error.48"));
-				return 0;
-			}
-		}
-	}
-
-	pDoc->m_MasterDB.GetMkMatrix(nPcsId, nStrip, nCol, nRow); // nStrip:0~3 , nC:0~ , nR:0~
-
-	return(nStrip + 1);
-/*
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	int nIdx = pDoc->GetPcrIdx0(nSerial);
-	int nNodeX, nNodeY;
-	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
-	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
-	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
-	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-	int nStripY = int(nNodeY / MAX_STRIP_NUM);
-	int nStripIdx = 0;
-
+	int nPcsIdx, nStrip, nCol, nRow;
 #ifndef TEST_MODE
-	int nDefPcsId = 0, nNum = 0, nMode = 0, nRow = 0;
-
-	if (bDualTest)
-	{
-		if (pDoc->m_pPcr[2])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
-		{
-			if (pDoc->m_pPcr[2][nIdx])
-			{
-				if (pDoc->m_pPcr[2][nIdx]->m_pDefPcs)
-				{
-					nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
-					nNum = int(nDefPcsId / nNodeY);
-					nMode = nDefPcsId % nNodeY;
-					if (nNum % 2) 	// 홀수.
-						nRow = nNodeY - (nMode + 1);
-					else		// 짝수.
-						nRow = nMode;
-
-					nStripIdx = int(nRow / nStripY) + 1;
-				}
-			}
-		}
-	}
-	else
-	{
-		if (pDoc->m_pPcr[0])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
-		{
-			if (pDoc->m_pPcr[0][nIdx])
-			{
-				if (pDoc->m_pPcr[0][nIdx]->m_pDefPcs)
-				{
-					nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
-					nNum = int(nDefPcsId / nNodeY);
-					nMode = nDefPcsId % nNodeY;
-					if (nNum % 2) 	// 홀수.
-						nRow = nNodeY - (nMode + 1);
-					else		// 짝수.
-						nRow = nMode;
-
-					nStripIdx = int(nRow / nStripY) + 1;
-				}
-			}
-		}
-	}
+	nPcsIdx = GetPcsIdxForMk(nSerial, nMkPcs);					// (nMkPcs : 마킹순서 인덱스)
+	pDoc->m_MasterDB.GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);	// nStrip:0~3 , nC:0~ , nR:0~
 #else
-	nStripIdx = 1;
+	nStrip = 0;
 #endif
-
-	return nStripIdx;
-*/
+	return(nStrip + 1);
 }
 
 CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs) // pcr 시리얼, pcr 불량 피스 읽은 순서 인덱스
@@ -11025,14 +10907,6 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs) // pcr 시리얼, pc
 						nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcsMk[nMkPcs];
 						//nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
 						ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nDefPcsId);
-						//if (pDoc->m_MasterDB.m_pPcsRgn)
-						//{
-						//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
-						//}
-						//if (pDoc->m_Master[0].m_pPcsRgn)
-						//{
-						//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
-						//}
 					}
 				}
 			}
@@ -11051,14 +10925,6 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs) // pcr 시리얼, pc
 						nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[nMkPcs];
 						//nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
 						ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nDefPcsId);
-						//if (pDoc->m_MasterDB.m_pPcsRgn)
-						//{
-						//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
-						//}
-						//if (pDoc->m_Master[0].m_pPcsRgn)
-						//{
-						//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt1(nDefPcsId); // Cam1의 Mk 포인트.
-						//}
 					}
 				}
 			}
@@ -11080,67 +10946,15 @@ int CGvisR2R_PunchView::GetMkStripIdx1(int nSerial, int nMkPcs) // 0 : Fail , 1~
 		return 0;
 	}
 
-	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	int nIdx = pDoc->GetPcrIdx1(nSerial);
-	int nNodeX, nNodeY;
-	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
-	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
-	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
-	//int nNodeX = pDoc->m_Master[0].m_pPcsRgn->nCol;
-	//int nNodeY = pDoc->m_Master[0].m_pPcsRgn->nRow;
-	int nStripY = int(nNodeY / MAX_STRIP_NUM);
-	int nStripIdx = 0;
+	int nPcsIdx, nStrip, nCol, nRow;
 
 #ifndef TEST_MODE
-	int nDefPcsId = 0, nNum = 0, nMode = 0, nRow = 0;
-	if (bDualTest)
-	{
-		if (pDoc->m_pPcr[2])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
-		{
-			if (pDoc->m_pPcr[2][nIdx])
-			{
-				if (pDoc->m_pPcr[2][nIdx]->m_pDefPcs)
-				{
-					nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
-					nNum = int(nDefPcsId / nNodeY);
-					nMode = nDefPcsId % nNodeY;
-					if (nNum % 2) 	// 홀수.
-						nRow = nNodeY - (nMode + 1);
-					else		// 짝수.
-						nRow = nMode;
-
-					nStripIdx = int(nRow / nStripY) + 1;
-				}
-			}
-		}
-	}
-	else
-	{
-		if (pDoc->m_pPcr[0])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
-		{
-			if (pDoc->m_pPcr[0][nIdx])
-			{
-				if (pDoc->m_pPcr[0][nIdx]->m_pDefPcs)
-				{
-					nDefPcsId = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nMkPcs];
-					nNum = int(nDefPcsId / nNodeY);
-					nMode = nDefPcsId % nNodeY;
-					if (nNum % 2) 	// 홀수.
-						nRow = nNodeY - (nMode + 1);
-					else		// 짝수.
-						nRow = nMode;
-
-					nStripIdx = int(nRow / nStripY) + 1;
-				}
-			}
-		}
-	}
+	nPcsIdx = GetPcsIdxForMk(nSerial, nMkPcs);					// (nMkPcs : 마킹순서 인덱스)
+	pDoc->m_MasterDB.GetMkMatrix(nPcsIdx, nStrip, nCol, nRow);	// nStrip:0~3 , nC:0~ , nR:0~
 #else
-	nStripIdx = 1;
+	nStrip = 0;
 #endif
-
-	return nStripIdx;
+	return (nStrip + 1);
 }
 
 void CGvisR2R_PunchView::Move0(CfPoint pt, BOOL bCam)
@@ -11509,6 +11323,23 @@ BOOL CGvisR2R_PunchView::LoadPcrDn(int nSerial, BOOL bFromShare)
 		return FALSE;
 	}
 	return TRUE;
+}
+
+int CGvisR2R_PunchView::GetPcsIdxForPnl(int nMkIdx)					// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
+{
+	int nPcxIdx = pDoc->m_MasterDB.GetPnlMkPcsIdx(nMkIdx);
+	return nPcxIdx;
+}
+
+int CGvisR2R_PunchView::GetPcsIdxForMk(int nSerial, int nMkIdx)		// nMkIdx : 마킹순서 인덱스 , PcxIdx : 판넬의 불량피스 인덱스
+{
+	int nPcsIdx = -1;
+	int nIdx = pDoc->GetPcrIdx0(nSerial);
+
+	if(pDoc->m_pPcr[0][nIdx])
+		nPcsIdx = pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[nMkIdx];
+
+	return nPcsIdx;
 }
 
 BOOL CGvisR2R_PunchView::OrederingMkUp(int nSerial)

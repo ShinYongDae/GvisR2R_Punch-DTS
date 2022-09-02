@@ -811,6 +811,8 @@ public:
 	BOOL LoadPcrDn(int nSerial, BOOL bFromShare = FALSE);
 	BOOL OrederingMkUp(int nSerial);
 	BOOL OrederingMkDn(int nSerial);
+	int GetPcsIdxForPnl(int nMkIdx);				// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
+	int GetPcsIdxForMk(int nSerial, int nMkIdx);	// nMkIdx : 마킹순서 인덱스 , PcxIdx : 판넬의 불량피스 인덱스
 	void MoveAoi(double dOffset);
 	void MoveMk(double dOffset);
 	BOOL IsMk0Done();
