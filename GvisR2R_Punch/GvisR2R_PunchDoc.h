@@ -52,7 +52,8 @@ public:
 	CString *pMkInfo;
 
 	// m_pPcr에 저장되는 데이터는 PCR파일에서 읽어오는 순서로 인덱스에 저장됨.
-	CDataMarking* m_pPcr[MAX_PCR][MAX_PCR_PNL];	//릴맵화면표시를 위한 데이터 클래스	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+	CDataMarking* m_pPcr[MAX_PCR][MAX_PCR_PNL];	//릴맵화면표시를 위한 데이터	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+	CDataMarking* m_pPcrMk[MAX_PCR_PNL];		//릴맵화면표시를 위한 데이터를 마킹순서로 정렬 (마킹순서 인덱스순으로 pcr내용을 재정렬)
 
 	stMpeIoWrite m_pIo[TOT_M_IO];
 

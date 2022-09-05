@@ -1134,7 +1134,7 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 
 			pPnlBuf[nR][nC] = (short)nDefCode;	// nPnl의 열 정보.
 			if(m_pPnlBuf)
-				m_pPnlBuf[nSerial-1][nR][nC] = pPnlBuf[nR][nC];  // DefCode 3D Array : [nSerial][nRow][nCol] - 릴맵 정보용.
+				m_pPnlBuf[nSerial-1][nR][nC] = pPnlBuf[nR][nC];  // DefCode 3D Array : [nSerial][nRow][nCol] - 릴맵 정보용. #define PNL_TOT		1000	//2500
 		}
 	}
 

@@ -10778,16 +10778,16 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs) // pcr 시리얼, pc
 
 	if (bDualTest)
 	{
-		if (pDoc->m_pPcr[2])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+		if (pDoc->m_pPcrMk)	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
 		{
-			if (pDoc->m_pPcr[2][nIdx])
+			if (pDoc->m_pPcrMk[nIdx])
 			{
-				if (pDoc->m_pPcr[2][nIdx]->m_pDefPcs)
+				if (pDoc->m_pPcrMk[nIdx]->m_pDefPcs)
 				{
-					if (pDoc->m_pPcr[2][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
+					if (pDoc->m_pPcrMk[nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
-						nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcsMk[nMkPcs];
-						//nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
+						nDefPcsId = pDoc->m_pPcrMk[nIdx]->m_pDefPcsMk[nMkPcs];
+						//nDefPcsId = pDoc->m_pPcrMk[nIdx]->m_pDefPcs[nMkPcs];
 						ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nDefPcsId);
 						//if (pDoc->m_MasterDB.m_pPcsRgn)
 						//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
@@ -10797,6 +10797,25 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs) // pcr 시리얼, pc
 				}
 			}
 		}
+		//if (pDoc->m_pPcr[2])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+		//{
+		//	if (pDoc->m_pPcr[2][nIdx])
+		//	{
+		//		if (pDoc->m_pPcr[2][nIdx]->m_pDefPcs)
+		//		{
+		//			if (pDoc->m_pPcr[2][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
+		//			{
+		//				nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcsMk[nMkPcs];
+		//				//nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
+		//				ptPnt = pDoc->m_MasterDB.GetMkPnt(0, nDefPcsId);
+		//				//if (pDoc->m_MasterDB.m_pPcsRgn)
+		//				//	ptPnt = pDoc->m_MasterDB.m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
+		//				//if (pDoc->m_Master[0].m_pPcsRgn)
+		//				//	ptPnt = pDoc->m_Master[0].m_pPcsRgn->GetMkPnt0(nDefPcsId); // Cam0의 Mk 포인트.
+		//			}
+		//		}
+		//	}
+		//}
 	}
 	else
 	{
@@ -10896,21 +10915,36 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs) // pcr 시리얼, pc
 	int nDefPcsId = 0;
 	if (bDualTest)
 	{
-		if (pDoc->m_pPcr[2])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+		if (pDoc->m_pPcrMk)	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
 		{
-			if (pDoc->m_pPcr[2][nIdx])
+			if (pDoc->m_pPcrMk[nIdx])
 			{
-				if (pDoc->m_pPcr[2][nIdx]->m_pDefPcs)
+				if (pDoc->m_pPcrMk[nIdx]->m_pDefPcs)
 				{
-					if (pDoc->m_pPcr[2][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
+					if (pDoc->m_pPcrMk[nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
 					{
-						nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcsMk[nMkPcs];
+						nDefPcsId = pDoc->m_pPcrMk[nIdx]->m_pDefPcsMk[nMkPcs];
 						//nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
 						ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nDefPcsId);
 					}
 				}
 			}
 		}
+		//if (pDoc->m_pPcr[2])	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+		//{
+		//	if (pDoc->m_pPcr[2][nIdx])
+		//	{
+		//		if (pDoc->m_pPcr[2][nIdx]->m_pDefPcs)
+		//		{
+		//			if (pDoc->m_pPcr[2][nIdx]->m_pMk[nMkPcs] != -2) // -2 (NoMarking)
+		//			{
+		//				nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcsMk[nMkPcs];
+		//				//nDefPcsId = pDoc->m_pPcr[2][nIdx]->m_pDefPcs[nMkPcs];
+		//				ptPnt = pDoc->m_MasterDB.GetMkPnt(1, nDefPcsId);
+		//			}
+		//		}
+		//	}
+		//}
 	}
 	else
 	{
@@ -11342,7 +11376,7 @@ int CGvisR2R_PunchView::GetPcsIdxForMk(int nSerial, int nMkIdx)		// nMkIdx : 마�
 	return nPcsIdx;
 }
 
-BOOL CGvisR2R_PunchView::OrederingMkUp(int nSerial)
+BOOL CGvisR2R_PunchView::OrederingMkUp(int nSerial, BOOL bDualTest)
 {
 	int i, nIdx, nTotDef;
 
@@ -11382,6 +11416,45 @@ BOOL CGvisR2R_PunchView::OrederingMkUp(int nSerial)
 					{
 						pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[i] = nArrangTable[nRrev][nC];	// Y축 -방향(nR 감소방향)으로 불량피스 인덱스를 정렬
 						i++;
+					}
+				}
+			}
+		}
+
+		if (!bDualTest)
+		{
+			int nOrd, nOrd2;
+			for (nOrd = 0; nOrd < nTotDef; nOrd++)												// Merging된 총 Piece수를 파일로딩상의 순서에서 마킹순서상으로 pcr파일을 재정렬.(m_pDefPcsMk[nOrd]와 m_pDefPcs[nOrd] 동일해짐)
+			{
+				int nMkPcsIdx = pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[nOrd];						// 마킹 순서(nOrd)에서의 재정렬된 마킹할 피스의 인덱스
+																								// Cam ID
+				pDoc->m_pPcrMk[nIdx]->m_nCamId = pDoc->m_pPcr[0][nIdx]->m_nCamId;							// nIdx: 릴맵화면 표시 인덱스
+																								// Piece Number
+				pDoc->m_pPcrMk[nIdx]->m_pDefPcsMk[nOrd] = nMkPcsIdx;									// 현시점에서 순서가 아닌 저장시점의 마킹순서별 저장된 불량피스 인덱스를 마킹순서로 저장
+
+				for (nOrd2 = 0; nOrd2 < nTotDef; nOrd2++)										// 불량피스 전부를 마킹순서상의 피스 인덱스와 일치하는 피스인덱스의 파일로딩상의 순서까지 반복수행. 
+				{
+					int nPcsIdx = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nOrd2];
+
+					if (nMkPcsIdx == nPcsIdx)
+					{
+						pDoc->m_pPcrMk[nIdx]->m_pDefPcs[nOrd] = nPcsIdx;
+						pDoc->m_pPcrMk[nIdx]->m_pLayer[nOrd] = pDoc->m_pPcr[0][nIdx]->m_pLayer[nOrd2];
+						// BadPointPosX
+						pDoc->m_pPcrMk[nIdx]->m_pDefPos[nOrd].x = pDoc->m_pPcr[0][nIdx]->m_pDefPos[nOrd2].x;
+						// BadPointPosY
+						pDoc->m_pPcrMk[nIdx]->m_pDefPos[nOrd].y = pDoc->m_pPcr[0][nIdx]->m_pDefPos[nOrd2].y;
+						// BadName
+						pDoc->m_pPcrMk[nIdx]->m_pDefType[nOrd] = pDoc->m_pPcr[0][nIdx]->m_pDefType[nOrd2];
+						// CellNum
+						pDoc->m_pPcrMk[nIdx]->m_pCell[nOrd] = pDoc->m_pPcr[0][nIdx]->m_pCell[nOrd2];
+						// ImageSize
+						pDoc->m_pPcrMk[nIdx]->m_pImgSz[nOrd] = pDoc->m_pPcr[0][nIdx]->m_pImgSz[nOrd2];
+						// ImageNum
+						pDoc->m_pPcrMk[nIdx]->m_pImg[nOrd] = pDoc->m_pPcr[0][nIdx]->m_pImg[nOrd2];
+						// strMarkingCode : -2 (NoMarking)
+						pDoc->m_pPcrMk[nIdx]->m_pMk[nOrd] = pDoc->m_pPcr[0][nIdx]->m_pMk[nOrd2];
+						break;
 					}
 				}
 			}
@@ -16184,7 +16257,7 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 			}
 			if (LoadPcrUp(m_nShareUpS))				// Default: From Buffer, TRUE: From Share
 			{
-				OrederingMkUp(m_nShareUpS);
+				OrederingMkUp(m_nShareUpS, bDualTest);
 			}
 
 			if (!bDualTest)

@@ -600,7 +600,7 @@ typedef struct {
 
 #define BUF_SZ						50
 
-#define PNL_TOT						2500
+#define PNL_TOT						1000	//2500
 #define PNLBUF_Y					50
 #define PNLBUF_X					50
 
