@@ -2219,6 +2219,7 @@ void CCamMaster::InitOrederingMk()
 					if (nArrangTable[nRow][nCol] > -1)
 					{
 						m_PnlMkPcsIdx[nInc] = nArrangTable[nRow][nCol];		// Y축 +방향(nRow 증가방향)으로 마킹순서의 피스 인덱스를 정렬
+						m_PnlPcsIdxMkOrder[m_PnlMkPcsIdx[nInc]] = nInc;
 						nInc++;
 					}
 				}
@@ -2228,6 +2229,7 @@ void CCamMaster::InitOrederingMk()
 					if (nArrangTable[nRrev][nCol] > -1)
 					{
 						m_PnlMkPcsIdx[nInc] = nArrangTable[nRrev][nCol];	// Y축 -방향(nRow 감소방향)으로 마킹순서의 피스 인덱스를 정렬
+						m_PnlPcsIdxMkOrder[m_PnlMkPcsIdx[nInc]] = nInc;
 						nInc++;
 					}
 				}
@@ -2239,6 +2241,7 @@ void CCamMaster::InitOrederingMk()
 		for (nPcsIdx = 0; nPcsIdx < nTotPcs; nPcsIdx++)						// 상면 총 피스 수
 		{
 			m_PnlMkPcsIdx[nPcsIdx] = nPcsIdx;
+			m_PnlPcsIdxMkOrder[m_PnlMkPcsIdx[nPcsIdx]] = nPcsIdx;
 		}
 	}
 }
@@ -2247,3 +2250,9 @@ int CCamMaster::GetPnlMkPcsIdx(int nMkIdx)									// 판넬 전체 피스의 마킹순서�
 {
 	return m_PnlMkPcsIdx[nMkIdx];
 }
+
+int CCamMaster::GetPnlMkPcsOrder(int nPcsIdx)								// 판넬 전체 피스 인덱스에 대한 마킹순서 인덱스
+{
+	return m_PnlPcsIdxMkOrder[nPcsIdx];
+}
+

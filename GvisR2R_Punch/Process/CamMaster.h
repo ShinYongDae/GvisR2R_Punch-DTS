@@ -30,6 +30,7 @@ class CCamMaster : public CWnd
 //	REGIONS_PIECE_ID PieceRgnID[MAX_PIECE_RGN_NUM];
 	CPoint	**PolygonPoints;
 	int m_PnlMkPcsIdx[MAX_PIECE_RGN_NUM];				// 마킹순서별 피스 인덱스 (좌상단부터 지그재그로 마킹)
+	int m_PnlPcsIdxMkOrder[MAX_PIECE_RGN_NUM];			// 캠마스터 피스 인덱스의 마킹순서
 
 	void AllocPolygonRgnData();
 	void FreePolygonRgnData();
@@ -124,6 +125,7 @@ public:
 
 	// for Punching order
 	int GetPnlMkPcsIdx(int nMkIdx);									// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
+	int GetPnlMkPcsOrder(int nPcsIdx);								// 판넬 전체 피스 인덱스에 대한 마킹순서 인덱스
 
 	// Generated message map functions
 protected:

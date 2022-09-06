@@ -381,6 +381,9 @@ public:
 
 	BOOL DirectoryExists(LPCTSTR szPath);
 
+	void SetMkPcsIdxOnDts(int nSerial);
+	void SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
+
 // 재정의입니다.
 public:
 	virtual BOOL OnNewDocument();

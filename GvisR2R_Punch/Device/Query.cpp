@@ -2799,3 +2799,44 @@ void CQuery::StringToChar(CString str, char* pCh) // char* returned must be dele
 	WideCharToMultiByte(CP_ACP, 0, wszStr, -1, pCh, nLenth, 0, 0);
 	return;
 }
+
+BOOL CQuery::LoadPieceOut(CString strLotName, int nSerial, int* pPieceOutIndex, int& nTotalPieceOut)
+{
+	CString strQuery;
+	strQuery.Format(_T("SELECT OUT_CODE FROM `gvisdb`.`pieceout` WHERE LOT_CODE = '%s' AND SERIAL_CODE = '%d'"), strLotName, nSerial);
+
+	if (!m_dataSource.ExecuteQuery((LPCTSTR)strQuery))
+	{
+		CString strMsg;
+		strMsg.Format(_T("Error occur at m_dataSource.ExecuteQuery() at LoadPieceOut()\r\n%s"), m_dataSource.GetLastError());
+		Log(strMsg); AfxMessageBox(strMsg, MB_ICONSTOP);
+		return FALSE;
+	}
+
+	long lMaxCols = m_dataSource.m_pRS->Fields->Count;
+	long lMaxRows = m_dataSource.m_pRS->RecordCount;
+
+	if (lMaxRows > 0)
+	{
+		_variant_t vColName, vValue;
+		CString strData;
+		m_dataSource.m_pRS->MoveFirst();
+		for (int lRow = 0; lRow < lMaxRows; lRow++)
+		{
+			// fetch lot code & return
+			vValue = m_dataSource.m_pRS->Fields->Item[(long)0]->Value;
+			if (vValue.vt != VT_NULL)
+			{
+				vValue.ChangeType(VT_INT);
+				pPieceOutIndex[lRow] = vValue.intVal;
+			}
+			m_dataSource.m_pRS->MoveNext();
+		}
+
+		nTotalPieceOut = (int)lMaxRows;
+		return TRUE;
+	}
+	
+	nTotalPieceOut = 0;
+	return TRUE;
+}

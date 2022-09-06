@@ -538,13 +538,13 @@ BOOL CGvisR2R_PunchView::LoadMstInfo()
 		pDoc->m_MasterDB.LoadMstInfo();
 	}
 
-	if (m_pDts)
-	{
-		if (m_pDts->IsUseDts())
-		{
-			pDoc->m_MasterDB.WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
-		}
-	}
+	//if (m_pDts)
+	//{
+	//	if (m_pDts->IsUseDts())
+	//	{
+	//		pDoc->m_MasterDB.WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
+	//	}
+	//}
 
 #ifdef TEST_MODE
 	//if (IsLastJob(0)) // Up
@@ -11423,20 +11423,19 @@ BOOL CGvisR2R_PunchView::OrederingMkUp(int nSerial, BOOL bDualTest)
 
 		if (!bDualTest)
 		{
-			int nOrd, nOrd2;
-			for (nOrd = 0; nOrd < nTotDef; nOrd++)												// Merging된 총 Piece수를 파일로딩상의 순서에서 마킹순서상으로 pcr파일을 재정렬.(m_pDefPcsMk[nOrd]와 m_pDefPcs[nOrd] 동일해짐)
+			int nOrd, nOrd2, nPcsIdx;
+			for (nOrd = 0; nOrd < nTotDef; nOrd++)															// Merging된 총 Piece수를 파일로딩상의 순서에서 마킹순서상으로 pcr파일을 재정렬.(m_pDefPcsMk[nOrd]와 m_pDefPcs[nOrd] 동일해짐)
 			{
-				int nMkPcsIdx = pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[nOrd];						// 마킹 순서(nOrd)에서의 재정렬된 마킹할 피스의 인덱스
-																								// Cam ID
-				pDoc->m_pPcrMk[nIdx]->m_nCamId = pDoc->m_pPcr[0][nIdx]->m_nCamId;							// nIdx: 릴맵화면 표시 인덱스
-																								// Piece Number
-				pDoc->m_pPcrMk[nIdx]->m_pDefPcsMk[nOrd] = nMkPcsIdx;									// 현시점에서 순서가 아닌 저장시점의 마킹순서별 저장된 불량피스 인덱스를 마킹순서로 저장
+				int nMkPcsIdx = pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[nOrd];									// 마킹 순서(nOrd)에서의 재정렬된 마킹할 피스의 인덱스
+																											// Cam ID
+				pDoc->m_pPcrMk[nIdx]->m_nCamId = pDoc->m_pPcr[0][nIdx]->m_nCamId;							// nIdx: 릴맵화면 표시 인덱스																											
+				pDoc->m_pPcrMk[nIdx]->m_pDefPcsMk[nOrd] = nMkPcsIdx;										// 마킹순서별 저장된 불량피스 인덱스를 m_pPcrMk에 마킹순서데로 피스 인덱스를 저장
 
-				for (nOrd2 = 0; nOrd2 < nTotDef; nOrd2++)										// 불량피스 전부를 마킹순서상의 피스 인덱스와 일치하는 피스인덱스의 파일로딩상의 순서까지 반복수행. 
+				for (nOrd2 = 0; nOrd2 < nTotDef; nOrd2++)													// 불량피스 전부를 마킹순서상의 피스 인덱스와 일치하는 피스인덱스의 파일로딩상의 순서까지 반복수행. 
 				{
-					int nPcsIdx = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nOrd2];
+					nPcsIdx = pDoc->m_pPcr[0][nIdx]->m_pDefPcs[nOrd2];
 
-					if (nMkPcsIdx == nPcsIdx)
+					if (nMkPcsIdx == nPcsIdx)																// 마킹순서상의 피스 인덱스와 일치하는 피스인덱스
 					{
 						pDoc->m_pPcrMk[nIdx]->m_pDefPcs[nOrd] = nPcsIdx;
 						pDoc->m_pPcrMk[nIdx]->m_pLayer[nOrd] = pDoc->m_pPcr[0][nIdx]->m_pLayer[nOrd2];
@@ -22464,4 +22463,21 @@ BOOL CGvisR2R_PunchView::IsPinPos1()
 	return TRUE;
 }
 
+BOOL CGvisR2R_PunchView::GetDtsPieceOut(int nSerial, int* pPcsOutIdx, int& nTotPcsOut)
+{
+	BOOL bRtn = FALSE;
+	int nIdx = pDoc->GetPcrIdx0(nSerial);					// 릴맵화면버퍼 인덱스
+	CString sLot = pDoc->m_pPcr[0][nIdx]->m_sLot;
 
+	if (m_pDts)
+	{
+		if (m_pDts->IsUseDts())
+		{
+			bRtn = m_pDts->LoadPieceOut(sLot, nSerial, pPcsOutIdx, nTotPcsOut);
+			if (!bRtn)
+				AfxMessageBox(_T("Error - GetDtsPieceOut()."), MB_ICONSTOP | MB_OK);
+		}
+	}
+
+	return bRtn;
+}

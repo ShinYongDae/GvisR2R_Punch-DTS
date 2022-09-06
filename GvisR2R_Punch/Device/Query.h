@@ -83,5 +83,7 @@ public:
 	BOOL GetMirrorTypeName(int nIndex, CString &strMirrorName);
 	BOOL GetMirrorTypeCode(CString strModelName, CString strLotName, CString strLayerName, CString &strMirrorCode);
 	BOOL FindMirrorTypeCode(CString strMirrorName, CString &strMirrorCode);
+
+	BOOL LoadPieceOut(CString strLotName, int nSerial, int* pPieceOutIndex, int& nTotalPieceOut);
 };
 

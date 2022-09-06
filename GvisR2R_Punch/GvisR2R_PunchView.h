@@ -911,6 +911,8 @@ public:
 	BOOL IsPinPos0();
 	BOOL IsPinPos1();
 
+	BOOL GetDtsPieceOut(int nSerial, int* pPcsOutIdx, int& nTotPcsOut);
+
 // 재정의입니다.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
