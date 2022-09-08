@@ -621,9 +621,11 @@ struct stSystem
 	CString sPathCamSpecDir;
 
 	CString sPathAoiUp, sPathAoiUpCurrInfo, sPathAoiUpVrsData, sPathAoiUpOffset;
+	CString sPathAoiUpLocalSpec;
 	CString sPathVrsShareUp, sPathVrsBufUp;
 	CString sPathVsShareUp;
 	CString sPathAoiDn, sPathAoiDnCurrInfo, sPathAoiDnVrsData, sPathAoiDnOffset;
+	CString sPathAoiDnLocalSpec;
 	CString sPathVrsShareDn, sPathVrsBufDn;
 	CString sPathVsShareDn;
 
@@ -650,10 +652,12 @@ struct stSystem
 
 		sPathAoiUp = _T(""); sPathAoiUpCurrInfo = _T("");
 		sPathAoiUpOffset = _T(""); sPathAoiUpVrsData = _T("");
+		sPathAoiUpLocalSpec = _T("");
 		sPathVrsShareUp = _T(""); sPathVrsBufUp = _T("");
 		sPathVsShareUp = _T("");
 		sPathAoiDn = _T(""); sPathAoiDnCurrInfo = _T("");
 		sPathAoiDnOffset = _T(""); sPathAoiDnVrsData = _T("");
+		sPathAoiDnLocalSpec = _T("");
 		sPathVrsShareDn = _T(""); sPathVrsBufDn = _T("");
 		sPathVsShareDn = _T("");
 
@@ -1519,7 +1523,15 @@ struct stListBuf
 
 };
 
+struct stAoiSpec
+{
+	int nOpenGraySpec;
 
+	stAoiSpec()
+	{
+		nOpenGraySpec = 0;
+	}
+};
 
 
 

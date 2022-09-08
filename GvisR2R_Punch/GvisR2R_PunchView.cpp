@@ -98,8 +98,8 @@ CGvisR2R_PunchView::CGvisR2R_PunchView()
 	m_sFixMsg[1] = _T("");
 
 	m_bWaitClrDispMsg = FALSE;
-	m_bOpenShareUp = TRUE;
-	m_bOpenShareDn = TRUE;
+	//m_bOpenShareUp = TRUE;
+	//m_bOpenShareDn = TRUE;
 
 	m_bStopFeeding = FALSE;
 
@@ -2761,7 +2761,7 @@ BOOL CGvisR2R_PunchView::ChkBufUp(int* pSerial, int &nTot)
 	{
 		pDoc->m_bBufEmpty[0] = TRUE;
 		if (!pDoc->m_bBufEmptyF[0])
-			pDoc->m_bBufEmptyF[0] = TRUE;
+			pDoc->m_bBufEmptyF[0] = TRUE;		// 최초 한번 버퍼가 비어있으면(초기화를 하고 난 이후) TRUE.
 
 		return FALSE; // pcr파일이 존재하지 않음.
 	}
@@ -7601,7 +7601,7 @@ BOOL CGvisR2R_PunchView::IsAuto()
 	return FALSE;
 }
 
-void CGvisR2R_PunchView::Shift2Buf()
+void CGvisR2R_PunchView::Shift2Buf()	// 버퍼폴더의 마지막 시리얼과 Share폴더의 시리얼이 연속인지 확인 후 옮김.
 {
 	int nLastListBuf;
 	if (m_nShareUpS > 0)
@@ -7634,12 +7634,12 @@ void CGvisR2R_PunchView::Shift2Buf()
 	{
 		if (m_nShareDnS > 0)
 		{
-			// 			nLastListBuf = pDoc->m_ListBuf[1].GetLast();
-			// 			if(nLastListBuf > 0 && nLastListBuf < 5)
-			// 			{
-			// 				if(nLastListBuf > m_nShareDnS)
-			// 					pDoc->m_ListBuf[1].Clear();
-			// 			}
+ 			//nLastListBuf = pDoc->m_ListBuf[1].GetLast();
+ 			//if(nLastListBuf > 0 && nLastListBuf < 5)
+ 			//{
+ 			//	if(nLastListBuf > m_nShareDnS)
+ 			//		pDoc->m_ListBuf[1].Clear();
+ 			//}
 			nLastListBuf = pDoc->m_ListBuf[1].GetLast();
 			if (nLastListBuf > 0 && m_nShareDnS > 1)
 			{
@@ -7654,22 +7654,19 @@ void CGvisR2R_PunchView::Shift2Buf()
 			m_bLoadShare[1] = TRUE;
 			pDoc->m_ListBuf[1].Push(m_nShareDnS);
 
-			//if(m_bChkLastProcVs)
+			if (m_nShareDnS == m_nAoiLastSerial[0] - 3 && m_nAoiLastSerial[0] > 0)
 			{
-				//if(m_nShareDnS == GetLotEndSerial()-3)
-				if (m_nShareDnS == m_nAoiLastSerial[0] - 3 && m_nAoiLastSerial[0] > 0)
+				if (IsVsDn())
 				{
-					if (IsVsDn())
-					{
-						SetDummyDn();
-						Sleep(30);
-						SetDummyDn();
-						Sleep(30);
-						SetDummyDn();
-						Sleep(30);
-					}
+					SetDummyDn();
+					Sleep(30);
+					SetDummyDn();
+					Sleep(30);
+					SetDummyDn();
+					Sleep(30);
 				}
 			}
+
 		}
 	}
 
@@ -9698,12 +9695,12 @@ void CGvisR2R_PunchView::InitAuto(BOOL bInit)
 
 	pView->m_nDebugStep = 14; pView->DispThreadTick();
 	InitIoWrite();
-	pView->m_nDebugStep = 15; pView->DispThreadTick();
-	OpenShareUp();
-	pView->m_nDebugStep = 16; pView->DispThreadTick();
-	OpenShareDn();
+	//pView->m_nDebugStep = 15; pView->DispThreadTick();
+	//OpenShareUp();
+	//pView->m_nDebugStep = 16; pView->DispThreadTick();
+	//OpenShareDn();
 	pView->m_nDebugStep = 17; pView->DispThreadTick();
-	SetTest(FALSE);
+	SetTest(FALSE);	// 검사부 상/하 검사 시작 (Off)
 	pView->m_nDebugStep = 18; pView->DispThreadTick();
 	if (m_pDlgMenu01)
 	{
@@ -9823,7 +9820,7 @@ void CGvisR2R_PunchView::InitAuto(BOOL bInit)
 
 }
 
-void CGvisR2R_PunchView::SetListBuf()
+void CGvisR2R_PunchView::SetListBuf()	// pDoc->m_ListBuf에 버퍼 폴더의 시리얼번호를 가지고 재갱신함.
 {
 	pDoc->m_ListBuf[0].Clear();
 	if (ChkBufUp(m_pBufSerial[0], m_nBufTot[0]))
@@ -12492,25 +12489,25 @@ BOOL CGvisR2R_PunchView::IsJogRtUp1()
 	return bOn;
 }
 
-void CGvisR2R_PunchView::OpenShareUp(BOOL bOpen)
-{
-	m_bOpenShareUp = bOpen;
-}
+//void CGvisR2R_PunchView::OpenShareUp(BOOL bOpen)
+//{
+//	m_bOpenShareUp = bOpen;
+//}
 
-BOOL CGvisR2R_PunchView::IsOpenShareUp()
-{
-	return m_bOpenShareUp;
-}
+//BOOL CGvisR2R_PunchView::IsOpenShareUp()
+//{
+//	return m_bOpenShareUp;
+//}
 
-void CGvisR2R_PunchView::OpenShareDn(BOOL bOpen)
-{
-	m_bOpenShareDn = bOpen;
-}
+//void CGvisR2R_PunchView::OpenShareDn(BOOL bOpen)
+//{
+//	m_bOpenShareDn = bOpen;
+//}
 
-BOOL CGvisR2R_PunchView::IsOpenShareDn()
-{
-	return m_bOpenShareDn;
-}
+//BOOL CGvisR2R_PunchView::IsOpenShareDn()
+//{
+//	return m_bOpenShareDn;
+//}
 
 
 void CGvisR2R_PunchView::SwAoiEmg(BOOL bOn)
@@ -18429,7 +18426,7 @@ void CGvisR2R_PunchView::Mk4PtAlignPt1()
 						m_nMkStAuto++;
 				}
 			}
-										   break;
+			break;
 		case MK_ST + (Mk4PtIdx::Move1Cam1) + 1:
 			if (IsRun())
 				m_nMkStAuto++;
@@ -19817,7 +19814,7 @@ BOOL CGvisR2R_PunchView::ReloadRst()
 	{
 		if (pDoc->m_pReelMap)
 		{
-			nRatio[0] = pDoc->m_pReelMap->GetPregressReloadRst();
+			nRatio[0] = pDoc->m_pReelMap->GetProgressReloadRst();
 			bDone[0] = pDoc->m_pReelMap->IsDoneReloadRst();
 		}
 		else
@@ -19827,7 +19824,7 @@ BOOL CGvisR2R_PunchView::ReloadRst()
 
 		if (pDoc->m_pReelMapUp)
 		{
-			nRatio[1] = pDoc->m_pReelMapUp->GetPregressReloadRst();
+			nRatio[1] = pDoc->m_pReelMapUp->GetProgressReloadRst();
 			bDone[1] = pDoc->m_pReelMapUp->IsDoneReloadRst();
 		}
 		else
@@ -19839,7 +19836,7 @@ BOOL CGvisR2R_PunchView::ReloadRst()
 		{
 			if (pDoc->m_pReelMapDn)
 			{
-				nRatio[2] = pDoc->m_pReelMapDn->GetPregressReloadRst();
+				nRatio[2] = pDoc->m_pReelMapDn->GetProgressReloadRst();
 				bDone[2] = pDoc->m_pReelMapDn->IsDoneReloadRst();
 			}
 			else
@@ -19849,7 +19846,7 @@ BOOL CGvisR2R_PunchView::ReloadRst()
 
 			if (pDoc->m_pReelMapAllUp)
 			{
-				nRatio[3] = pDoc->m_pReelMapAllUp->GetPregressReloadRst();
+				nRatio[3] = pDoc->m_pReelMapAllUp->GetProgressReloadRst();
 				bDone[3] = pDoc->m_pReelMapAllUp->IsDoneReloadRst();
 			}
 			else
@@ -19859,7 +19856,7 @@ BOOL CGvisR2R_PunchView::ReloadRst()
 
 			if (pDoc->m_pReelMapAllDn)
 			{
-				nRatio[4] = pDoc->m_pReelMapAllDn->GetPregressReloadRst();
+				nRatio[4] = pDoc->m_pReelMapAllDn->GetProgressReloadRst();
 				bDone[4] = pDoc->m_pReelMapAllDn->IsDoneReloadRst();
 			}
 			else
@@ -22480,4 +22477,22 @@ BOOL CGvisR2R_PunchView::GetDtsPieceOut(int nSerial, int* pPcsOutIdx, int& nTotP
 	}
 
 	return bRtn;
+}
+
+BOOL CGvisR2R_PunchView::LoadAoiSpec()
+{
+	return  pDoc->LoadAoiSpec();
+}
+
+BOOL CGvisR2R_PunchView::LoadMasterSpec()
+{
+	//int i;
+	//CString sPath, sItem;
+	//CString sSpecDir = pDoc->WorkingInfo.System.sPathCamSpecDir;
+	//CString sModel = pDoc->WorkingInfo.LastJob.sModelUp;
+	//CString sLayer = pDoc->WorkingInfo.LastJob.sLayerUp;
+
+	//sPath.Format(_T("%s%s\\%s.ini"), sSpecDir, sModel, sLayer);
+
+	return TRUE;
 }

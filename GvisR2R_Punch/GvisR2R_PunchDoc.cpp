@@ -973,6 +973,14 @@ BOOL CGvisR2R_PunchDoc::LoadWorkingInfo()
 		WorkingInfo.System.sPathAoiUpVrsData = CString(_T(""));
 	}
 
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("AoiUpLocalSpec"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.sPathAoiUpLocalSpec = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("AoiUpLocalSpec 폴더가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathAoiUpLocalSpec = CString(_T(""));
+	}
+
 	if (0 < ::GetPrivateProfileString(_T("System"), _T("AOIDnPath"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.System.sPathAoiDn = CString(szData);
 	else
@@ -1003,6 +1011,14 @@ BOOL CGvisR2R_PunchDoc::LoadWorkingInfo()
 	{
 		AfxMessageBox(_T("AOIDn VRSData 폴더가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
 		WorkingInfo.System.sPathAoiDnVrsData = CString(_T(""));
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("System"), _T("AoiDnLocalSpec"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.System.sPathAoiDnLocalSpec = CString(szData);
+	else
+	{
+		AfxMessageBox(_T("AoiDnLocalSpec 폴더가 설정되어 있지 않습니다."), MB_ICONWARNING | MB_OK);
+		WorkingInfo.System.sPathAoiDnLocalSpec = CString(_T(""));
 	}
 
 
@@ -4186,7 +4202,7 @@ BOOL CGvisR2R_PunchDoc::GetAoiInfoUp(int nSerial, int *pNewLot, BOOL bFromBuf) /
 	{
 		strFileData.Format(_T("PCR파일이 설정되지 않았습니다."));
 		pView->MsgBox(strFileData);
-		// 		AfxMessageBox(strFileData);
+		//AfxMessageBox(strFileData);
 		return(FALSE);
 	}
 
@@ -4270,19 +4286,19 @@ BOOL CGvisR2R_PunchDoc::GetAoiInfoUp(int nSerial, int *pNewLot, BOOL bFromBuf) /
 		return FALSE;
 	}
 
-	if (WorkingInfo.LastJob.sModelUp != Status.PcrShare[0].sModel || WorkingInfo.LastJob.sLayerUp != Status.PcrShare[0].sLayer || WorkingInfo.LastJob.sLotUp != Status.PcrShare[0].sLot)
-	{
-		if (m_bBufEmptyF[0])
-		{
-			if (!m_bBufEmpty[0])
-				m_bBufEmptyF[0] = FALSE;
+	//if (WorkingInfo.LastJob.sModelUp != Status.PcrShare[0].sModel || WorkingInfo.LastJob.sLayerUp != Status.PcrShare[0].sLayer || WorkingInfo.LastJob.sLotUp != Status.PcrShare[0].sLot)
+	//{
+	//	if (m_bBufEmptyF[0])	// 버퍼 초기화를 한 이후에 신규 pcr파일의 모델, 레이어, 로트가 바뀌었으면
+	//	{
+	//		//if (!m_bBufEmpty[0])
+	//			m_bBufEmptyF[0] = FALSE;
 
-			WorkingInfo.LastJob.sModelUp = Status.PcrShare[0].sModel;
-			WorkingInfo.LastJob.sLayerUp = Status.PcrShare[0].sLayer;
-			WorkingInfo.LastJob.sLotUp = Status.PcrShare[0].sLot;
-			return TRUE;
-		}
-	}
+	//		WorkingInfo.LastJob.sModelUp = Status.PcrShare[0].sModel;
+	//		WorkingInfo.LastJob.sLayerUp = Status.PcrShare[0].sLayer;
+	//		WorkingInfo.LastJob.sLotUp = Status.PcrShare[0].sLot;
+	//		return TRUE;
+	//	}
+	//}
 
 	if(bFromBuf)
 	{
@@ -4296,6 +4312,9 @@ BOOL CGvisR2R_PunchDoc::GetAoiInfoUp(int nSerial, int *pNewLot, BOOL bFromBuf) /
 			//else
 			//{
 				WorkingInfo.LastJob.sLotUp = Status.PcrShare[0].sLot;
+				WorkingInfo.LastJob.sModelUp = Status.PcrShare[0].sModel;
+				WorkingInfo.LastJob.sLayerUp = Status.PcrShare[0].sLayer;
+
 				SetModelInfoUp();
 				pView->OpenReelmapUp(); // At Start...
 				pView->SetPathAtBufUp();
@@ -4416,19 +4435,19 @@ BOOL CGvisR2R_PunchDoc::GetAoiInfoDn(int nSerial, int *pNewLot, BOOL bFromBuf) /
 		return FALSE;
 	}
 
-	if (WorkingInfo.LastJob.sModelDn != Status.PcrShare[1].sModel || WorkingInfo.LastJob.sLayerDn != Status.PcrShare[1].sLayer || WorkingInfo.LastJob.sLotDn != Status.PcrShare[1].sLot)
-	{
-		if (m_bBufEmptyF[1])
-		{
-			if (!m_bBufEmpty[1])
-				m_bBufEmptyF[1] = FALSE;
+	//if (WorkingInfo.LastJob.sModelDn != Status.PcrShare[1].sModel || WorkingInfo.LastJob.sLayerDn != Status.PcrShare[1].sLayer || WorkingInfo.LastJob.sLotDn != Status.PcrShare[1].sLot)
+	//{
+	//	if (m_bBufEmptyF[1])
+	//	{
+	//		if (!m_bBufEmpty[1])
+	//			m_bBufEmptyF[1] = FALSE;
 
-			WorkingInfo.LastJob.sModelDn = Status.PcrShare[1].sModel;
-			WorkingInfo.LastJob.sLayerDn = Status.PcrShare[1].sLayer;
-			WorkingInfo.LastJob.sLotDn = Status.PcrShare[1].sLot;
-			return TRUE;
-		}
-	}
+	//		WorkingInfo.LastJob.sModelDn = Status.PcrShare[1].sModel;
+	//		WorkingInfo.LastJob.sLayerDn = Status.PcrShare[1].sLayer;
+	//		WorkingInfo.LastJob.sLotDn = Status.PcrShare[1].sLot;
+	//		return TRUE;
+	//	}
+	//}
 
 	if (bFromBuf)
 	{
@@ -4442,6 +4461,8 @@ BOOL CGvisR2R_PunchDoc::GetAoiInfoDn(int nSerial, int *pNewLot, BOOL bFromBuf) /
 			//else
 			//{
 				WorkingInfo.LastJob.sLotDn = Status.PcrShare[1].sLot;
+				WorkingInfo.LastJob.sModelDn = Status.PcrShare[1].sModel;
+				WorkingInfo.LastJob.sLayerDn = Status.PcrShare[1].sLayer;
 				SetModelInfoDn();
 
 				pView->OpenReelmapDn(); // At Start...
@@ -5885,7 +5906,7 @@ int CGvisR2R_PunchDoc::GetLastSerial()
 	return (nLastShot);
 }
 
-int CGvisR2R_PunchDoc::GetLastShotMk()
+int CGvisR2R_PunchDoc::GetLastShotMk()	// m_pDlgFrameHigh에서 얻거나 없으면, sPathOldFile폴더의 ReelMapDataDn.txt에서 _T("Info"), _T("Marked Shot") 찾음.
 {
 	int nLastShot = 0;
 	if (pView->m_pDlgFrameHigh)
@@ -7097,15 +7118,15 @@ void CGvisR2R_PunchDoc::SetLastSerial(int nSerial)
 		// 		if(m_pReelMap)
 		// 			m_pReelMap->SetLastSerial(nSerial);
 		if (m_pReelMapUp)
-			m_pReelMapUp->SetLastSerial(nSerial);
+			m_pReelMapUp->SetLastSerial(nSerial);					// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 		if (bDualTest)
 		{
 			if (m_pReelMapDn)
-				m_pReelMapDn->SetLastSerial(nSerial);
+				m_pReelMapDn->SetLastSerial(nSerial);				// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 			if (m_pReelMapAllUp)
-				m_pReelMapAllUp->SetLastSerial(nSerial);
+				m_pReelMapAllUp->SetLastSerial(nSerial);			// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 			if (m_pReelMapAllDn)
-				m_pReelMapAllDn->SetLastSerial(nSerial);
+				m_pReelMapAllDn->SetLastSerial(nSerial);			// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 		}
 	}
 }
@@ -8325,4 +8346,30 @@ BOOL CGvisR2R_PunchDoc::DirectoryExists(LPCTSTR szPath)
 
 	return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
 		(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+}
+
+
+BOOL CGvisR2R_PunchDoc::LoadAoiSpec()
+{
+	CString sPath, sData, sMsg;
+	TCHAR szData[200];
+
+	CString sSpecDir = WorkingInfo.System.sPathAoiUpLocalSpec;
+	CString sModel = WorkingInfo.LastJob.sModelUp;
+	CString sLayer = WorkingInfo.LastJob.sLayerUp;
+
+	sPath.Format(_T("%s%s\\%s.LSp"), sSpecDir, sModel, sLayer);
+
+	//strSpec.Format(_T("%d"), SpecData.nOpenGraySpec);
+	//::WritePrivateProfileString(_T("Model_Spec_Loc"), _T("OpenGray"), strSpec, strPath);
+	if (0 < ::GetPrivateProfileString(_T("Model_Spec_Loc"), _T("OpenGray"), NULL, szData, sizeof(szData), sPath))
+		m_stAoiSpec.nOpenGraySpec = _ttoi(szData);
+	else
+	{
+		sMsg.Format(_T("%s\r\n OpenGray 설정값을 읽지 못했습니다."));
+		AfxMessageBox(sMsg, MB_ICONWARNING | MB_OK);
+		m_stAoiSpec.nOpenGraySpec = 0;
+	}
+
+	return TRUE;
 }

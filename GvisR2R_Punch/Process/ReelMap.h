@@ -26,25 +26,28 @@
 
 class CReelMap : public CWnd
 {
-	BOOL m_FixPcs[FIX_PCS_SHOT_MAX][FIX_PCS_COL_MAX][FIX_PCS_ROW_MAX]; // [Col][Row]
-	int m_FixPcsPrev[FIX_PCS_COL_MAX][FIX_PCS_ROW_MAX]; // [Col][Row]
-	int m_nPrevSerial[2]; // [0] : -- , [1] : ++
-	int m_nPnlBuf;
-	short ***m_pPnlBuf;	// DefCode 3D Array : [nSerial][nRow][nCol]
-	int m_nTotPcs, m_nGoodPcs, m_nBadPcs, m_nDef[MAX_DEF];	// [DefCode] : Total Num.
-	int m_nDefStrip[MAX_STRIP_NUM], m_nDefPerStrip[MAX_STRIP_NUM][MAX_DEF];
-	int m_nStripOut[MAX_STRIP_NUM], m_nTotStOut;
-	CString m_sPathShare, m_sPathBuf;
+	BOOL m_FixPcs[FIX_PCS_SHOT_MAX][FIX_PCS_COL_MAX][FIX_PCS_ROW_MAX];		// [Col][Row]
+	int m_FixPcsPrev[FIX_PCS_COL_MAX][FIX_PCS_ROW_MAX];						// [Col][Row]
+	int m_nPrevSerial[2];													// [0] : -- , [1] : ++
+	int m_nPnlBuf;															// 메모리에 할당된 총 Shot수
+	short ***m_pPnlBuf;														// DefCode 3D Array : [nSerial][nRow][nCol]
+	int m_nTotPcs, m_nGoodPcs, m_nBadPcs, m_nDef[MAX_DEF];					// [DefCode] : Total Num.
+	int m_nDefStrip[MAX_STRIP_NUM];											// Strip별 불량수
+	int m_nDefPerStrip[MAX_STRIP_NUM][MAX_DEF];								// Strip별 불량종류에 대한 불량수
+	int m_nStripOut[MAX_STRIP_NUM];											// Strip별 Strip Out수
+	int m_nTotStOut;														// 총 Strip Out수
+	double m_dAdjRatio;														// Master Image의 Pixel 해상도에 따른 Reelmap에서의 식별용 간격 비율.
+	int m_nIdxDefInfo;														// MAX_DEFINFO에 들어가는 정보의 Index.
+	int m_nWritedSerial;													// In Share folder Serial.
+	BOOL m_bContFixDef;														// 연속고정불량발생
+	CString m_sPathShare;													// Share에서 pcr파일을 읽어서 설정한 MarkedFile 폴더내 릴맵저장위치
+	CString m_sPathBuf;														// 버퍼에서 pcr파일을 읽어서 설정한 MarkedFile 폴더내 릴맵저장위치
 	CString m_sPathYield;
-	double m_dAdjRatio; // Master Image의 Pixel 해상도에 따른 Reelmap에서의 식별용 간격 비율.
-	int m_nIdxDefInfo;	// MAX_DEFINFO에 들어가는 정보의 Index.
-	int m_nWritedSerial; // In Share folder Serial.
-	BOOL m_bContFixDef;
 
 	//int m_nCntFixPcs;
 
 	void LoadConfig();
-	BOOL UpdateRst(int nSerial);
+	BOOL UpdateRst(int nSerial);											// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 	BOOL MakeDir();
 	BOOL MakeDir(CString sModel, CString sLayer, CString sLot);
 	BOOL MakeDirUser();
@@ -172,17 +175,22 @@ public:
 	void RestoreReelmap();
 
 	BOOL m_bThreadAliveReloadRst, m_bRtnThreadReloadRst, m_bDoneReloadRst;
-	int m_nLastOnThread, m_nPregressReloadRst, m_nTotalPregressReloadRst;
-	CThreadTask m_ThreadTaskReloadRst; // CThreadTask class, handles the threading code
-	BOOL ReloadRst();
-	BOOL ReloadRst(int nTo);
+	int m_nLastOnThread;
+	int m_nProgressReloadRst;				// ProgressReloadRst에서 현재 진행량
+	int m_nTotalProgressReloadRst;			// ProgressReloadRst에서 총 진행량
+	CThreadTask m_ThreadTaskReloadRst;		// CThreadTask class, handles the threading code
+	BOOL ReloadRst();						// StartThreadReloadRst();에서 스레드를 수행.
+	BOOL ReloadRst(int nTo);				// StartThreadReloadRst();에서 실행
 	BOOL IsDoneReloadRst();
-	int GetPregressReloadRst();
+	int GetProgressReloadRst();
 	void StartThreadReloadRst();
 	static BOOL ThreadProcReloadRst(LPVOID lpContext);
 	void StopThreadReloadRst();
 
 	BOOL UpdateYield(int nSerial);
+
+	void LoadReelmap(int nTo);				// StartThreadReloadRst();에서 실행
+	void ModifyReelmap(int nTo);				// StartThreadReloadRst();에서 실행
 
 // Overrides
 	// ClassWizard generated virtual function overrides

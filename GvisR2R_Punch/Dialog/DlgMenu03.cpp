@@ -3095,7 +3095,7 @@ BOOL CDlgMenu03::DoReset()
 		}
 		else
 		{
-			pView->SetListBuf();
+			pView->SetListBuf();	// pDoc->m_ListBuf[]에 버퍼 폴더의 시리얼번호를 가지고 재갱신함.
 		}
 		pView->m_nDebugStep = 17; pView->DispThreadTick();
 		

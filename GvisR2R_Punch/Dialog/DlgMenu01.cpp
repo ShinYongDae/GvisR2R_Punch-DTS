@@ -2929,7 +2929,7 @@ void CDlgMenu01::UpdateTotVel(CString sVel)
 	}
 }
 
-void CDlgMenu01::UpdateRst()
+void CDlgMenu01::UpdateRst() // Menu01 화면에서의 수율정보를 업데이트함.
 {
 	if(!pDoc->m_pReelMap)
 		return;

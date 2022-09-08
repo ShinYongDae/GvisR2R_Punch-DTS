@@ -150,8 +150,8 @@ CReelMap::CReelMap(int nLayer, int nPnl, int nPcs, int nDir)
 	
 	m_bThreadAliveReloadRst = FALSE;
 	m_nLastOnThread = 0;
-	m_nTotalPregressReloadRst = 0;
-	m_nPregressReloadRst = 0;
+	m_nTotalProgressReloadRst = 0;
+	m_nProgressReloadRst = 0;
 	m_bDoneReloadRst = FALSE;
 
 	m_nSelMarkingPnl = 2;
@@ -1660,7 +1660,7 @@ CString CReelMap::GetLotEd()
 	return sLot;
 }
 
-void CReelMap::SetLastSerial(int nSerial)
+void CReelMap::SetLastSerial(int nSerial) 	// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 {
 	if(nSerial <= 0)
 	{
@@ -1688,7 +1688,7 @@ void CReelMap::SetLastSerial(int nSerial)
 		sData.Format(_T("%04d-%02d-%02d, %02d:%02d:%02d"), nYear, nMonth, nDay, nHour, nMin, nSec);
 	::WritePrivateProfileString(_T("Info"), _T("Marked Date"), sData, m_sPathBuf);
 
-	UpdateRst(nSerial);
+	UpdateRst(nSerial);	// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 }
 
 void CReelMap::SetCompletedSerial(int nSerial)
@@ -2339,19 +2339,13 @@ BOOL CReelMap::UpdateYield(int nSerial)
 
 
 
-BOOL CReelMap::UpdateRst(int nSerial)
+BOOL CReelMap::UpdateRst(int nSerial)		// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 {
 	if(nSerial <= 0)
 	{
 		AfxMessageBox(_T("Serial Error.65"));
 		return FALSE;
 	}
-
-	//if (!UpdateYield(nSerial))
-	//{
-	//	AfxMessageBox(_T("Serial Error.66"));
-	//	return FALSE;
-	//}
 
 	int k, i;
 	CString strMenu, strItem, sCode, sDefNum, strData;
@@ -2399,101 +2393,6 @@ BOOL CReelMap::UpdateRst(int nSerial)
 	strData.Format(_T("%d"), m_stYield.nTotSriptOut);
 	::WritePrivateProfileString(_T("StripOut"), _T("Total"), strData, m_sPathBuf);
 
-/*
-	CString sCode, sDefNum, strData, strMenu, strItem;
-	int nPnl, nRow, nCol, nDefCode , nTot, nGood, nDef, k, i, nStrip;
-	int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-	int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
-	int nTotPcs = nNodeX * nNodeY;
-	int nStripPcs = nTotPcs / MAX_STRIP_NUM;
-
-	int nDefStrip[4];
-	nDefStrip[0] = 0; nDefStrip[1] = 0; nDefStrip[2] = 0; nDefStrip[3] = 0;
-	
-	nPnl = nSerial - 1;
-
-	if(nPnl>=0)
-	{
-		for(nRow=0; nRow<nNodeY; nRow++)
-		{
-			for(nCol=0; nCol<nNodeX; nCol++)
-			{
-				if(m_pPnlBuf)
-				{
-					nDefCode = (int)m_pPnlBuf[nPnl][nRow][nCol] < 0 ? 0 : (int)m_pPnlBuf[nPnl][nRow][nCol];
-					m_nDef[nDefCode]++;
-
-					nStrip = int(nRow / (nNodeY/MAX_STRIP_NUM));
-					if(nStrip > -1 && nStrip < 4)
-					{
-						if(nDefCode > 0)
-						{
-							nDefStrip[nStrip]++;
-							m_nDefStrip[nStrip]++;
-							m_nDefPerStrip[nStrip][nDefCode]++;
-						}
-					}
-				}
-			}
-		}
-	}
-	else
-		return FALSE;
-
-
-	double dStOutRto = _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0; // atof
-	for(nStrip=0; nStrip<4; nStrip++)
-	{
-		if(nDefStrip[nStrip] >= nStripPcs * dStOutRto)
-			m_nStripOut[nStrip]++;
-	}
-
-
-	nTot = nNodeX * nNodeY * nSerial;
-	nDef = 0;
-	for(i=1; i<MAX_DEF; i++)
-	{
-		nDef += m_nDef[i];
-		sCode.Format(_T("%d"), i);
-		sDefNum.Format(_T("%d"), m_nDef[i]);
-		::WritePrivateProfileString(_T("Info"), sCode, sDefNum, m_sPathBuf);
-	}
-	nGood = nTot - nDef;
-
-	strData.Format(_T("%d"), nTot);
-	::WritePrivateProfileString(_T("Info"), _T("Total Pcs"), strData, m_sPathBuf);
-	strData.Format(_T("%d"), nGood);
-	::WritePrivateProfileString(_T("Info"), _T("Good Pcs"), strData, m_sPathBuf);
-	strData.Format(_T("%d"), nDef);
-	::WritePrivateProfileString(_T("Info"), _T("Bad Pcs"), strData, m_sPathBuf);
-
-	int nTotStOut = 0;
-	for(k=0; k<4; k++)
-	{
-		strMenu.Format(_T("Strip%d"), k);
-		strData.Format(_T("%d"), m_nDefStrip[k]);
-		::WritePrivateProfileString(_T("Info"), strMenu, strData, m_sPathBuf);
-		
-		strMenu.Format(_T("%d"), k);
-		strData.Format(_T("%d"), m_nStripOut[k]);
-		::WritePrivateProfileString(_T("StripOut"), strMenu, strData, m_sPathBuf);
-		nTotStOut += m_nStripOut[k];
-
-		for(i=1; i<MAX_DEF; i++)
-		{
-			strItem.Format(_T("Strip%d"), k);
-			strMenu.Format(_T("%d"), i);
-			strData.Format(_T("%d"), m_nDefPerStrip[k][i]);
-			::WritePrivateProfileString(strItem, strMenu, strData, m_sPathBuf);
-		}			
-	}
-	strData.Format(_T("%d"), nTotStOut);
-	::WritePrivateProfileString(_T("StripOut"), _T("Total"), strData, m_sPathBuf);
-
-	m_nTotPcs = nTot;
-	m_nGoodPcs = nGood;
-	m_nBadPcs = nDef;
-*/
 	return TRUE;
 }
 
@@ -3699,7 +3598,7 @@ BOOL CReelMap::ThreadProcReloadRst( LPVOID lpContext )
 	pThread->m_bThreadAliveReloadRst = TRUE;	
 	
 	pThread->m_cs.Lock();
-	int nSerial = pDoc->GetLastShotMk();
+	int nSerial = pDoc->GetLastShotMk();	// m_pDlgFrameHigh에서 얻거나 없으면, sPathOldFile폴더의 ReelMapDataDn.txt에서 _T("Info"), _T("Marked Shot") 찾음.
 	pThread->m_bRtnThreadReloadRst = pThread->ReloadRst(pThread->m_nLastOnThread);
 	pThread->m_cs.Unlock();
 
@@ -3714,13 +3613,13 @@ BOOL CReelMap::IsDoneReloadRst()
 	return m_bDoneReloadRst;
 }
 
-int CReelMap::GetPregressReloadRst()
+int CReelMap::GetProgressReloadRst()
 {
-	if(m_nTotalPregressReloadRst <= 0)
+	if(m_nTotalProgressReloadRst <= 0)
 		return 0;
 
-	double dA = (double)m_nPregressReloadRst;
-	double dB = (double)m_nTotalPregressReloadRst;
+	double dA = (double)m_nProgressReloadRst;
+	double dB = (double)m_nTotalProgressReloadRst;
 	double dC = 100.0 * dA / dB;
 	int nC = int(dC);
 
@@ -3733,15 +3632,15 @@ BOOL CReelMap::ReloadRst()
 	BOOL bRtn;
 	
 	//nSerial = pDoc->GetLastShotMk();
-	m_nLastOnThread = pDoc->GetLastShotMk();
+	m_nLastOnThread = pDoc->GetLastShotMk();	// m_pDlgFrameHigh에서 얻거나 없으면, sPathOldFile폴더의 ReelMapDataDn.txt에서 _T("Info"), _T("Marked Shot") 찾음.
 
 	//if(nSerial > 0)
 	if(m_nLastOnThread > 0)
 	{
 		//bRtn = ReloadRst(nSerial);
 		m_bDoneReloadRst = FALSE;
-		m_nPregressReloadRst = 0;
-		m_nTotalPregressReloadRst = 0;
+		m_nProgressReloadRst = 0;
+		m_nTotalProgressReloadRst = 0;
 		StartThreadReloadRst();
 		bRtn = TRUE;
 	}
@@ -3751,75 +3650,53 @@ BOOL CReelMap::ReloadRst()
 	return bRtn;
 }
 
-BOOL CReelMap::ReloadRst(int nTo)
+void CReelMap::LoadReelmap(int nTo)
 {
-	if(!m_pPnlBuf)
-	{
-		AfxMessageBox(_T("Memory not alloced.- PnlBuf"));
-		m_bDoneReloadRst = TRUE;
-		return FALSE;
-	}
-
 	int nPnl, nRow, nCol, nDefCode, nStrip, nC, nR, i;
 	CString sPnl, sRow, sVal;
-	//char sep[] = {",/;\r\n\t"};
-	//char szData[MAX_PATH];
 	TCHAR sep[] = { _T(",/;\r\n\t") };
 	TCHAR szData[MAX_PATH];
+	int nDefStrip[MAX_STRIP_NUM];
 
-	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
-	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
 	int nNodeX, nNodeY;
 	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
-	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+
 	int nTotPcs = nNodeX * nNodeY;
 	int nStripPcs = nTotPcs / MAX_STRIP_NUM;
 
-	int nDefStrip[MAX_STRIP_NUM];
-	
-
-//  InitRst();
-	ClrRst();
-	m_nTotPcs = 0;
-	m_nGoodPcs = 0;
-	m_nBadPcs = 0;
-	
-	m_nTotalPregressReloadRst = nTo*(nNodeX*nNodeY+4)+4*MAX_DEF+MAX_DEF;
-	m_nPregressReloadRst=0;
-
-	for(nPnl=0; nPnl<nTo; nPnl++)
+	for (nPnl = 0; nPnl < nTo; nPnl++)						// 릴맵 총 Shot에 대한 불량피스 로딩.
 	{
-		for(i=0; i<MAX_STRIP_NUM; i++)
+		for (i = 0; i < MAX_STRIP_NUM; i++)
 			nDefStrip[i] = 0;
 
-		for(nRow=0; nRow<nNodeX; nRow++)
+		for (nRow = 0; nRow < nNodeX; nRow++)
 		{
-			sPnl.Format(_T("%d"), nPnl+1);
+			sPnl.Format(_T("%d"), nPnl + 1);
 			sRow.Format(_T("%02d"), nRow);
-// 			sRow.Format(_T("%d"), nRow+1);
+			// 			sRow.Format(_T("%d"), nRow+1);
 			if (0 < ::GetPrivateProfileString(sPnl, sRow, NULL, szData, sizeof(szData), m_sPathBuf))
 			{
-				for(nCol=0; nCol<nNodeY; nCol++)
+				for (nCol = 0; nCol < nNodeY; nCol++)		// 릴맵 text방향에서 col방향(strip4 --> strip1)은 NodeY방향임.
 				{
-					m_nPregressReloadRst++;
+					m_nProgressReloadRst++;					// ProgressReloadRst에서 현재 진행량
 
-					if(nCol==0)
-						sVal = _tcstok(szData,sep);
+					if (nCol == 0)
+						sVal = _tcstok(szData, sep);
 					else
-						sVal = _tcstok(NULL,sep);//strtok
+						sVal = _tcstok(NULL, sep);//strtok
 
 					nDefCode = _tstoi(sVal);
 
-					nR = (nNodeY-1)-nCol;
+					nR = (nNodeY - 1) - nCol;
 					nC = nRow;
 
 					m_pPnlBuf[nPnl][nR][nC] = (short)nDefCode;
 					m_nDef[nDefCode]++;
 
 					nStrip = int(nR / (nNodeY / MAX_STRIP_NUM));
-					if(nStrip > -1 && nStrip < MAX_STRIP_NUM)
+					if (nStrip > -1 && nStrip < MAX_STRIP_NUM)
 					{
-						if(nDefCode > 0)
+						if (nDefCode > 0)
 						{
 							nDefStrip[nStrip]++;
 							m_nDefStrip[nStrip]++;
@@ -3828,7 +3705,7 @@ BOOL CReelMap::ReloadRst(int nTo)
 					}
 
 					m_nTotPcs++;
-					if(nDefCode > 0)
+					if (nDefCode > 0)
 						m_nBadPcs++;
 					else
 						m_nGoodPcs++;
@@ -3837,24 +3714,24 @@ BOOL CReelMap::ReloadRst(int nTo)
 		}
 
 		double dStOutRto = _tstof(pDoc->WorkingInfo.LastJob.sStripOutRatio) / 100.0; //atof
-		for(nStrip=0; nStrip<MAX_STRIP_NUM; nStrip++)
+		for (nStrip = 0; nStrip < MAX_STRIP_NUM; nStrip++)		// 열별 스트립 아웃 수 카운트
 		{
-			m_nPregressReloadRst++;
+			m_nProgressReloadRst++;
 
-			if(nDefStrip[nStrip] >= nStripPcs * dStOutRto)
-				m_nStripOut[nStrip]++;
+			if (nDefStrip[nStrip] >= nStripPcs * dStOutRto)		// 열별 스트립 내 피스 불량수가 스트립아웃 수 이상이면,
+		 		m_nStripOut[nStrip]++;							// 열별 스트립 아웃 수 카운트
 		}
 	}
+}
 
-
-	// 수율 데이타를 갱신함.
-
+void CReelMap::ModifyReelmap(int nTo)
+{
 	// Piece infomation..............
 	CString strData, strMenu, strItem;
-	int k;
+	int k, i;
 
 	strData.Format(_T("%d"), m_nTotPcs);
-	::WritePrivateProfileString(_T("Info"), _T("Total Pcs"), strData, m_sPathBuf);
+	::WritePrivateProfileString(_T("Info"), _T("Total Pcs"), strData, m_sPathBuf); // m_sPathBuf: 버퍼에서 pcr파일을 읽어서 설정한 MarkedFile 폴더내 릴맵저장위치
 
 	strData.Format(_T("%d"), m_nGoodPcs);
 	::WritePrivateProfileString(_T("Info"), _T("Good Pcs"), strData, m_sPathBuf);
@@ -3863,38 +3740,76 @@ BOOL CReelMap::ReloadRst(int nTo)
 	::WritePrivateProfileString(_T("Info"), _T("Bad Pcs"), strData, m_sPathBuf);
 
 	int nTotStOut = 0;
-	for(k=0; k<MAX_STRIP_NUM; k++)
+	for (k = 0; k < MAX_STRIP_NUM; k++)
 	{
 		strMenu.Format(_T("Strip%d"), k);
 		strData.Format(_T("%d"), m_nDefStrip[k]);
 		::WritePrivateProfileString(_T("Info"), strMenu, strData, m_sPathBuf);
-		
+
 		strMenu.Format(_T("%d"), k);
 		strData.Format(_T("%d"), m_nStripOut[k]);
 		::WritePrivateProfileString(_T("StripOut"), strMenu, strData, m_sPathBuf);
 		nTotStOut += m_nStripOut[k];
 
-		for(i=1; i<MAX_DEF; i++)
+		for (i = 1; i < MAX_DEF; i++)
 		{
-			m_nPregressReloadRst++;
+			m_nProgressReloadRst++;
 
 			strItem.Format(_T("Strip%d"), k);
 			strMenu.Format(_T("%d"), i);
 			strData.Format(_T("%d"), m_nDefPerStrip[k][i]);
 			::WritePrivateProfileString(strItem, strMenu, strData, m_sPathBuf);
-		}			
+		}
 	}
-	strData.Format(_T("%d"), m_nTotStOut=nTotStOut);
+	strData.Format(_T("%d"), m_nTotStOut = nTotStOut);
 	::WritePrivateProfileString(_T("StripOut"), _T("Total"), strData, m_sPathBuf);
 
-	for(i=1; i<MAX_DEF; i++)
+	for (i = 1; i < MAX_DEF; i++)
 	{
-		m_nPregressReloadRst++;
+		m_nProgressReloadRst++;
 
 		strMenu.Format(_T("%d"), i);
 		strData.Format(_T("%d)"), m_nDef[i]); // 불량이름별 불량수
 		::WritePrivateProfileString(_T("Info"), strMenu, strData, m_sPathBuf);
 	}
+}
+
+BOOL CReelMap::ReloadRst(int nTo) // StartThreadReloadRst();에서 실행
+{
+	if(!m_pPnlBuf)
+	{
+		AfxMessageBox(_T("Memory not alloced.- PnlBuf"));
+		m_bDoneReloadRst = TRUE;
+		return FALSE;
+	}
+
+	//int nPnl, nRow, nCol, nDefCode, nStrip, nC, nR, i;
+	//CString sPnl, sRow, sVal;
+	//TCHAR sep[] = { _T(",/;\r\n\t") };
+	//TCHAR szData[MAX_PATH];
+
+	//int nNodeX = pDoc->m_MasterDB.m_pPcsRgn->nCol;
+	//int nNodeY = pDoc->m_MasterDB.m_pPcsRgn->nRow;
+	int nNodeX, nNodeY;
+	pDoc->m_MasterDB.GetShotRowCol(nNodeY, nNodeX);
+	//pDoc->m_MasterDB.m_pPcsRgn->GetShotRowCol(nNodeY, nNodeX);
+	//int nTotPcs = nNodeX * nNodeY;
+	//int nStripPcs = nTotPcs / MAX_STRIP_NUM;
+	//int nDefStrip[MAX_STRIP_NUM];
+	
+
+	//InitRst();
+	ClrRst(); // m_nTotPcs, m_nGoodPcs, m_nBadPcs, m_nTotStOut, m_nDef, m_nStripOut, m_nDefStrip, m_nDefPerStrip, m_pPnlBuf
+	
+	int nProgressPcsOut = nTo * nNodeX * nNodeY;
+	int nProgressStripOut = nTo * MAX_STRIP_NUM;
+	int nProgressStripDef = MAX_STRIP_NUM * MAX_DEF;
+	int nProgressDef = MAX_DEF;
+	m_nTotalProgressReloadRst = nProgressPcsOut + nProgressStripOut + nProgressStripDef + nProgressDef;
+	m_nProgressReloadRst=0;
+
+	LoadReelmap(nTo);
+	ModifyReelmap(nTo);	// 수율 데이타를 갱신함.
 
 	m_bDoneReloadRst = TRUE;
 	return TRUE;

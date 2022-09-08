@@ -107,6 +107,8 @@ public:
 	int m_nDef[MAX_DEF];						// [3]: Up/Dn/ALL
 	double m_dMkBuffCurrPos;
 
+	stAoiSpec m_stAoiSpec;
+
 // 작업입니다.
 public:
 	CString GetProcessNum();
@@ -281,7 +283,7 @@ public:
 	BOOL MakeMkDirUp();
 	BOOL MakeMkDirDn();
 	BOOL Shift2Mk(int nSerial);
-	void SetLastSerial(int nSerial);
+	void SetLastSerial(int nSerial);								// 릴맵 텍스트 파일의 수율정보를 업데이트함.
 	void UpdateYield(int nSerial);
 	void SetCompletedSerial(int nSerial);
 	BOOL ChkLotEnd(CString sPath);
@@ -303,9 +305,9 @@ public:
 	CString GetMin(int nDlgId, int nCtrlId);
 	CString GetMax(int nDlgId, int nCtrlId);
 
-	int GetLastShotMk();
-	int GetLastShotUp();
-	int GetLastShotDn();
+	int GetLastShotMk();	// m_pDlgFrameHigh에서 얻거나 없으면, sPathOldFile폴더의 ReelMapDataDn.txt에서 _T("Info"), _T("Marked Shot") 찾음.
+	int GetLastShotUp();	// pView->m_pDlgFrameHigh->m_nAoiLastShot[0]
+	int GetLastShotDn();	// pView->m_pDlgFrameHigh->m_nAoiLastShot[1]
 
 	int Mirroring(int nPcsId);
 
@@ -383,6 +385,8 @@ public:
 
 	void SetMkPcsIdxOnDts(int nSerial);
 	void SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
+
+	BOOL LoadAoiSpec();
 
 // 재정의입니다.
 public:

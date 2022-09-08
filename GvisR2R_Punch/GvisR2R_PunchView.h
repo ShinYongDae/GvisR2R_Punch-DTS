@@ -169,7 +169,7 @@ class CGvisR2R_PunchView : public CFormView
 	BOOL m_bTIM_SAFTY_STOP;
 	CString m_sMyMsg; int m_nTypeMyMsg;
 	int m_nVsBufLastSerial[2];
-	BOOL m_bOpenShareUp, m_bOpenShareDn;
+	//BOOL m_bOpenShareUp, m_bOpenShareDn;
 
 	//	int m_nMsgShiftX, m_nMsgShiftY;
 
@@ -760,10 +760,10 @@ public:
 	BOOL IsJogRtUp0();
 	BOOL IsJogRtDn1();
 	BOOL IsJogRtUp1();
-	void OpenShareUp(BOOL bOpen = TRUE);
-	void OpenShareDn(BOOL bOpen = TRUE);
-	BOOL IsOpenShareUp();
-	BOOL IsOpenShareDn();
+	//void OpenShareUp(BOOL bOpen = TRUE);
+	//void OpenShareDn(BOOL bOpen = TRUE);
+	//BOOL IsOpenShareUp();
+	//BOOL IsOpenShareDn();
 	void ResetMotion();
 	void ResetMotion(int nMsId);
 	unsigned long ChkDoor(); // 0: All Closed , Open Door Index : Doesn't all closed. (Bit3: F, Bit2: L, Bit1: R, Bit0; B)
@@ -912,6 +912,9 @@ public:
 	BOOL IsPinPos1();
 
 	BOOL GetDtsPieceOut(int nSerial, int* pPcsOutIdx, int& nTotPcsOut);
+
+	BOOL LoadAoiSpec();
+	BOOL LoadMasterSpec();
 
 // 재정의입니다.
 public:
