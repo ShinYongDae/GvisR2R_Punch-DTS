@@ -10,7 +10,7 @@
 #endif // _MSC_VER > 1000
 
 
-//#define TEST_MODE					1
+#define TEST_MODE					1
 
 #define MAX_STRIP_NUM				4
 #define MAX_PCE_COL					100

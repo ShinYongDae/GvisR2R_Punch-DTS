@@ -16177,6 +16177,7 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 						pDoc->WorkingInfo.LastJob.sLayerUp,
 						_T(""), FALSE);
 					pDoc->m_MasterDB.LoadMstInfo();
+					pDoc->m_MasterDB.WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
 				}
 				//if (IsLastJob(0)) // Up
 				//{

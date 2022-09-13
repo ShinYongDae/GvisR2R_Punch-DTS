@@ -2016,7 +2016,7 @@ BOOL CCamMaster::GetMkMatrix(int nPcsId, int &nC, int &nR)	// nC:0~ , nR:0~
 	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
 	{
 		nStrip = MstPnl.Piece[nPcsId].nMstStripRow;
-		nPMaxR = MstPnl.Strip[nStrip].nTotalPieceRow;
+		nPMaxR = MstPnl.Strip[0].nTotalPieceRow;
 		nR = MstPnl.Piece[nPcsId].nMstPcsRow + nStrip * nPMaxR;
 		nC = MstPnl.Piece[nPcsId].nMstPcsCol;
 	}
