@@ -118,8 +118,8 @@ void CDlgUser::DisplayUserNameList()
 
 int CDlgUser::ReadUserNameListFile()
 {
-	//char FileD[200];
-	TCHAR FileD[200];
+	//char FileD[MAX_PATH];
+	TCHAR FileD[MAX_PATH];
 	char *FileData;
 	CString strFileData;
 	size_t nFileSize, nRSize;

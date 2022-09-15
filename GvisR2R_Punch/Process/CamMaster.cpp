@@ -55,7 +55,7 @@ CCamMaster::CCamMaster()
 
 	PolygonPoints = NULL;	//20140116-ndy debug
 
-	m_bUseDTS = FALSE;
+	m_bUse = FALSE;
 }
 
 CCamMaster::~CCamMaster()
@@ -89,13 +89,12 @@ END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CCamMaster message handlers
-void CCamMaster::Init(CString sPathSpec, CString sModel, CString sLayer, CString sLayerUp, BOOL bUseDTS)
+void CCamMaster::Init(CString sPathSpec, CString sModel, CString sLayer, CString sLayerUp)
 {
 	m_sModel = sModel;
 	m_sLayer = sLayer;
 	m_sPathCamSpecDir = sPathSpec;
 	m_sLayerUp = sLayerUp;
-	m_bUseDTS = bUseDTS;
 }
 
 BOOL CCamMaster::LoadMstInfo()
@@ -104,8 +103,6 @@ BOOL CCamMaster::LoadMstInfo()
 
 	GetCamPxlRes();
 	LoadMasterSpec();
-	LoadPinImg();
-	LoadAlignImg();
 	if(LoadStripRgnFromCam())
 	{
 		if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
@@ -125,6 +122,8 @@ BOOL CCamMaster::LoadMstInfo()
 	else
 		return FALSE;
 
+	LoadPinImg();
+	LoadAlignImg();
 
 	return TRUE;
 }
@@ -280,7 +279,7 @@ BOOL CCamMaster::LoadMasterSpec()
 void CCamMaster::LoadPinImg()
 {
 	BOOL prcStopF = FALSE;
-	TCHAR FileNLoc[200];
+	TCHAR FileNLoc[MAX_PATH];
 	CString StrDirectoryPath;
 	CFileFind PinFindFile;
 	CString strFileNPin;
@@ -311,7 +310,7 @@ void CCamMaster::LoadPinImg()
 #ifdef USE_CAM_MASTER
 	int Cell;
 	int i;
-	TCHAR FileNPin[200];
+	TCHAR FileNPin[MAX_PATH];
 
 	// CAM-Master File Copy and Local File Load
 	//strcpy(FileNLoc, PATH_PIN_IMG);
@@ -354,17 +353,17 @@ BOOL CCamMaster::LoadStripRgnFromCam() // sprintf(FileNCam,"%s%s\\%s.mst",strSpe
 	CFile file;
 	int Rsize, RsizeStPosX, RsizeStPosY, RsizeEdPosX, RsizeEdPosY, RsizeXSwathPixPos;
 	int SizeI, SizeIXSwathPixPos;
-	//char FileNCam[200];
-	TCHAR FileNCam[200];
+	//char FileNCam[MAX_PATH];
+	TCHAR FileNCam[MAX_PATH];
 
-	CString sPath;
-#ifdef TEST_MODE
-	sPath = PATH_CELL_MST;
-#else
+	CString sPath, sMsg;
+#ifdef USE_CAM_MASTER
 	if (m_sPathCamSpecDir.Right(1) != "\\")
 		sPath.Format(_T("%s\\%s\\%s.mst"), m_sPathCamSpecDir, m_sModel, m_sLayer);
 	else
 		sPath.Format(_T("%s%s\\%s.mst"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+#else
+	sPath = PATH_CELL_MST;
 #endif
 
 	//strcpy(FileNCam, sPath);
@@ -374,6 +373,10 @@ BOOL CCamMaster::LoadStripRgnFromCam() // sprintf(FileNCam,"%s%s\\%s.mst",strSpe
 	{
 		if(!file.Open(FileNCam, CFile::modeRead))
 		{
+			sMsg.Format(_T("캠마스터에서 해당모델의 작업정보가 없습니다.\r\n%s"), sPath);
+			pView->ClrDispMsg();
+			AfxMessageBox(sMsg);
+			//MessageBox(sMsg);
 			return(FALSE);
 		}
 	}
@@ -389,6 +392,7 @@ BOOL CCamMaster::LoadStripRgnFromCam() // sprintf(FileNCam,"%s%s\\%s.mst",strSpe
 	{
 		pView->MsgBox(_T("MST File is incorrected."));
 // 		AfxMessageBox(_T("MST File is incorrected."),MB_ICONSTOP|MB_OK);
+		file.Close();
 		return(FALSE);
 	}
 	
@@ -405,16 +409,18 @@ BOOL CCamMaster::LoadStripRgnFromCam() // sprintf(FileNCam,"%s%s\\%s.mst",strSpe
 	{
 		pView->MsgBox(_T("MST File is incorrected."));
 // 		AfxMessageBox(_T("MST File is incorrected."),MB_ICONSTOP|MB_OK);
+		file.Close();
 		return(FALSE);
 	}
 
+	file.Close();
 	return(TRUE);
 }
 
 void CCamMaster::LoadAlignImg()
 {
 	/*
-	char FN[200];
+	char FN[MAX_PATH];
 
 	sprintf(FN, "%s%s\\%s-md0.tif",strSpecPath,strModel,strLayer);
 	VicFileLoad(pGlobalView->m_pDlgSetPunchAlign->m_VisionFirst.m_MilAlign0PositionImg, FN);
@@ -428,8 +434,8 @@ void CCamMaster::LoadAlignImg()
 	MbufSave(FN, pGlobalView->m_pDlgSetPunchAlign->m_VisionFirst.m_MilAlign1PositionImg);
 	*/
 	BOOL prcStopF = FALSE;
-	//char FileNAlign[200], FileNLoc[200];
-	TCHAR FileNLoc[200];
+	//char FileNAlign[MAX_PATH], FileNLoc[MAX_PATH];
+	TCHAR FileNLoc[MAX_PATH];
 	CString StrDirectoryPath;
 	CFileFind AlignFindFile;
 	CString strFileNAlign;
@@ -459,7 +465,7 @@ void CCamMaster::LoadAlignImg()
 #ifdef USE_CAM_MASTER
 	int i;
 	int Cell;
-	TCHAR FileNAlign[200];
+	TCHAR FileNAlign[MAX_PATH];
 
 	if (MasterInfo.nNumOfAlignPoint >= 2)
 	{
@@ -928,13 +934,13 @@ void CCamMaster::SetCad4PntAlignMkPos()
 	//		return sRes;
 	//	}
 	//}
- #ifdef TEST_MODE
- 	sPath = PATH_PIN_IMG_;
- #else
+#ifdef USE_CAM_MASTER
 	if (m_sPathCamSpecDir.Right(1) != "\\")
 		sPath.Format(_T("%s\\%s\\%s.mst"), m_sPathCamSpecDir, m_sModel, m_sLayer);
 	else
 		sPath.Format(_T("%s%s\\%s.mst"), m_sPathCamSpecDir, m_sModel, m_sLayer);
+ #else
+ 	sPath = PATH_PIN_IMG_;
  #endif
  
  	int nPos = sPath.ReverseFind('-');
@@ -953,8 +959,8 @@ void CCamMaster::SetCad4PntAlignMkPos()
 
 BOOL CCamMaster::LoadPcsRgnFromCam() // 기존 RTR
 {
-	//char FileN[200];
-	TCHAR FileN[200];
+	//char FileN[MAX_PATH];
+	TCHAR FileN[MAX_PATH];
 	int Size, RSize, SizeI = sizeof(short);
 	CFile file;
 	int i, nGroupID =0;
@@ -965,13 +971,13 @@ BOOL CCamMaster::LoadPcsRgnFromCam() // 기존 RTR
 	double fData1,fData2,fData3,fData4;
 
 	CString sPath;
-#ifdef TEST_MODE
-	sPath = PATH_CELL_RGN;
-#else
+#ifdef USE_CAM_MASTER
 	if (MasterInfo.strMasterLocation.Right(1) != "\\")
 		sPath.Format(_T("%s\\%s\\%s\\Piece.rgn"), MasterInfo.strMasterLocation, m_sModel, m_sLayer);
 	else
 		sPath.Format(_T("%s%s\\%s\\Piece.rgn"), MasterInfo.strMasterLocation, m_sModel, m_sLayer);
+#else
+	sPath = PATH_CELL_RGN;
 #endif
 
 	// Select Block ID
@@ -1103,7 +1109,7 @@ BOOL CCamMaster::LoadPcsRgnFromCam() // 기존 RTR
 //	Object:	1. Load region data "strpcs.rgn"
 //			2. Set Piece Data
 //			3. Set Strip Data
-BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
+BOOL CCamMaster::LoadStripPieceRegion_Binary()
 {
 	//TCHAR		FileNCam[1024];
 	CString		strFileNCam;
@@ -1117,6 +1123,7 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 	else
 		strFileNCam.Format(_T("%s%s\\%s\\strpcs.bin"), MasterInfo.strMasterLocation, m_sModel, m_sLayer);
 
+	//strFileNCam = _T("\\\\GM-STORAGE2\\MasterData-PCB\\C1iNRefer\\TOP\\1TS_TEST-025\\strpcs.bin");
 	if (!find.FindFile(strFileNCam))
 	{
 		pView->MsgBox(_T("캠마스터에 피스정보가 설정되지 않았습니다."));
@@ -1218,11 +1225,14 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 		file.Read((void *)&m_nPieceNum[j], sizeof(int));
 		for (i = 0; i < m_nPieceNum[j]; i++)
 		{
-			file.Read((void *)&PieceRgnPix[i + nPieceCount].nId, sizeof(int));	// Piece ID
+			file.Read((void *)&PieceRgnPix[i + nPieceCount].nId, sizeof(int));	// Piece ID : Strip 별로 (0 ~ 시작)
 			file.Read((void *)&PieceRgnPix[i + nPieceCount].Row, sizeof(int));	// Row
 			file.Read((void *)&PieceRgnPix[i + nPieceCount].Col, sizeof(int));	// Col
-			file.Read((void *)&m_nDummy[6 + i + nPieceCount], sizeof(int));							// Rotation Info (0 : 0  1 : 90  2 : 180  3 : 270 [Degree])
-			
+			//file.Read((void *)&m_nDummy[6 + i + nPieceCount], sizeof(int));							// Rotation Info (0 : 0  1 : 90  2 : 180  3 : 270 [Degree])
+			file.Read((void *)&nDummy, sizeof(int));
+
+			PieceRgnPix[i + nPieceCount].nId += nPieceCount;					// Piece ID : Panel 별로 (0 ~ 시작)
+
 			////////////////////////////////////////////////////////////////////////////////////////////////
 			// Set Piece position
 			nDummy = sizeof(CPoint);
@@ -1325,6 +1335,9 @@ BOOL CCamMaster::LoadStripPieceRegion_Binary()	//20121120-ndy for PairPanel
 
 void CCamMaster::SetMasterPanelInfo()
 {
+	if (!m_pPcsRgn)
+		return;
+
 	int i, j, k;
 	int nR, nC, nRow, nCol, nSMaxR, nSMaxC, nPMaxR, nPMaxC;
 	int nPieceCount = 0;
@@ -1470,6 +1483,7 @@ BOOL CCamMaster::WriteStripPieceRegion_Text(CString sBasePath, CString sLot)
 	if (sModel.IsEmpty() || sLot.IsEmpty() || sLayer.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 로뜨 또는 레이어명이 없습니다."));
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
@@ -1609,8 +1623,8 @@ void CCamMaster::FreePolygonRgnData()	// 120809 jsy
 void CCamMaster::LoadPcsImg()
 {
 	BOOL prcStopF = FALSE;
-	//char FileS[200], FileD[200];
-	TCHAR FileD[200]; 
+	//char FileS[MAX_PATH], FileD[MAX_PATH];
+	TCHAR FileD[MAX_PATH];
 	CFileFind PcsFindFile;
 	CString StrDirectoryPath;
 
@@ -1632,7 +1646,7 @@ void CCamMaster::LoadPcsImg()
 	PcsImgFree();
 		
 #ifdef USE_CAM_MASTER
-	TCHAR FileS[200];
+	TCHAR FileS[MAX_PATH];
 	//sprintf(FileS,"%s%s\\%s\\Piece.tif", MasterInfo.strMasterLocation, m_sModel, m_sLayer);
 	//strcpy(FileD, PATH_PCS_IMG);
 	if (MasterInfo.strMasterLocation.Right(1) != "\\")
@@ -1667,8 +1681,8 @@ void CCamMaster::LoadPcsImg()
 void CCamMaster::LoadCadImg()
 {
 	BOOL prcStopF = FALSE;
-	//char FileNCam[200], FileNLoc[200];
-	TCHAR FileNLoc[200]; 
+	//char FileNCam[MAX_PATH], FileNLoc[MAX_PATH];
+	TCHAR FileNLoc[MAX_PATH];
 	CString StrDirectoryPath;
 	CFileFind CADFindFile;
 	CString strFileNCam;
@@ -1719,7 +1733,7 @@ void CCamMaster::LoadCadImg()
 
 #ifdef USE_CAM_MASTER
 	int Cell;
-	TCHAR FileNCam[200];
+	TCHAR FileNCam[MAX_PATH];
 
 	for (Cell = 0; Cell < nStripCell; Cell++) // 한 스트립의 총 셀수.
 	{
@@ -2009,6 +2023,7 @@ BOOL CCamMaster::GetMkMatrix(int nPcsId, int &nC, int &nR)	// nC:0~ , nR:0~
 
 	if (!m_pPcsRgn)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
 		return bRtn; 
 	}
@@ -2031,6 +2046,7 @@ BOOL CCamMaster::GetMkMatrix(int nPcsId, int &nStrip, int &nC, int &nR)	// nStri
 	BOOL bRtn = FALSE;
 	if (!m_pPcsRgn)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
 		return bRtn; 
 	}
@@ -2051,6 +2067,7 @@ void CCamMaster::SetPinPos(int nCam, CfPoint ptPnt)
 {
 	if (!m_pPcsRgn)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
 		return;
 	}
@@ -2062,6 +2079,7 @@ void CCamMaster::GetShotRowCol(int& nR, int& nC)
 {
 	if (!m_pPcsRgn)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
 		return;
 	}
@@ -2073,6 +2091,7 @@ void CCamMaster::SetMkPnt(int nCam, int nMkIdx, CfPoint fPt)				// nCam : [0]-Le
 {
 	if (!m_pPcsRgn)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
 		return;
 	}
@@ -2085,6 +2104,7 @@ void CCamMaster::GetMkPnt(int nC, int nR, int &nPcsId, CfPoint &ptPnt)		// nC, n
 {
 	if (!m_pPcsRgn)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
 		return;
 	}
@@ -2096,6 +2116,7 @@ void CCamMaster::GetPcsRgn(int nC, int nR, int &nPcsId, CRect &ptRect)		// nC, n
 {
 	if (!m_pPcsRgn)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
 		return;
 	}
@@ -2126,6 +2147,7 @@ CfPoint CCamMaster::GetMkPnt(int nCam, int nPcsId)							// nCam : [0]-LeftCamer
 
 	if (!m_pPcsRgn)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
 		return fPt;
 	}
@@ -2149,6 +2171,7 @@ int CCamMaster::GetTotPcs()
 {
 	if (!m_pPcsRgn)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
 		return 0;
 	}
@@ -2163,6 +2186,7 @@ double CCamMaster::GetPcsWidth()
 {
 	if (!m_pPcsRgn)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
 		return 0.0;
 	}
@@ -2174,6 +2198,7 @@ double CCamMaster::GetPcsHeight()
 {
 	if (!m_pPcsRgn)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("m_pPcsRgn is NULL on GetMkMatrix()"));
 		return 0.0;
 	}

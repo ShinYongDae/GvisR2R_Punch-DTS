@@ -27,8 +27,11 @@ CMpDevice::CMpDevice(CWnd* pParent)
 #ifdef USE_MPE
 	m_hController = 0;	
 #endif
-	if(!Create(NULL, _T("MPE"), WS_CHILD, CRect(0,0,0,0), m_pParent, (UINT)this))
+	if (!Create(NULL, _T("MPE"), WS_CHILD, CRect(0, 0, 0, 0), m_pParent, (UINT)this))
+	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("CMpDevice::Create() Failed!!!"));
+	}
 }
 
 CMpDevice::~CMpDevice()
@@ -164,6 +167,7 @@ long CMpDevice::Read(CString strRegAddr)
 			strRegAddr.SetAt(1,'L');
 			if(!GetIoDataValue(strRegAddr, lReadBuffer))
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Mp2100m - Reading Error!!!"));
 				return 0;
 			}
@@ -174,6 +178,7 @@ long CMpDevice::Read(CString strRegAddr)
 			strRegAddr.SetAt(1,'L');
 			if(!GetIoDataValue(strRegAddr, lReadBuffer))
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Mp2100m - Reading Error!!!"));
 				return 0;
 			}
@@ -195,6 +200,7 @@ long CMpDevice::Read(CString strRegAddr)
 			strRegAddr.SetAt(strRegAddr.GetLength()-1,('0'+nAddrLastNum-1));
 			if(!GetIoDataValue(strRegAddr, lReadBuffer))
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Mp2100m - Reading Error!!!"));
 				return 0;
 			}
@@ -206,6 +212,7 @@ long CMpDevice::Read(CString strRegAddr)
 			strRegAddr.SetAt(1,'L');
 			if(!GetIoDataValue(strRegAddr, lReadBuffer))
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Mp2100m - Reading Error!!!"));
 				return 0;
 			}
@@ -223,12 +230,14 @@ long CMpDevice::Read(CString strRegAddr)
 			strRegAddr.SetAt(strRegAddr.GetLength()-1,('0'+nAddrLastNum-1));
 			if(!GetIoDataValue(strRegAddr, lReadBuffer))
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Mp2100m - Reading Error!!!"));
 				return 0;
 			}
 			strRegAddr.SetAt(strRegAddr.GetLength()-1,('0'+nAddrLastNum+1));
 			if(!GetIoDataValue(strRegAddr, lReadBuffer))
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Mp2100m - Reading Error!!!"));
 				return 0;
 			}
@@ -242,6 +251,7 @@ long CMpDevice::Read(CString strRegAddr)
 		{
 			if(!GetIoDataValue(strRegAddr, lReadBuffer))
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Mp2100m - Reading Error!!!"));
 				return 0;
 			}
@@ -1441,6 +1451,7 @@ void CMpDevice::GetMpeIO()
 
 	if (nGrpIn + nGrpOut > 15)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Error - nInSeg+nOutSeg > 15"));
 		return;
 	}
@@ -1508,6 +1519,7 @@ void CMpDevice::GetMpeIO()
 		// Error check processing
 		if (dwRC != MP_SUCCESS)
 		{
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("ymcGetGroupRegisterData ERROR"));
 			return;
 		}
@@ -1531,7 +1543,8 @@ void CMpDevice::GetMpeIO()
 
 	if(nGrpIn+nGrpOut > 15)
 	{
-		AfxMessageBox(_T("Error - nInSeg+nOutSeg > 15"));
+				pView->ClrDispMsg();
+AfxMessageBox(_T("Error - nInSeg+nOutSeg > 15"));
 		return;
 	} 
 
@@ -1593,7 +1606,8 @@ void CMpDevice::GetMpeIO()
 	// Error check processing
 	if( dwRC != MP_SUCCESS )
 	{
-		AfxMessageBox(_T("ymcGetGroupRegisterData ERROR"));
+				pView->ClrDispMsg();
+AfxMessageBox(_T("ymcGetGroupRegisterData ERROR"));
 		return;
 	}
 
@@ -1668,6 +1682,7 @@ void CMpDevice::GetMpeSignal()
 		// Error check processing
 		if (dwRC != MP_SUCCESS)
 		{
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("ymcGetGroupRegisterData ERROR"));
 			return;
 		}
@@ -1698,6 +1713,7 @@ void CMpDevice::GetMpeSignal()
 	// Error check processing
 	if (dwRC != MP_SUCCESS)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("ymcGetGroupRegisterData ERROR"));
 		return;
 	}
@@ -1729,6 +1745,7 @@ void CMpDevice::GetMpeSignal()
 	// Error check processing
 	if (dwRC != MP_SUCCESS)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("ymcGetGroupRegisterData ERROR"));
 		return;
 	}
@@ -1759,6 +1776,7 @@ void CMpDevice::GetMpeSignal()
 	// Error check processing
 	if (dwRC != MP_SUCCESS)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("ymcGetGroupRegisterData ERROR"));
 		return;
 	}
@@ -1794,6 +1812,7 @@ void CMpDevice::GetMpeSignal()
 	// Error check processing
 	if (dwRC != MP_SUCCESS)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("ymcGetGroupRegisterData ERROR"));
 		return;
 	}
@@ -1815,7 +1834,8 @@ void CMpDevice::GetMpeSignal()
 	// Error check processing
 	if (dwRC != MP_SUCCESS)
 	{
-		AfxMessageBox(_T("ymcSetGroupRegisterData ERROR"));
+				pView->ClrDispMsg();
+AfxMessageBox(_T("ymcSetGroupRegisterData ERROR"));
 		return;
 	}
 

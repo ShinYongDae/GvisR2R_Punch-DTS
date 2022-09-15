@@ -292,34 +292,37 @@ BOOL CDlgUtil05::IsDblSol()
 	return FALSE;
 }
 
-void CDlgUtil05::OnBtn00() 
+void CDlgUtil05::OnBtn00()
 {
 	// TODO: Add your control notification handler code here
 #ifdef USE_MPE
 	BOOL bOn;
 
-	if(m_nIdxMpeIo > -1)
+	if (m_nIdxMpeIo > -1)
 	{
-		bOn = pDoc->m_pMpeIo[m_nSegment] & (0x01<<m_nIdxMpeIo);
-		if(!bOn)
+		bOn = pDoc->m_pMpeIo[m_nSegment] & (0x01 << m_nIdxMpeIo);
+		if (!bOn)
 		{
-			pDoc->m_pMpeIo[m_nSegment] |= (0x01<<m_nIdxMpeIo);
-			if(IsDblSol())
-				pDoc->m_pMpeIo[m_nSegment] &= ~(0x01<<_tstoi(m_strParam[1])); // m_strParam[2] : DblSol Index
+			pDoc->m_pMpeIo[m_nSegment] |= (0x01 << m_nIdxMpeIo);
+			if (IsDblSol())
+				pDoc->m_pMpeIo[m_nSegment] &= ~(0x01 << _tstoi(m_strParam[1])); // m_strParam[2] : DblSol Index
 		}
 	}
-// 	else if(m_nIdxSliceIo > -1)
-// 	{
-// 		bOn = pDoc->m_pSliceIo[m_nSegment] & (0x01<<m_nIdxSliceIo);
-// 		if(!bOn)
-// 		{
-// 			pDoc->m_pSliceIo[m_nSegment] |= (0x01<<m_nIdxSliceIo);
-// 			if(IsDblSol())
-// 				pDoc->m_pSliceIo[m_nSegment] &= ~(0x01<<_tstoi(m_strParam[2])); // m_strParam[2] : DblSol Index
-// 		}
-// 	}
+	// 	else if(m_nIdxSliceIo > -1)
+	// 	{
+	// 		bOn = pDoc->m_pSliceIo[m_nSegment] & (0x01<<m_nIdxSliceIo);
+	// 		if(!bOn)
+	// 		{
+	// 			pDoc->m_pSliceIo[m_nSegment] |= (0x01<<m_nIdxSliceIo);
+	// 			if(IsDblSol())
+	// 				pDoc->m_pSliceIo[m_nSegment] &= ~(0x01<<_tstoi(m_strParam[2])); // m_strParam[2] : DblSol Index
+	// 		}
+	// 	}
 	else
+	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Failed IO control..."));
+	}
 #endif
 }
 
@@ -350,7 +353,10 @@ void CDlgUtil05::OnBtn01()
 // 		}
 // 	}
 	else
+	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Failed IO control..."));
+	}
 #endif
 }
 

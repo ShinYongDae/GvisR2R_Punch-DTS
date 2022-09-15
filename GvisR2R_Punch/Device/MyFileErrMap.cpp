@@ -88,7 +88,7 @@ BOOL CMyFileErrMap::Open(CString sPath)
 BOOL CMyFileErrMap::LoadInfo(CString sPath)
 {
 	TCHAR sep[] = {_T(",;\r\n\t")};
-	TCHAR szData[200];
+	TCHAR szData[MAX_PATH];
 	TCHAR *stopstring;
 
 	if (0 < ::GetPrivateProfileString(_T("Info"), _T("COMPENSATOR_DIMENSION"), NULL, szData, sizeof(szData), sPath))
@@ -185,7 +185,7 @@ BOOL CMyFileErrMap::LoadInfo(CString sPath)
 BOOL CMyFileErrMap::LoadX(int nRow, int nIdx, CString sPath)
 {
 	TCHAR sep[] = {_T(",;\r\n\t")};
-	TCHAR szData[200];
+	TCHAR szData[MAX_PATH];
 	CString str;
 
 	TCHAR *stopstring;
@@ -231,6 +231,7 @@ BOOL CMyFileErrMap::LoadX(int nRow, int nIdx, CString sPath)
 			nIdx++;
 		}
 
+		//pView->ClrDispMsg();
 		AfxMessageBox(_T("Error - Open FileErrMap X!!!"));
 
 		return FALSE;
@@ -243,7 +244,7 @@ BOOL CMyFileErrMap::LoadX(int nRow, int nIdx, CString sPath)
 BOOL CMyFileErrMap::LoadY(int nRow, int nIdx, CString sPath)
 {
 	TCHAR sep[] = {_T(",;\r\n\t")};
-	TCHAR szData[200];
+	TCHAR szData[MAX_PATH];
 	CString str;
 
 	TCHAR *stopstring;
@@ -289,6 +290,7 @@ BOOL CMyFileErrMap::LoadY(int nRow, int nIdx, CString sPath)
 			nIdx++;
 		}
 
+		//pView->ClrDispMsg();
 		AfxMessageBox(_T("Error - Open FileErrMap Y!!!"));
 
 		return FALSE;

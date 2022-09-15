@@ -386,8 +386,8 @@ void CMyGL::SetRgn()
 			fData3 = pDoc->m_pReelMap->pPcsRgn[k][i].right;		// right
 			fData4 = pDoc->m_pReelMap->pPcsRgn[k][i].bottom;	// bottom
 
-			GVertexFill(&m_pPcsPnt[k][i][0], (GLfloat)fData1, (GLfloat)fData2, 0.0f);
-			GVertexFill(&m_pPcsPnt[k][i][1], (GLfloat)fData3, (GLfloat)fData4, 0.0f);
+			GVertexFill(&m_pPcsPnt[k][i][0], (GLfloat)fData1, (GLfloat)fData2, 0.0f);	// [pnl][pcsIdx][LT]
+			GVertexFill(&m_pPcsPnt[k][i][1], (GLfloat)fData3, (GLfloat)fData4, 0.0f);	// [pnl][pcsIdx][RB]
 		}
 	}
 

@@ -487,6 +487,7 @@ void CGvisR2R_PunchView::OnInitialUpdate()
 	if(!pDoc->DirectoryExists(sDir))
 	{
 		sMsg.Format(_T("캠마스터에 스펙폴더가 없습니다. : \n 1.SpecFolder : %s"), sDir);
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg, MB_ICONSTOP | MB_OK);
 		ExitProgram();
 		return;
@@ -534,8 +535,9 @@ BOOL CGvisR2R_PunchView::LoadMstInfo()
 			pDoc->WorkingInfo.System.sPathCamSpecDir,
 			pDoc->WorkingInfo.LastJob.sModelUp,
 			pDoc->WorkingInfo.LastJob.sLayerUp,
-			_T(""), TRUE);
-		pDoc->m_MasterDB.LoadMstInfo();
+			_T(""));
+		if (!pDoc->m_MasterDB.LoadMstInfo())
+			return FALSE;
 	}
 
 	//if (m_pDts)
@@ -618,7 +620,11 @@ void CGvisR2R_PunchView::OnTimer(UINT_PTR nIDEvent)
 			DispMsg(_T("프로그램을 초기화합니다."), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			DtsInit();
 
-			LoadMstInfo();
+			if (LoadMstInfo())
+				pDoc->m_MasterDB.m_bUse = TRUE;
+			else
+				pDoc->m_MasterDB.m_bUse = FALSE;
+
 
 			// Reelmap 정보 Loading.....
 			InitReelmap();
@@ -757,6 +763,7 @@ void CGvisR2R_PunchView::OnTimer(UINT_PTR nIDEvent)
 			else
 			{
 				m_bTIM_INIT_VIEW = FALSE;
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Motion is failed."));
 				PostMessage(WM_CLOSE);
 			}
@@ -779,6 +786,7 @@ void CGvisR2R_PunchView::OnTimer(UINT_PTR nIDEvent)
 			else
 			{
 				m_bTIM_INIT_VIEW = FALSE;
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Motion is failed."));
 				PostMessage(WM_CLOSE);
 			}
@@ -855,7 +863,10 @@ void CGvisR2R_PunchView::OnTimer(UINT_PTR nIDEvent)
 				m_pDlgMenu01->ResetLastProc();
 			}
 			if (!MemChk())
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Memory Error - Cam Spec Data : PCR[0] or PCR[1] or Reelmap"));
+			}
 			else
 			{
 				if (pDoc->m_pReelMap)
@@ -2688,6 +2699,7 @@ BOOL CGvisR2R_PunchView::SortingInUp(CString sPath, int nIndex)
 	{
 		sMsg.Format(_T("일시정지 - Failed getting information."));
 		//MsgBox(sMsg);
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
@@ -2884,6 +2896,7 @@ BOOL CGvisR2R_PunchView::SortingInDn(CString sPath, int nIndex)
 	{
 		sMsg.Format(_T("일시정지 - Failed getting information."));
 		//MsgBox(sMsg);
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
@@ -8858,6 +8871,7 @@ BOOL CGvisR2R_PunchView::SetMkFirst(int nCam, BOOL bRun)
 	}
 	else
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Failed-SetMkFirst()"));
 		return FALSE;
 	}
@@ -8884,6 +8898,7 @@ BOOL CGvisR2R_PunchView::SetMkFirst(int nCam, BOOL bRun)
 				m_dNextTarget[AXIS_X0] = -1.0;
 				m_dNextTarget[AXIS_Y0] = -1.0;
 
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Failed-SetMkFirst()"));
 				return FALSE;
 			}
@@ -8905,6 +8920,7 @@ BOOL CGvisR2R_PunchView::SetMkFirst(int nCam, BOOL bRun)
 				m_dNextTarget[AXIS_X1] = -1.0;
 				m_dNextTarget[AXIS_Y1] = -1.0;
 
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Failed-SetMkFirst()"));
 				return FALSE;
 			}
@@ -8927,6 +8943,7 @@ BOOL CGvisR2R_PunchView::SetMkFirst(int nCam, BOOL bRun)
 			m_dNextTarget[AXIS_Y1] = -1.0;
 		}
 
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Failed-SetMkFirst()"));
 		return FALSE;
 	}
@@ -9422,6 +9439,7 @@ BOOL CGvisR2R_PunchView::ChkLotEnd(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.25"));
 		return FALSE;
 	}
@@ -9437,6 +9455,7 @@ BOOL CGvisR2R_PunchView::ChkLotEndUp(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.26"));
 		return 0;
 	}
@@ -9455,6 +9474,7 @@ BOOL CGvisR2R_PunchView::ChkLotEndDn(int nSerial)
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.27"));
 		return 0;
 	}
@@ -9491,6 +9511,7 @@ BOOL CGvisR2R_PunchView::SetSerial(int nSerial, BOOL bDumy)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.28"));
 		return 0;
 	}
@@ -9983,20 +10004,21 @@ void CGvisR2R_PunchView::ResetMkInfo(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : 
 				pDoc->WorkingInfo.System.sPathCamSpecDir,
 				pDoc->WorkingInfo.LastJob.sModelUp,
 				pDoc->WorkingInfo.LastJob.sLayerUp,
-				_T(""), FALSE);
+				_T(""));
 			//pDoc->m_Master[0].Init(
 			//	pDoc->WorkingInfo.System.sPathCamSpecDir,
 			//	pDoc->WorkingInfo.LastJob.sModelUp,
 			//	pDoc->WorkingInfo.LastJob.sLayerUp,
 			//	_T(""), FALSE);
 			pView->m_nDebugStep = 504; pView->DispThreadTick();
-			pDoc->m_MasterDB.LoadMstInfo();
+			pDoc->m_MasterDB.m_bUse = pDoc->m_MasterDB.LoadMstInfo();
 			pDoc->m_MasterDB.WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
 			//pDoc->m_Master[0].LoadMstInfo();
 			//pDoc->m_Master[0].WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
 		}
 		else
 		{
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error - IsLastJob(0)..."));
 		}
 		pView->m_nDebugStep = 505; pView->DispThreadTick();
@@ -10181,6 +10203,7 @@ int CGvisR2R_PunchView::GetErrCode(int nSerial) // 1(정상), -1(Align Error, 노광
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.29"));
 		return 0;
 	}
@@ -10207,6 +10230,7 @@ int CGvisR2R_PunchView::GetErrCodeUp(int nSerial) // 1(정상), -1(Align Error, 노
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.30"));
 		return 0;
 	}
@@ -10260,6 +10284,7 @@ int CGvisR2R_PunchView::GetErrCode0(int nSerial) // 1(정상), -1(Align Error, 노�
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.32"));
 		return 0;
 	}
@@ -10286,6 +10311,7 @@ int CGvisR2R_PunchView::GetErrCodeUp0(int nSerial) // 1(정상), -1(Align Error, �
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.33"));
 		return 0;
 	}
@@ -10316,6 +10342,7 @@ int CGvisR2R_PunchView::GetErrCodeDn0(int nSerial) // 1(정상), -1(Align Error, �
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.34"));
 		return 0;
 	}
@@ -10339,6 +10366,7 @@ int CGvisR2R_PunchView::GetErrCode1(int nSerial) // 1(정상), -1(Align Error, 노�
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.35"));
 		return 0;
 	}
@@ -10366,6 +10394,7 @@ int CGvisR2R_PunchView::GetErrCodeUp1(int nSerial) // 1(정상), -1(Align Error, �
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.36"));
 		return 0;
 	}
@@ -10396,6 +10425,7 @@ int CGvisR2R_PunchView::GetErrCodeDn1(int nSerial) // 1(정상), -1(Align Error, �
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.37"));
 		return 0;
 	}
@@ -10423,6 +10453,7 @@ int CGvisR2R_PunchView::GetTotDefPcs(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.38"));
 		return 0;
 	}
@@ -10441,6 +10472,7 @@ int CGvisR2R_PunchView::GetTotDefPcsUp(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.39"));
 		return 0;
 	}
@@ -10469,6 +10501,7 @@ int CGvisR2R_PunchView::GetTotDefPcsDn(int nSerial)
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.40"));
 		return 0;
 	}
@@ -10494,6 +10527,7 @@ int CGvisR2R_PunchView::GetTotDefPcs0(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.41"));
 		return 0;
 	}
@@ -10531,6 +10565,7 @@ int CGvisR2R_PunchView::GetTotDefPcsUp0(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.42"));
 		return 0;
 	}
@@ -10555,6 +10590,7 @@ int CGvisR2R_PunchView::GetTotDefPcsDn0(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.43"));
 		return 0;
 	}
@@ -10580,6 +10616,7 @@ int CGvisR2R_PunchView::GetTotDefPcs1(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.44"));
 		return 0;
 	}
@@ -10616,6 +10653,7 @@ int CGvisR2R_PunchView::GetTotDefPcsUp1(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.45"));
 		return 0;
 	}
@@ -10640,6 +10678,7 @@ int CGvisR2R_PunchView::GetTotDefPcsDn1(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.46"));
 		return 0;
 	}
@@ -10760,6 +10799,7 @@ CfPoint CGvisR2R_PunchView::GetMkPnt0(int nSerial, int nMkPcs) // pcr 시리얼, pc
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.47"));
 		return 0;
 	}
@@ -10880,6 +10920,7 @@ int CGvisR2R_PunchView::GetMkStripIdx0(int nSerial, int nMkPcs) // 0 : Fail , 1~
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.48"));
 		return 0;
 	}
@@ -10898,6 +10939,7 @@ CfPoint CGvisR2R_PunchView::GetMkPnt1(int nSerial, int nMkPcs) // pcr 시리얼, pc
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.50"));
 		return 0;
 	}
@@ -10973,6 +11015,7 @@ int CGvisR2R_PunchView::GetMkStripIdx1(int nSerial, int nMkPcs) // 0 : Fail , 1~
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.51"));
 		return 0;
 	}
@@ -11322,6 +11365,7 @@ BOOL CGvisR2R_PunchView::LoadPcrUp(int nSerial, BOOL bFromShare)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.52"));
 		return FALSE;
 	}
@@ -11343,6 +11387,7 @@ BOOL CGvisR2R_PunchView::LoadPcrDn(int nSerial, BOOL bFromShare)
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.53"));
 		return 0;
 	}
@@ -11541,6 +11586,7 @@ BOOL CGvisR2R_PunchView::UpdateReelmap(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.54"));
 		return 0;
 	}
@@ -11580,6 +11626,7 @@ BOOL CGvisR2R_PunchView::UpdateReelmap(int nSerial)
 		if (!pDoc->GetPcrInfo(sPathPcr[0], stInfo)) // Up
 		{
 			pView->DispStsBar(_T("E(4)"), 5);
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error-GetPcrInfo(4)"));
 			return FALSE;
 		}
@@ -11606,6 +11653,7 @@ BOOL CGvisR2R_PunchView::UpdateReelmap(int nSerial)
 			if (!pDoc->GetPcrInfo(sPathPcr[1], stInfo)) // Dn
 			{
 				pView->DispStsBar(_T("E(5)"), 5);
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Error-GetPcrInfo(5)"));
 				return FALSE;
 			}
@@ -11743,6 +11791,7 @@ BOOL CGvisR2R_PunchView::CopyDefImg(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.55"));
 		return 0;
 	}
@@ -11754,6 +11803,7 @@ BOOL CGvisR2R_PunchView::CopyDefImg(int nSerial, CString sNewLot)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.56"));
 		return 0;
 	}
@@ -11765,6 +11815,7 @@ BOOL CGvisR2R_PunchView::CopyDefImgUp(int nSerial, CString sNewLot)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.57"));
 		return 0;
 	}
@@ -11780,6 +11831,7 @@ BOOL CGvisR2R_PunchView::CopyDefImgDn(int nSerial, CString sNewLot)
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.58"));
 		return FALSE;
 	}
@@ -11888,6 +11940,7 @@ BOOL CGvisR2R_PunchView::GetAoiUpInfo(int nSerial, int *pNewLot, BOOL bFromBuf)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.59"));
 		return 0;
 	}
@@ -11899,6 +11952,7 @@ BOOL CGvisR2R_PunchView::GetAoiDnInfo(int nSerial, int *pNewLot, BOOL bFromBuf)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.60"));
 		return 0;
 	}
@@ -12153,6 +12207,7 @@ void CGvisR2R_PunchView::SetLotEnd(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.61"));
 		return;
 	}
@@ -12605,12 +12660,18 @@ void CGvisR2R_PunchView::SetDummyUp()
 	if (m_nDummy[0] == 3)
 	{
 		if (!MakeDummyUp(-2))
+		{
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error - MakeDummyUp(-2)"));
+		}
 	}
 	else
 	{
 		if (!MakeDummyUp(-1))
+		{
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error - MakeDummyUp(-1)"));
+		}
 	}
 }
 
@@ -12620,12 +12681,18 @@ void CGvisR2R_PunchView::SetDummyDn()
 	if (m_nDummy[1] == 3)
 	{
 		if (!MakeDummyDn(-2))
+		{
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error - MakeDummyDn(-2)"));
+		}
 	}
 	else
 	{
 		if (!MakeDummyDn(-1))
+		{
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error - MakeDummyDn(-1)"));
+		}
 	}
 }
 
@@ -12666,6 +12733,7 @@ BOOL CGvisR2R_PunchView::MakeDummyUp(int nErr) // AOI 상면 기준.
 	fpPCR = fopen(pRtn = StringToChar(strRstPath2), "w+"); if(pRtn) delete pRtn; pRtn = NULL;
 	if (fpPCR == NULL)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
 	}
 	fprintf(fpPCR, pRtn = StringToChar(pDataFile->GetAllString())); if (pRtn) delete pRtn; pRtn = NULL;
@@ -12685,6 +12753,7 @@ BOOL CGvisR2R_PunchView::MakeDummyUp(int nErr) // AOI 상면 기준.
 	fpPCR = fopen(pRtn = StringToChar(sDummyPath), "w+"); if (pRtn) delete pRtn; pRtn = NULL;
 	if (fpPCR == NULL)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
 	}
 
@@ -12707,6 +12776,7 @@ BOOL CGvisR2R_PunchView::MakeDummyUp(int nErr) // AOI 상면 기준.
 	fpPCR = fopen(pRtn = StringToChar(sDummyPath), "w+"); if(pRtn) delete pRtn; pRtn = NULL;
 	if (fpPCR == NULL)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
 	}
 
@@ -12762,6 +12832,7 @@ BOOL CGvisR2R_PunchView::MakeDummyDn(int nErr) // AOI 상면 기준.
 	fpPCR = fopen(pRtn = StringToChar(strRstPath2), "w+"); if (pRtn) delete pRtn; pRtn = NULL;
 	if (fpPCR == NULL)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
 	}
 	fprintf(fpPCR, pRtn = StringToChar(pDataFile->GetAllString())); if (pRtn) delete pRtn; pRtn = NULL;
@@ -12781,6 +12852,7 @@ BOOL CGvisR2R_PunchView::MakeDummyDn(int nErr) // AOI 상면 기준.
 	fpPCR = fopen(pRtn = StringToChar(sDummyPath), "w+"); if (pRtn) delete pRtn; pRtn = NULL;
 	if (fpPCR == NULL)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
 	}
 
@@ -12803,6 +12875,7 @@ BOOL CGvisR2R_PunchView::MakeDummyDn(int nErr) // AOI 상면 기준.
 	fpPCR = fopen(pRtn = StringToChar(sDummyPath), "w+"); delete pRtn;
 	if (fpPCR == NULL)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("TROUBLE_SAVE_PIECEOUT_VRS"), MB_ICONWARNING | MB_OK);
 	}
 
@@ -13029,6 +13102,7 @@ void CGvisR2R_PunchView::DoReject0()
 			}
 			else
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Strip Index Failed."));
 				break;
 			}
@@ -13302,6 +13376,7 @@ void CGvisR2R_PunchView::DoReject1()
 			}
 			else
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Strip Index Failed."));
 				break;
 			}
@@ -14044,6 +14119,7 @@ void CGvisR2R_PunchView::DoMark0()
 			}
 			else
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Strip Index Failed."));
 				break;
 			}
@@ -14119,8 +14195,11 @@ void CGvisR2R_PunchView::DoMark0()
 		{
 			// Verify - Mk0
 			SetDelay0(pDoc->m_nDelayShow, 1);		// [mSec]
-			if(!SaveMk0Img(m_nMkPcs[0]))
+			if (!SaveMk0Img(m_nMkPcs[0]))
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Error-SaveMk0Img()"));
+			}
 			//m_nDebugStep = m_nMkPcs[0]; DispThreadTick();
 		}
 		m_nStepMk[0]++;
@@ -14484,12 +14563,14 @@ BOOL CGvisR2R_PunchView::SaveMk0Img(int nMkPcsIdx)
 	if (!pDoc->GetPcrInfo(sSrc, stInfo))
 	{
 		pView->DispStsBar(_T("E(2)"), 5);
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Error-GetPcrInfo(2)"));
 		return FALSE;
 	}
 
 	if (!pDoc->MakeMkDir(stInfo))
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Error-MakeMkDir()"));
 		return FALSE;
 	}
@@ -14728,6 +14809,7 @@ void CGvisR2R_PunchView::DoMark1()
 			}
 			else
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Strip Index Failed."));
 				break;
 			}
@@ -14803,8 +14885,11 @@ void CGvisR2R_PunchView::DoMark1()
 		{
 			// Verify - Mk1
 			SetDelay1(pDoc->m_nDelayShow, 6);		// [mSec]
-			if(!SaveMk1Img(m_nMkPcs[1]))
+			if (!SaveMk1Img(m_nMkPcs[1]))
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Error-SaveMk1Img()"));
+			}
 			//m_nDebugStep = m_nMkPcs[1]; DispThreadTick();
 		}
 		m_nStepMk[1]++;
@@ -15141,12 +15226,14 @@ BOOL CGvisR2R_PunchView::SaveMk1Img(int nMkPcsIdx)
 	if (!pDoc->GetPcrInfo(sSrc, stInfo))
 	{
 		pView->DispStsBar(_T("E(2)"), 5);
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Error-GetPcrInfo(2)"));
 		return FALSE;
 	}
 
 	if (!pDoc->MakeMkDir(stInfo))
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Error-MakeMkDir()"));
 		return FALSE;
 	}
@@ -16175,8 +16262,8 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 						pDoc->WorkingInfo.System.sPathCamSpecDir,
 						pDoc->WorkingInfo.LastJob.sModelUp,
 						pDoc->WorkingInfo.LastJob.sLayerUp,
-						_T(""), FALSE);
-					pDoc->m_MasterDB.LoadMstInfo();
+						_T(""));
+					pDoc->m_MasterDB.m_bUse = pDoc->m_MasterDB.LoadMstInfo();
 					pDoc->m_MasterDB.WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
 				}
 				//if (IsLastJob(0)) // Up
@@ -16207,7 +16294,7 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 						pDoc->WorkingInfo.LastJob.sModelUp,
 						pDoc->WorkingInfo.LastJob.sLayerUp,
 						_T(""), FALSE);
-					pDoc->m_MasterDB.LoadMstInfo();
+					pDoc->m_MasterDB.m_bUse = pDoc->m_MasterDB.LoadMstInfo();
 					pDoc->m_MasterDB.WriteStripPieceRegion_Text(pDoc->WorkingInfo.System.sPathOldFile, pDoc->WorkingInfo.LastJob.sLotUp);
 				}
 
@@ -16560,6 +16647,7 @@ void CGvisR2R_PunchView::DoAutoMarking()
 		MarkingWith4PointAlign();
 	else
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("마킹을 위한 Align방식이 정해지지 않았습니다."));
 	}
 }
@@ -16708,6 +16796,7 @@ void CGvisR2R_PunchView::Mk2PtChkSerial()
 				if (m_nBufDnSerial[0] == m_nBufDnSerial[1])
 				{
 					Stop();
+					pView->ClrDispMsg();
 					AfxMessageBox(_T("좌/우 마킹 시리얼이 같습니다."));
 					SetListBuf();
 					m_nMkStAuto = MK_ST + (Mk2PtIdx::Start);
@@ -16719,6 +16808,7 @@ void CGvisR2R_PunchView::Mk2PtChkSerial()
 				if (m_nBufUpSerial[0] == m_nBufUpSerial[1])
 				{
 					Stop();
+					pView->ClrDispMsg();
 					AfxMessageBox(_T("좌/우 마킹 시리얼이 같습니다."));
 					SetListBuf();
 					m_nMkStAuto = MK_ST + (Mk2PtIdx::Start);
@@ -18012,6 +18102,7 @@ void CGvisR2R_PunchView::Mk4PtChkSerial()
 				if (m_nBufDnSerial[0] == m_nBufDnSerial[1])
 				{
 					Stop();
+					pView->ClrDispMsg();
 					AfxMessageBox(_T("좌/우 마킹 시리얼이 같습니다."));
 					SetListBuf();
 					m_nMkStAuto = MK_ST + (Mk4PtIdx::Start);
@@ -18023,6 +18114,7 @@ void CGvisR2R_PunchView::Mk4PtChkSerial()
 				if (m_nBufUpSerial[0] == m_nBufUpSerial[1])
 				{
 					Stop();
+					pView->ClrDispMsg();
 					AfxMessageBox(_T("좌/우 마킹 시리얼이 같습니다."));
 					SetListBuf();
 					m_nMkStAuto = MK_ST + (Mk4PtIdx::Start);
@@ -19685,7 +19777,10 @@ void CGvisR2R_PunchView::MoveMk0InitPos()
 		if (!pView->m_pMotion->Move0(MS_X0Y0, pTgtPos, fVel / 2.0, fAcc / 2.0, fAcc / 2.0))
 		{
 			if (!pView->m_pMotion->Move0(MS_X0Y0, pTgtPos, fVel / 2.0, fAcc / 2.0, fAcc / 2.0))
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Move X0Y0 Error..."));
+			}
 		}
 	}
 }
@@ -19715,7 +19810,10 @@ void CGvisR2R_PunchView::MoveMk1InitPos()
 		if (!pView->m_pMotion->Move1(MS_X1Y1, pTgtPos, fVel / 2.0, fAcc / 2.0, fAcc / 2.0))
 		{
 			if (!pView->m_pMotion->Move1(MS_X1Y1, pTgtPos, fVel / 2.0, fAcc / 2.0, fAcc / 2.0))
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Move X1Y1 Error..."));
+			}
 		}
 	}
 }
@@ -19952,6 +20050,7 @@ BOOL CGvisR2R_PunchView::OpenReelmapFromBuf(int nSerial)
 	if (!pDoc->GetPcrInfo(sSrc, stInfoUp))
 	{
 		pView->DispStsBar(_T("E(6)"), 5);
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Error-GetPcrInfo(6)"));
 		return FALSE;
 	}
@@ -19961,6 +20060,7 @@ BOOL CGvisR2R_PunchView::OpenReelmapFromBuf(int nSerial)
 		if (!pDoc->GetPcrInfo(sSrc, stInfoDn))
 		{
 			pView->DispStsBar(_T("E(7)"), 5);
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error-GetPcrInfo(7)"));
 			return FALSE;
 		}
@@ -20071,6 +20171,7 @@ void CGvisR2R_PunchView::EStop()
 		ResetMotion(MS_X1Y1);
 		Sleep(30);
 		// 		DispMsg(_T("X축 충돌 범위에 의한 정지입니다."), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("X축 충돌 범위에 의한 정지입니다."));
 
 		double dCurrX = pView->m_dEnc[AXIS_X1];
@@ -20272,7 +20373,10 @@ void CGvisR2R_PunchView::DoAllMk(int nCam)
 			if (!pView->m_pMotion->Move(MS_X1Y1, pPos, fVel, fAcc, fAcc))
 			{
 				if (!pView->m_pMotion->Move(MS_X1Y1, pPos, fVel, fAcc, fAcc))
+				{
+					pView->ClrDispMsg();
 					AfxMessageBox(_T("Move X1Y1 Error..."));
+				}
 			}
 		}
 		if (!m_bTHREAD_MK[2])
@@ -20303,7 +20407,10 @@ void CGvisR2R_PunchView::DoAllMk(int nCam)
 			if (!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
 			{
 				if (!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
+				{
+					pView->ClrDispMsg();
 					AfxMessageBox(_T("Move X0Y0 Error..."));
+				}
 			}
 		}
 		if (!m_bTHREAD_MK[3])
@@ -20443,7 +20550,10 @@ void CGvisR2R_PunchView::IoWrite(CString sMReg, long lData)
 		}
 	}
 	if (i >= TOT_M_IO)
+	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Not enought TOT_M_IO Num!!!"));
+	}
 }
 
 BOOL CGvisR2R_PunchView::IsRdyTest()
@@ -20767,6 +20877,7 @@ BOOL CGvisR2R_PunchView::MoveAlign0(int nPos)
 			{
 				if (!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc, ABS, NO_WAIT))
 				{
+					pView->ClrDispMsg();
 					AfxMessageBox(_T("Error - Move MoveAlign0 ..."));
 					return FALSE;
 				}
@@ -20826,6 +20937,7 @@ BOOL CGvisR2R_PunchView::MoveAlign1(int nPos)
 			{
 				if (!m_pMotion->Move(MS_X1Y1, pPos, fVel, fAcc, fAcc, ABS, NO_WAIT))
 				{
+					pView->ClrDispMsg();
 					AfxMessageBox(_T("Error - Move MoveAlign1 ..."));
 					return FALSE;
 				}
@@ -21384,6 +21496,7 @@ void CGvisR2R_PunchView::MakeResultMDS()
 	else
 	{
 		strMsg.Format(_T("It is trouble to open file.\r\n%s"), sPath);
+		pView->ClrDispMsg();
 		AfxMessageBox(strMsg, MB_ICONWARNING | MB_OK);
 	}
 
@@ -21464,6 +21577,7 @@ void CGvisR2R_PunchView::MakeSapp3()
 	else
 	{
 		strMsg.Format(_T("It is trouble to open file.\r\n%s"), sPath);
+		pView->ClrDispMsg();
 		AfxMessageBox(strMsg, MB_ICONWARNING | MB_OK);
 	}
 
@@ -21824,7 +21938,10 @@ BOOL CGvisR2R_PunchView::MoveMeasPos(int nId)
 				if (!m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
 				{
 					if (!m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
+					{
+						pView->ClrDispMsg();
 						AfxMessageBox(_T("Move XY Error..."));
+					}
 				}
 			}
 
@@ -21884,7 +22001,10 @@ BOOL CGvisR2R_PunchView::MoveMeasPos(int nId)
 				if (!m_pMotion->Move(MS_X1Y1, pPos, fVel, fAcc, fAcc))
 				{
 					if (!m_pMotion->Move(MS_X1Y1, pPos, fVel, fAcc, fAcc))
+					{
+						pView->ClrDispMsg();
 						AfxMessageBox(_T("Move XY Error..."));
+					}
 				}
 			}
 
@@ -22391,6 +22511,7 @@ BOOL CGvisR2R_PunchView::IsConnected()
 					Sleep(100);
 					if (GetTickCount() >= (dwStartTick + DELAY_RESPONSE))
 					{
+						pView->ClrDispMsg();
 						AfxMessageBox(_T(" WaitResponse() Time Out. \r\n m_pEngrave->IsConnected() !!!"));
 						break;
 					}
@@ -22400,6 +22521,7 @@ BOOL CGvisR2R_PunchView::IsConnected()
 					Sleep(100);
 					if (GetTickCount() >= (dwStartTick + DELAY_RESPONSE))
 					{
+						pView->ClrDispMsg();
 						AfxMessageBox(_T(" WaitResponse() Time Out. \r\n m_pEngrave->IsConnected() !!!"));
 						break;
 					}
@@ -22473,7 +22595,10 @@ BOOL CGvisR2R_PunchView::GetDtsPieceOut(int nSerial, int* pPcsOutIdx, int& nTotP
 		{
 			bRtn = m_pDts->LoadPieceOut(sLot, nSerial, pPcsOutIdx, nTotPcsOut);
 			if (!bRtn)
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Error - GetDtsPieceOut()."), MB_ICONSTOP | MB_OK);
+			}
 		}
 	}
 

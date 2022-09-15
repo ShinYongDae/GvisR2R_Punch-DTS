@@ -202,8 +202,8 @@ void CDlgUtil04::SetCombo(int nSel)
 {
 	CComboBox* pCombo1 = ((CComboBox*)GetDlgItem(IDC_COMBO1));
 
-	//char szData[200];
-	TCHAR szData[200];
+	//char szData[MAX_PATH];
+	TCHAR szData[MAX_PATH];
 	CString strSeg, strIndex, strComboData, strPath;
 
 // 	switch(nSel)
@@ -728,10 +728,10 @@ void CDlgUtil04::DispListMp2100(int nIndex)
 {
 	int nMaxSeg, nSeg, nInSeg, nOutSeg;
 	TCHAR sep[] = {_T(",;\r\n\t")};
-	TCHAR szData[200];
+	TCHAR szData[MAX_PATH];
 	TCHAR *token1, *token2, *token3, *token4, *token5;
 	//char sep[] = {",;\r\n\t"};
-	//char szData[200];
+	//char szData[MAX_PATH];
 	//char *token1, *token2, *token3, *token4, *token5;
 	CString strInSeg, strOutSeg, strAddr, strMReg, strSymbol, strName, strComboData, strPath, strIdx, strMBoth;
 
@@ -835,7 +835,7 @@ void CDlgUtil04::DispListMp2100(int nIndex)
 // {
 // 	int nMaxSeg, nSeg, nInSeg, nOutSeg;
 // 	char sep[] = {",;\r\n\t"};
-// 	char szData[200];
+// 	char szData[MAX_PATH];
 // 	char *token0,  *token1, *token2, *token3;
 // 	CString strInSeg, strOutSeg, strAddr, strSymbol, strName, strComboData, strPath, strIdx, strMBoth;
 // 

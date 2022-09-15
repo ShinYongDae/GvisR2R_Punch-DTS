@@ -543,8 +543,11 @@ void CDlgUtil03::MoveMkPos(int nStcId)
 		if(fLen > 0.001)
 		{
 			pView->m_pMotion->GetSpeedProfile(TRAPEZOIDAL, AXIS_X0, fLen, fVel, fAcc, fJerk);
-			if(!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
+			if (!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Move X0Y0 Error..."));
+			}
 		}
 	}
 	else if(!bOn0 && bOn1)
@@ -566,8 +569,11 @@ void CDlgUtil03::MoveMkPos(int nStcId)
 		if(fLen > 0.001)
 		{
 			pView->m_pMotion->GetSpeedProfile(TRAPEZOIDAL, AXIS_X1, fLen, fVel, fAcc, fJerk);
-			if(!pView->m_pMotion->Move(MS_X1Y1, pPos, fVel, fAcc, fAcc))
+			if (!pView->m_pMotion->Move(MS_X1Y1, pPos, fVel, fAcc, fAcc))
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Move X1Y1 Error..."));
+			}
 		}
 	}
 	else if(bOn0 && bOn1)
@@ -589,8 +595,11 @@ void CDlgUtil03::MoveMkPos(int nStcId)
 		if(fLen > 0.001)
 		{
 			pView->m_pMotion->GetSpeedProfile(TRAPEZOIDAL, AXIS_X0, fLen, fVel, fAcc, fJerk);
-			if(!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
+			if (!pView->m_pMotion->Move(MS_X0Y0, pPos, fVel, fAcc, fAcc))
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Move X0Y0 Error..."));
+			}
 		}
 
 		nPos = str.Find('(', 0);
@@ -609,8 +618,11 @@ void CDlgUtil03::MoveMkPos(int nStcId)
 		if(fLen > 0.001)
 		{
 			pView->m_pMotion->GetSpeedProfile(TRAPEZOIDAL, AXIS_X1, fLen, fVel, fAcc, fJerk);
-			if(!pView->m_pMotion->Move(MS_X1Y1, pPos, fVel, fAcc, fAcc))
+			if (!pView->m_pMotion->Move(MS_X1Y1, pPos, fVel, fAcc, fAcc))
+			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Move X1Y1 Error..."));
+			}
 		}
 	}
 

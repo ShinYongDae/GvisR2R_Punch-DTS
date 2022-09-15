@@ -597,7 +597,7 @@ void CMyFile::DelPcrAll(CString strPath)
 BOOL CMyFile::ChkLotEnd(CString sPath)
 {
 	// 파일을 읽는다.
-	char FileD[200];
+	char FileD[MAX_PATH];
 	char *FileData;
 	CString strFileData;
 	size_t nFileSize, nRSize;

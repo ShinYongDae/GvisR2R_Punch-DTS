@@ -449,7 +449,7 @@ void CDlgMenu05::ModifyLayerData()
 // 
 // 	int nTemp, nFileSize, nRSize;
 // 	CString strFileData, strHeaderErrorInfo, strModel, strLayer, strLot, strTotalBadPieceNum, strMsg;
-// 	char FileD[200];
+// 	char FileD[MAX_PATH];
 // 	CFileFind findfile;
 // 	FILE *fp;
 // 	char *FileData;
@@ -602,6 +602,7 @@ BOOL CDlgMenu05::MakeResult() // TRUE: Make Result, FALSE: Load Result or Failed
 	if(!findfile.FindFile(strAddedDefectFP)) // Can not find file.
 	{
 		strMsg.Format(_T("%s file open is failed"), strAddedDefectFP);
+		pView->ClrDispMsg();
 		AfxMessageBox(strMsg);
 	}
 	else
@@ -1257,8 +1258,8 @@ void CDlgMenu05::InsertLine(CString sPath)
 
 void CDlgMenu05::DisplayReelMapData()
 {
-	//char FileD[200];
-	TCHAR FileD[200];
+	//char FileD[MAX_PATH];
+	TCHAR FileD[MAX_PATH];
 	char *FileData;
 	CString strReelMapPath, strReelMapData, DsipMsg;
  	int nFileSize, nRSize, i;	//, nSizeTemp	
@@ -1337,6 +1338,7 @@ void CDlgMenu05::DisplayReelMapData()
 	else
 	{
 		DsipMsg.Format(_T("파일이 존재하지 않습니다.\r\n%s"), strReelMapPath);
+		pView->ClrDispMsg();
 		AfxMessageBox(DsipMsg);
 	}
 
@@ -1503,8 +1505,8 @@ void CDlgMenu05::DisplayReelMapUser()
 
 CString CDlgMenu05::LoadFile(CString sPath)
 {
-	//char FileD[200];
-	TCHAR FileD[200];
+	//char FileD[MAX_PATH];
+	TCHAR FileD[MAX_PATH];
 	char *FileData;
 	CString DsipMsg=_T(""), sData=_T("");
  	int nFileSize, nRSize, i;	//, nSizeTemp	
@@ -1574,6 +1576,7 @@ CString CDlgMenu05::LoadFile(CString sPath)
 	else
 	{
 		DsipMsg.Format(_T("파일이 존재하지 않습니다.\r\n%s"), sPath);
+		pView->ClrDispMsg();
 		AfxMessageBox(DsipMsg);
 	}
 
@@ -2228,6 +2231,7 @@ BOOL CDlgMenu05::ReloadRst()
 	if(!bExist) // Can not find file.
 	{
 		sMsg.Format(_T("결과 파일을 열지 못했습니다.\r\n%s"), sRmapPath);
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE; // Failed.
 	}
@@ -2560,6 +2564,7 @@ void CDlgMenu05::OnStcProc()
 				if( !f1.Open( m_sRmapPath, CFile::modeCreate | CFile::modeWrite ) )
 				{
 					sMsg.Format(_T("릴맵 파일을 열지 못했습니다.\r\n%s"), m_sRmapPath);
+					pView->ClrDispMsg();
 					AfxMessageBox(sMsg);
 					return;
 				}
@@ -2624,7 +2629,8 @@ void CDlgMenu05::MakeSapp3()
 	{
 		CString strMsg;
 		strMsg.Format(_T("It is trouble to open file.\r\n%s"), sPath);
-		AfxMessageBox(strMsg,MB_ICONWARNING|MB_OK);
+		pView->ClrDispMsg();
+		AfxMessageBox(strMsg, MB_ICONWARNING | MB_OK);
 	}
 	if(pRtn)
 		delete pRtn;
@@ -2635,8 +2641,8 @@ CString CDlgMenu05::Sapp3Data()
 {
 	CString strFileData = _T("");
 	CString strPanelFacePath, strPath, strMsg;
-	//char szData[200];
-	TCHAR szData[200];
+	//char szData[MAX_PATH];
+	TCHAR szData[MAX_PATH];
 	CFileFind findfile;
 	double dEntireSpeed;
 

@@ -412,6 +412,7 @@ BOOL CDlgMenu01::OpenReelmap(CString sPath)
 	if (!pDoc->GetPcrInfo(sPath, stInfo))
 	{
 		pView->DispStsBar(_T("E(1)"), 5);
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Error-GetPcrInfo(1)"));
 		return FALSE;
 	}

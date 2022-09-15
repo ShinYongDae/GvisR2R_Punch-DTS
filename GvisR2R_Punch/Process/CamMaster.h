@@ -38,7 +38,6 @@ class CCamMaster : public CWnd
 	CString m_sPathCamSpecDir, m_sModel, m_sLayer, m_sLayerUp;
 	long m_PinFileSize, m_PcsFileSize, m_AlignFileSize[4];
 
-	BOOL m_bUseDTS;
 
 	BOOL LoadMasterSpec();
 	void LoadPinImg();
@@ -75,6 +74,8 @@ public:
 
 // Attributes
 public:
+	BOOL m_bUse;
+
 	stMasterInfo MasterInfo;
 	REGION_STRIP* m_pCellRgn;
 	CPcsRgn* m_pPcsRgn;
@@ -96,7 +97,7 @@ public:
 
 // Operations
 public:
-	void Init(CString sModel, CString sLayer, CString sPathSpec = _T(""), CString sLayerUp=_T(""), BOOL bUseDTS=TRUE);
+	void Init(CString sModel, CString sLayer, CString sPathSpec = _T(""), CString sLayerUp=_T(""));
 	BOOL LoadMstInfo();
 	BOOL WriteStripPieceRegion_Text(CString sBasePath, CString sLot);
 

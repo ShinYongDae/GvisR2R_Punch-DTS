@@ -99,8 +99,11 @@ CMotion::CMotion(CWnd* pParent)
 		m_dFeedRate[i] = 1.0;
 
 	RECT rt={0,0,0,0};
-	if(!Create(NULL, NULL, WS_CHILD, rt, pParent, 0))
+	if (!Create(NULL, NULL, WS_CHILD, rt, pParent, 0))
+	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("CMotion::Create() Failed!!!"));
+	}
 
 	m_sPathMotionParam = PATH_MOTION_PARAM;
 	LoadParam();
@@ -200,7 +203,7 @@ void CMotion::LoadParam()
 	CGvisR2R_PunchDoc *pDoc = (CGvisR2R_PunchDoc *)pFrame->GetActiveDocument();
 	
 	CString sVal, sIdx;
-	TCHAR szData[200];
+	TCHAR szData[MAX_PATH];
 	TCHAR sep[] = _T(",/;\r\n\t");
 	TCHAR *token;
 	TCHAR *stopstring;
@@ -1164,6 +1167,7 @@ BOOL CMotion::InitNmcBoard()
 
 	if (!m_pMotionCard->CheckNmcConnection())
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("이더캣 통신이 불안정합니다. 노드 끊김 감지, 이더캣 장치의 상태 및 케이블 결속 상태를 재확인하고 프로그램을 다시 실행하십시오. 프로그램이 종료됩니다"), MB_ICONSTOP | MB_SYSTEMMODAL | MB_SETFOREGROUND | MB_TOPMOST);
 		return FALSE;
 	}
@@ -2260,6 +2264,7 @@ double CMotion::GetSCurveVelocity(double dLen, double &dVel, double &dAcc, doubl
 			}
 			else
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("S-Curve 속도 프로파일 계산 에러 "));
 //				AfxMessageBox(_T("Calculation Error at Speed profile of S-Curve motion"));
 			}		

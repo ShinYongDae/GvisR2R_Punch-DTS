@@ -45,6 +45,7 @@ CDataFile::CDataFile(LPCTSTR lpszFileName)
 		else
 		{
 			Open(lpszFileName);
+			file.Close();
 		}
 	}
 }
@@ -61,7 +62,7 @@ BOOL CDataFile::Open(CString sFileName)	// BOOL CDataFile::Open(LPCTSTR lpszFile
 	//if(!m_FilePath.Compare(lpszFileName)) return TRUE; // 이미 열려 있는 경우 TRUE를 리턴한다.
 	if(!m_FilePath.Compare(sFileName)) return TRUE; // 이미 열려 있는 경우 TRUE를 리턴한다.
 
-	TCHAR FileNCam[200];
+	TCHAR FileNCam[MAX_PATH];
 	wsprintf(FileNCam, TEXT("%s"), sFileName);
 
 	CFile file;

@@ -236,7 +236,7 @@ END_MESSAGE_MAP()
 // CReelMap message handlers
 void CReelMap::LoadConfig()
 {
-	TCHAR szData[200];
+	TCHAR szData[MAX_PATH];
 	TCHAR sep[] = { _T(",;\r\n\t") };
 	CString sVal;
 
@@ -309,6 +309,7 @@ BOOL CReelMap::LoadDefectTableIni()
 		}
 		else
 		{
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error - LoadDefectTableIni()"));
 			return FALSE;
 		}
@@ -956,6 +957,7 @@ BOOL CReelMap::Write(int nSerial, int nLayer)
 {
 	if(nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.62"));
 		return 0;
 	}
@@ -1079,6 +1081,7 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 {
 	if(nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.63"));
 		return 0;
 	}
@@ -1216,8 +1219,11 @@ void CReelMap::InitPcs()
 			pPcsDef = new int*[nTotPnl];
 			for(k=0; k<nTotPnl; k++)
 			{
-				if(nTotPcs > MAX_PCS)
+				if (nTotPcs > MAX_PCS)
+				{
+					pView->ClrDispMsg();
 					AfxMessageBox(_T("MAX_PCS 초과 Error."));
+				}
 				pPcsDef[k] = new int[MAX_PCS];
 				for(i=0; i<MAX_PCS; i++)
 					pPcsDef[k][i] = DEF_NONE;
@@ -1228,7 +1234,10 @@ void CReelMap::InitPcs()
 // 			pMkInfo = new CString[nTotPcs];
 	}
 	else
+	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Error-InitPcs."));
+	}
 }
 
 // void CReelMap::ResetReelmap()
@@ -1664,6 +1673,7 @@ void CReelMap::SetLastSerial(int nSerial) 	// 릴맵 텍스트 파일의 수율정보를 업데
 {
 	if(nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.64"));
 		return;
 	}
@@ -1695,6 +1705,7 @@ void CReelMap::SetCompletedSerial(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.67"));
 		return;
 	}
@@ -2010,6 +2021,7 @@ BOOL CReelMap::ReadYield(int nSerial, CString sPath)
 		else
 		{
 			sMsg.Format(_T("이전 수율 읽기 오류 : Shot(%d)-불량(%d)\r\n%s"), nSerial, i, sPath);
+			pView->ClrDispMsg();
 			AfxMessageBox(sMsg, MB_ICONWARNING | MB_OK);
 			return FALSE;
 		}
@@ -2022,6 +2034,7 @@ BOOL CReelMap::ReadYield(int nSerial, CString sPath)
 	else
 	{
 		sMsg.Format(_T("이전 수율 읽기 오류 : Shot(%d)-Total Pcs\r\n%s"), nSerial, sPath);
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg, MB_ICONWARNING | MB_OK);
 		return FALSE;
 	}
@@ -2033,6 +2046,7 @@ BOOL CReelMap::ReadYield(int nSerial, CString sPath)
 	else
 	{
 		sMsg.Format(_T("이전 수율 읽기 오류 : Shot(%d)-Good Pcs\r\n%s"), nSerial, sPath);
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg, MB_ICONWARNING | MB_OK);
 		return FALSE;
 	}
@@ -2044,6 +2058,7 @@ BOOL CReelMap::ReadYield(int nSerial, CString sPath)
 	else
 	{
 		sMsg.Format(_T("이전 수율 읽기 오류 : Shot(%d)-Bad Pcs\r\n%s"), nSerial, sPath);
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg, MB_ICONWARNING | MB_OK);
 		return FALSE;
 	}
@@ -2058,6 +2073,7 @@ BOOL CReelMap::ReadYield(int nSerial, CString sPath)
 		else
 		{
 			sMsg.Format(_T("이전 수율 읽기 오류 : Shot(%d)-Strip%d\r\n%s"), nSerial, k, sPath);
+			pView->ClrDispMsg();
 			AfxMessageBox(sMsg, MB_ICONWARNING | MB_OK);
 			return FALSE;
 		}
@@ -2070,6 +2086,7 @@ BOOL CReelMap::ReadYield(int nSerial, CString sPath)
 		else
 		{
 			sMsg.Format(_T("이전 수율 읽기 오류 : Shot(%d)-StripOut_%d\r\n%s"), nSerial, k, sPath);
+			pView->ClrDispMsg();
 			AfxMessageBox(sMsg, MB_ICONWARNING | MB_OK);
 			return FALSE;
 		}
@@ -2084,6 +2101,7 @@ BOOL CReelMap::ReadYield(int nSerial, CString sPath)
 			else
 			{
 				sMsg.Format(_T("이전 수율 읽기 오류 : Shot(%d)-Strip%d_%d\r\n%s"), nSerial, k, i, sPath);
+				pView->ClrDispMsg();
 				AfxMessageBox(sMsg, MB_ICONWARNING | MB_OK);
 				return FALSE;
 			}
@@ -2097,6 +2115,7 @@ BOOL CReelMap::ReadYield(int nSerial, CString sPath)
 	else
 	{
 		sMsg.Format(_T("이전 수율 읽기 오류 : Shot(%d)-StripOut_Total\r\n%s"), nSerial, sPath);
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg, MB_ICONWARNING | MB_OK);
 		return FALSE;
 	}
@@ -2242,6 +2261,7 @@ BOOL CReelMap::UpdateYield(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.68"));
 		return 0;
 	}
@@ -2343,6 +2363,7 @@ BOOL CReelMap::UpdateRst(int nSerial)		// 릴맵 텍스트 파일의 수율정보를 업데이트
 {
 	if(nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.65"));
 		return FALSE;
 	}
@@ -3778,6 +3799,7 @@ BOOL CReelMap::ReloadRst(int nTo) // StartThreadReloadRst();에서 실행
 {
 	if(!m_pPnlBuf)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Memory not alloced.- PnlBuf"));
 		m_bDoneReloadRst = TRUE;
 		return FALSE;

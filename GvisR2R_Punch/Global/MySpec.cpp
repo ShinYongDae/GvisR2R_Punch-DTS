@@ -98,7 +98,8 @@ BOOL CMySpec::MakeDir()
 	if(m_sModel.IsEmpty() || m_sLayer.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 레이어명이 없습니다."));
-		AfxMessageBox(sMsg);			
+		pView->ClrDispMsg();
+		AfxMessageBox(sMsg);
 		return FALSE;
 	}
 
@@ -120,7 +121,8 @@ BOOL CMySpec::MakeDir()
 	if(m_sModel.IsEmpty() || m_sLayer.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 레이어명이 없습니다."));
-		AfxMessageBox(sMsg);			
+		pView->ClrDispMsg();
+		AfxMessageBox(sMsg);
 		return FALSE;
 	}
 
@@ -150,7 +152,8 @@ BOOL CMySpec::MakeDir(CString sModel, CString sLayer)
 	if(sModel.IsEmpty() || sLayer.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 레이어명이 없습니다."));
-		AfxMessageBox(sMsg);			
+		pView->ClrDispMsg();
+		AfxMessageBox(sMsg);
 		return FALSE;
 	}
 
@@ -172,7 +175,8 @@ BOOL CMySpec::MakeDir(CString sModel, CString sLayer)
 	if(sModel.IsEmpty() || sLayer.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 레이어명이 없습니다."));
-		AfxMessageBox(sMsg);			
+		pView->ClrDispMsg();
+		AfxMessageBox(sMsg);
 		return FALSE;
 	}
 
@@ -196,11 +200,12 @@ BOOL CMySpec::Load()
 	if(!finder.FindFile(m_sPath))
 	{
 		sMsg.Format(_T("스펙 파일을 찾지 못했습니다.\r\n%s"), m_sPath);
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
 
-	TCHAR szData[200];
+	TCHAR szData[MAX_PATH];
 
 // 	if (0 < ::GetPrivateProfileString(_T("PCS"), _T("OffsetX"), NULL, szData, sizeof(szData), m_sPath))
 // 		m_dPcsOffsetX = _tstof(szData);
@@ -339,7 +344,7 @@ BOOL CMySpec::IsPinMkData()
 	if(!finder.FindFile(m_sPath))
 		return FALSE;
 
-	TCHAR szData[200];
+	TCHAR szData[MAX_PATH];
 
 // 	if (0 < ::GetPrivateProfileString(_T("PCS"), _T("OffsetX"), NULL, szData, sizeof(szData), m_sPath))
 // 		m_dPcsOffsetX = _tstof(szData);
@@ -399,7 +404,7 @@ BOOL CMySpec::IsPinData()
 	if(!finder.FindFile(m_sPath))
 		return FALSE;
 
-	TCHAR szData[200];
+	TCHAR szData[MAX_PATH];
 
 	if (0 < ::GetPrivateProfileString(_T("PIN0"), _T("X"), NULL, szData, sizeof(szData), m_sPath))
 		m_dPinPosX[0] = _tstof(szData);
@@ -443,7 +448,7 @@ BOOL CMySpec::IsPinData()
 // 	if(!finder.FindFile(m_sPath))
 // 		return FALSE;
 // 
-// 	char szData[200];
+// 	char szData[MAX_PATH];
 // 
 // 	if (0 < ::GetPrivateProfileString(_T("PCS"), _T("OffsetX"), NULL, szData, sizeof(szData), m_sPath))
 // 		m_dPcsOffsetX = _tstof(szData);

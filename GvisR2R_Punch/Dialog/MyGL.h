@@ -44,7 +44,7 @@ class CMyGL : public CWnd
 	int *m_pPnlNum, *m_pPnlDefNum;
 
 	GVertex **m_pFrmRgn;
-	GVertex ***m_pPcsPnt;
+	GVertex ***m_pPcsPnt;	// [pnl][pcsIdx][LT], 	// [pnl][pcsIdx][RB]
 
 	int m_nWorldW, m_nWorldH;
 	GVColor m_rgbDef[MAX_DEF];

@@ -900,6 +900,7 @@ BOOL CGvisR2R_PunchDoc::LoadWorkingInfo()
 {
 	TCHAR szData[200];
 	CString sVal, sPath = PATH_WORKING_INFO;
+	pView->ClrDispMsg();
 
 	// [System]
 
@@ -3648,7 +3649,8 @@ BOOL CGvisR2R_PunchDoc::InitReelmap()
 		CString strMsg;
 		strMsg.Format(_T("피스 영역이 존재하지 않습니다."));
 		//pView->MsgBox(strMsg);
-		AfxMessageBox(strMsg,MB_ICONSTOP);
+		pView->ClrDispMsg();
+		AfxMessageBox(strMsg, MB_ICONSTOP);
 		return FALSE;
 	}
 
@@ -4048,6 +4050,7 @@ int CGvisR2R_PunchDoc::GetPcrIdx(int nSerial, BOOL bNewLot)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.8"));
 		return 0;
 	}
@@ -4065,6 +4068,7 @@ int CGvisR2R_PunchDoc::GetPcrIdx0(int nSerial, BOOL bNewLot)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.9"));
 		return 0;
 	}
@@ -4099,6 +4103,7 @@ int CGvisR2R_PunchDoc::GetPcrIdx1(int nSerial, BOOL bNewLot)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.10"));
 		return 0;
 	}
@@ -4133,6 +4138,7 @@ BOOL CGvisR2R_PunchDoc::GetAoiUpInfo(int nSerial, int *pNewLot, BOOL bFromBuf) /
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.11"));
 		return 0;
 	}
@@ -4164,6 +4170,7 @@ BOOL CGvisR2R_PunchDoc::GetAoiDnInfo(int nSerial, int *pNewLot, BOOL bFromBuf) /
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.12"));
 		return 0;
 	}
@@ -4484,6 +4491,7 @@ int CGvisR2R_PunchDoc::LoadPCR0(int nSerial, BOOL bFromShare)	// return : 2(Fail
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.14"));
 		return 0;
 	}
@@ -4501,6 +4509,7 @@ int CGvisR2R_PunchDoc::LoadPCR1(int nSerial, BOOL bFromShare)	// return : 2(Fail
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.15"));
 		return 0;
 	}
@@ -4531,6 +4540,7 @@ int CGvisR2R_PunchDoc::LoadPCRAllUp(int nSerial, BOOL bFromShare)	// return : 2(
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.16"));
 		return 0;
 	}
@@ -5371,6 +5381,7 @@ BOOL CGvisR2R_PunchDoc::CopyDefImg(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.17"));
 		return 0;
 	}
@@ -5422,6 +5433,7 @@ BOOL CGvisR2R_PunchDoc::CopyDefImgUp(int nSerial, CString sNewLot)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.18"));
 		return 0;
 	}
@@ -5601,6 +5613,7 @@ BOOL CGvisR2R_PunchDoc::CopyDefImgDn(int nSerial, CString sNewLot)
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.19"));
 		return 0;
 	}
@@ -5774,6 +5787,7 @@ int CGvisR2R_PunchDoc::GetIdxPcrBuf(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.20"));
 		return 0;
 	}
@@ -5799,6 +5813,7 @@ int CGvisR2R_PunchDoc::GetIdxPcrBufUp(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.21"));
 		return 0;
 	}
@@ -5828,6 +5843,7 @@ int CGvisR2R_PunchDoc::GetIdxPcrBufDn(int nSerial)
 
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.22"));
 		return 0;
 	}
@@ -7026,6 +7042,7 @@ BOOL CGvisR2R_PunchDoc::Shift2Mk(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.23"));
 		return 0;
 	}
@@ -7042,12 +7059,14 @@ BOOL CGvisR2R_PunchDoc::Shift2Mk(int nSerial)
 		if (!GetPcrInfo(sSrc, stInfo))
 		{
 			pView->DispStsBar(_T("E(2)"), 5);
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error-GetPcrInfo(2)"));
 			return FALSE;
 		}
 
 		if (!MakeMkDir(stInfo))
 		{
+			pView->ClrDispMsg();
 			AfxMessageBox(_T("Error-MakeMkDir()"));
 			return FALSE;
 		}
@@ -7064,12 +7083,14 @@ BOOL CGvisR2R_PunchDoc::Shift2Mk(int nSerial)
 			if (!GetPcrInfo(sSrc, stInfo))
 			{
 				pView->DispStsBar(_T("E(3)"), 5);
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Error-GetPcrInfo(3)"));
 				return FALSE;
 			}
 
 			if (!MakeMkDir(stInfo))
 			{
+				pView->ClrDispMsg();
 				AfxMessageBox(_T("Error-MakeMkDir()"));
 				return FALSE;
 			}
@@ -7100,6 +7121,7 @@ void CGvisR2R_PunchDoc::SetLastSerial(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.24"));
 		return;
 	}
@@ -7135,6 +7157,7 @@ void CGvisR2R_PunchDoc::UpdateYield(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.66"));
 		return;
 	}
@@ -7158,6 +7181,7 @@ void CGvisR2R_PunchDoc::SetCompletedSerial(int nSerial)
 {
 	if (nSerial <= 0)
 	{
+		pView->ClrDispMsg();
 		AfxMessageBox(_T("Serial Error.49"));
 		return;
 	}
@@ -7237,6 +7261,7 @@ BOOL CGvisR2R_PunchDoc::MakeMkDir(CString sModel, CString sLot, CString sLayer)
 	if (sModel.IsEmpty() || sLot.IsEmpty() || sLayer.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 로뜨 또는 레이어명이 없습니다."));
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
@@ -7305,6 +7330,7 @@ BOOL CGvisR2R_PunchDoc::MakeMkDirUp()
 	if (WorkingInfo.LastJob.sModelUp.IsEmpty() || WorkingInfo.LastJob.sLotUp.IsEmpty() || WorkingInfo.LastJob.sLayerUp.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 로뜨 또는 레이어명이 없습니다."));
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
@@ -7355,6 +7381,7 @@ BOOL CGvisR2R_PunchDoc::MakeMkDirDn()
 	if (WorkingInfo.LastJob.sModelDn.IsEmpty() || WorkingInfo.LastJob.sLotDn.IsEmpty() || WorkingInfo.LastJob.sLayerDn.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 로뜨 또는 레이어명이 없습니다."));
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
@@ -7725,6 +7752,7 @@ BOOL CGvisR2R_PunchDoc::MakeMkDir(stModelInfo stInfo)
 	if (stInfo.sModel.IsEmpty() || stInfo.sLot.IsEmpty() || stInfo.sLayer.IsEmpty())
 	{
 		sMsg.Format(_T("모델이나 로뜨 또는 레이어명이 없습니다."));
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg);
 		return FALSE;
 	}
@@ -8367,6 +8395,7 @@ BOOL CGvisR2R_PunchDoc::LoadAoiSpec()
 	else
 	{
 		sMsg.Format(_T("%s\r\n OpenGray 설정값을 읽지 못했습니다."));
+		pView->ClrDispMsg();
 		AfxMessageBox(sMsg, MB_ICONWARNING | MB_OK);
 		m_stAoiSpec.nOpenGraySpec = 0;
 	}
