@@ -29,8 +29,8 @@ class CCamMaster : public CWnd
 	REGIONS_PIECE_2 PieceRgnPix[MAX_PIECE_RGN_NUM];
 //	REGIONS_PIECE_ID PieceRgnID[MAX_PIECE_RGN_NUM];
 	CPoint	**PolygonPoints;
-	int m_PnlMkPcsIdx[MAX_PIECE_RGN_NUM];				// 마킹순서별 피스 인덱스 (좌상단부터 지그재그로 마킹)
-	int m_PnlPcsIdxMkOrder[MAX_PIECE_RGN_NUM];			// 캠마스터 피스 인덱스의 마킹순서
+	int m_MkOrder2PnlPcsIdx[MAX_PIECE_RGN_NUM];			// 마킹순서별 피스 인덱스 (좌상단부터 지그재그로 마킹)
+	int m_PnlPcsIdx2MkOrder[MAX_PIECE_RGN_NUM];			// 캠마스터 피스 인덱스의 마킹순서
 
 	void AllocPolygonRgnData();
 	void FreePolygonRgnData();
@@ -67,6 +67,7 @@ class CCamMaster : public CWnd
 	void AlignImgFree(int nPos=-1); // -1 : All
 	BOOL AlignImgBufAlloc(TCHAR *strCADImg, int nPos);
 	void InitOrederingMk();
+	void WriteOrederingMk();
 
 // Construction
 public:

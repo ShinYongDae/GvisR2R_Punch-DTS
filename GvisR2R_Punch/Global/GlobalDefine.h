@@ -41,6 +41,7 @@
 	#define PATH_ALIGN2_IMG			_T("C:\\R2RSet\\Test\\Align2.TIF")
 	#define PATH_ALIGN3_IMG			_T("C:\\R2RSet\\Test\\Align3.TIF")
 	#define PATH_PCS_IMG			_T("C:\\R2RSet\\Test\\Piece.tif")
+	#define PATH_ORDERING_Mk		_T("C:\\R2RSet\\Test\\WriteOrederingMkRotate90ccw.txt")
 
 	#define	USE_MIL
 	#define	USE_VISION

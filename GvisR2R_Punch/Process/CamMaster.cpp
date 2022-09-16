@@ -118,6 +118,11 @@ BOOL CCamMaster::LoadMstInfo()
 		LoadCadAlignMkPos(); //.pch
 
 		InitOrederingMk();
+
+#ifdef TEST_MODE
+		WriteOrederingMk();
+#endif
+
 	}
 	else
 		return FALSE;
@@ -2220,11 +2225,90 @@ CRect CCamMaster::GetPcsRgn(int nPcsId)
 
 // for Punching Order
 
+void CCamMaster::WriteOrederingMk()
+{
+	CFile file;
+	CFileException pError;
+	if (!file.Open(PATH_ORDERING_Mk, CFile::modeWrite, &pError))
+	{
+		if (!file.Open(PATH_ORDERING_Mk, CFile::modeCreate | CFile::modeWrite, &pError))
+		{
+			// 파일 오픈에 실패시 
+#ifdef _DEBUG
+			afxDump << _T("File could not be opened ") << pError.m_cause << _T("\n");
+#endif
+			return;
+		}
+	}
+
+	CString sTemp = _T(""), sData = _T("");
+	int nTotPcs = GetTotPcs();
+	int nMkIdx, nNodeY, nNodeX;
+	GetShotRowCol(nNodeY, nNodeX);
+
+	//for (nMkIdx = 0; nMkIdx < nTotPcs; nMkIdx++)						// 상면 총 피스 수
+	//{
+	//	int nCol = int(nMkIdx / nNodeY);
+	//	if(!(nCol % 2))
+	//		sTemp.Format(_T("%d\t"), m_MkOrder2PnlPcsIdx[nMkIdx]);
+	//	else
+	//	{
+	//		int nRevIdx = 2 * (nNodeY*nCol) + nNodeY - (nMkIdx+1);
+	//		sTemp.Format(_T("%d\t"), m_MkOrder2PnlPcsIdx[nRevIdx]);
+	//	}
+
+	//	sData += sTemp;
+	//	if (!((nMkIdx + 1) % (nNodeY/MAX_STRIP_NUM)) && nMkIdx)
+	//		sData += _T("\t");
+	//	if (!((nMkIdx+1)%nNodeY) && nMkIdx)
+	//		sData += _T("\r\n"); 
+	//}
+	for (nMkIdx = nTotPcs - 1; nMkIdx >= 0; nMkIdx--)					// 상면 총 피스 수
+	{
+		int nCol = int(nMkIdx / nNodeY);
+		if(nNodeY%2)
+		{ 
+			if (!(nCol % 2))
+				sTemp.Format(_T("%d\t"), m_MkOrder2PnlPcsIdx[nMkIdx]);
+			else
+			{
+				int nRevIdx = 2 * (nNodeY*nCol) + nNodeY - (nMkIdx + 1);
+				sTemp.Format(_T("%d\t"), m_MkOrder2PnlPcsIdx[nRevIdx]);
+			}
+		}
+		else
+		{
+			if ((nCol % 2))
+				sTemp.Format(_T("%d\t"), m_MkOrder2PnlPcsIdx[nMkIdx]);
+			else
+			{
+				int nRevIdx = 2 * (nNodeY*nCol) + nNodeY - (nMkIdx + 1);
+				sTemp.Format(_T("%d\t"), m_MkOrder2PnlPcsIdx[nRevIdx]);
+			}
+		}
+
+		sData += sTemp;
+		if (!((nMkIdx) % (nNodeY / MAX_STRIP_NUM)) && nMkIdx)
+			sData += _T("\t");
+		if (!((nMkIdx) % nNodeY))
+			sData += _T("\r\n");
+	}
+
+	//버퍼의 내용을 file에 복사한다.
+	char* pRtn = NULL;
+	file.SeekToBegin();
+	file.Write(pRtn = StringToChar(sData), sData.GetLength());
+	file.Close();
+	delete pRtn;
+}
+
 void CCamMaster::InitOrederingMk()
 {
 	int nPcsIdx, nCol, nRow, nInc, nRrev;
 	int nArrangTable[MAX_PCE_ROW][MAX_PCE_COL] = { -1 };
 	int nTotPcs = GetTotPcs();
+	int nNodeY, nNodeX;
+	GetShotRowCol(nNodeY, nNodeX);
 
 	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
 	{
@@ -2235,26 +2319,26 @@ void CCamMaster::InitOrederingMk()
 		}
 
 		nInc = 0;															// 마킹순서 인덱스
-		for (nCol = 0; nCol < MAX_PCE_COL; nCol++)
+		for (nCol = 0; nCol < nNodeX; nCol++)
 		{
-			for (nRow = 0; nRow < MAX_PCE_ROW; nRow++)
+			for (nRow = 0; nRow < nNodeY; nRow++)
 			{
 				if (nCol % 2)												// NodeY방향으로 인덱스가 증가하도록 정렬할 때 
 				{
-					if (nArrangTable[nRow][nCol] > -1)
+					nRrev = nNodeY - nRow - 1;
+					if (nArrangTable[nRrev][nCol] > -1)
 					{
-						m_PnlMkPcsIdx[nInc] = nArrangTable[nRow][nCol];		// Y축 +방향(nRow 증가방향)으로 마킹순서의 피스 인덱스를 정렬
-						m_PnlPcsIdxMkOrder[m_PnlMkPcsIdx[nInc]] = nInc;
+						m_MkOrder2PnlPcsIdx[nInc] = nArrangTable[nRrev][nCol];	// Y축 -방향(nRow 감소방향)으로 마킹순서의 피스 인덱스를 정렬 : 마킹순서인덱스(nInc)별 CamMaster의 피스인덱스(nArrangTable[nRow][nCol])
+						m_PnlPcsIdx2MkOrder[m_MkOrder2PnlPcsIdx[nInc]] = nInc;		// CamMaster의 피스인덱스(m_MkOrder2PnlPcsIdx[nInc])에 해당하는 마킹순서인덱스(nInc)
 						nInc++;
 					}
 				}
 				else														// NodeY방향으로 인덱스가 감소하도록 정렬할 때 
 				{
-					nRrev = MAX_PCE_ROW - nRow - 1;
-					if (nArrangTable[nRrev][nCol] > -1)
+					if (nArrangTable[nRow][nCol] > -1)
 					{
-						m_PnlMkPcsIdx[nInc] = nArrangTable[nRrev][nCol];	// Y축 -방향(nRow 감소방향)으로 마킹순서의 피스 인덱스를 정렬
-						m_PnlPcsIdxMkOrder[m_PnlMkPcsIdx[nInc]] = nInc;
+						m_MkOrder2PnlPcsIdx[nInc] = nArrangTable[nRow][nCol];		// Y축 +방향(nRow 증가방향)으로 마킹순서의 피스 인덱스를 정렬 : 마킹순서인덱스(nInc)별 CamMaster의 피스인덱스(nArrangTable[nRow][nCol])
+						m_PnlPcsIdx2MkOrder[m_MkOrder2PnlPcsIdx[nInc]] = nInc;		// CamMaster의 피스인덱스(m_MkOrder2PnlPcsIdx[nInc])에 해당하는 마킹순서인덱스(nInc)
 						nInc++;
 					}
 				}
@@ -2265,19 +2349,19 @@ void CCamMaster::InitOrederingMk()
 	{
 		for (nPcsIdx = 0; nPcsIdx < nTotPcs; nPcsIdx++)						// 상면 총 피스 수
 		{
-			m_PnlMkPcsIdx[nPcsIdx] = nPcsIdx;
-			m_PnlPcsIdxMkOrder[m_PnlMkPcsIdx[nPcsIdx]] = nPcsIdx;
+			m_MkOrder2PnlPcsIdx[nPcsIdx] = nPcsIdx;
+			m_PnlPcsIdx2MkOrder[m_MkOrder2PnlPcsIdx[nPcsIdx]] = nPcsIdx;
 		}
 	}
 }
 
 int CCamMaster::GetPnlMkPcsIdx(int nMkIdx)									// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
 {
-	return m_PnlMkPcsIdx[nMkIdx];
+	return m_MkOrder2PnlPcsIdx[nMkIdx];
 }
 
 int CCamMaster::GetPnlMkPcsOrder(int nPcsIdx)								// 판넬 전체 피스 인덱스에 대한 마킹순서 인덱스
 {
-	return m_PnlPcsIdxMkOrder[nPcsIdx];
+	return m_PnlPcsIdx2MkOrder[nPcsIdx];
 }
 

@@ -113,6 +113,7 @@ BOOL CMpDevice::SetIoDataValue(CString strRegAddr, long OutputData)
 	m_dwReturnVal = ymcSetController(m_hController);
 	if (m_dwReturnVal !=MP_SUCCESS)
 	{
+		delete chrRegAddr;
 		pView->DispMsg(_T("Controller 핸들을 취득할 수 없습니다."), _T("경고"), RGB_RED, DELAY_TIME_MSG);
 		return FALSE;
 	}
@@ -342,6 +343,7 @@ BOOL CMpDevice::SetIo(CString strRegAddr, LPVOID pIoData, int nIoSize)
 	{
 		pView->DispMsg(_T("Controller 핸들을 취득할 수 없습니다."), _T("경고"), RGB_RED, DELAY_TIME_MSG);
 		m_cs.Unlock();
+		delete chrRegAddr;
 		return FALSE;
 	}
 	
@@ -413,6 +415,7 @@ int CMpDevice::GetIo(CString strRegAddr, LPVOID pIoData, int nIoSize)	// nRtn : 
 	{
 		//pView->MyMsgBox(_T("ymcSetController Error!!!");
 		pView->MsgBox(_T("ymcSetController Error!!!"));
+		delete chrRegAddr;
 		return 0;
 	}
 	wRtn = ymcGetRegisterDataHandle((LPBYTE)chrRegAddr, &hRData);
@@ -488,6 +491,7 @@ BOOL CMpDevice::GetIoDataValue(CString strRegAddr, long &InputData)
 	if (m_dwReturnVal !=MP_SUCCESS)
 	{
 		pView->DispMsg(_T("Controller 핸들을 취득할 수 없습니다."), _T("경고"), RGB_RED, DELAY_TIME_MSG);
+		delete chrRegAddr;
 		return FALSE;
 	}
 	
