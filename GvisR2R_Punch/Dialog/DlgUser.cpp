@@ -142,7 +142,8 @@ int CDlgUser::ReadUserNameListFile()
 		FileData = (char*)calloc(nFileSize+1, sizeof(char));
 		
 		nRSize = fread(FileData, sizeof(char), nFileSize, fp);
-		strFileData.Format(_T("%s"), CharToString(FileData));
+		//strFileData.Format(_T("%s"), CharToString(FileData));
+		strFileData = CharToString(FileData);
 		pDoc->m_strUserNameList = strFileData;
 
 		fclose(fp);

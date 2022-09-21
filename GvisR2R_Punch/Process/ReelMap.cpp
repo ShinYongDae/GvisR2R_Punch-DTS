@@ -1102,7 +1102,7 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 	}
 
 	short **pPnlBuf;
-	int i, nC, nR, nPcsId, nDefCode;//, nTot, nDef, nGood;
+	int i, nC, nR, nDefCode;//, nTot, nDef, nGood;
 	int nPcsIdx, nRow, nCol;
 
 	pPnlBuf = new short*[nNodeY];
@@ -1119,7 +1119,7 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 	{
 		if(pDoc->m_pPcr[nLayer][nIdx]->m_pMk[i] != -2) // -2 (NoMarking)
 		{
-			nPcsId = pDoc->m_pPcr[nLayer][nIdx]->m_pDefPcs[i];
+			nPcsIdx = pDoc->m_pPcr[nLayer][nIdx]->m_pDefPcs[i];
 			nDefCode = pDoc->m_pPcr[nLayer][nIdx]->m_pDefType[i];
 
 			if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
@@ -1128,11 +1128,11 @@ BOOL CReelMap::Write(int nSerial, int nLayer, CString sPath)
 			}
 			else
 			{
-				nC = int(nPcsId / nNodeY);
+				nC = int(nPcsIdx / nNodeY);
 				if (nC % 2)	// È¦¼ö.
-					nR = nNodeY * (nC + 1) - nPcsId - 1;
+					nR = nNodeY * (nC + 1) - nPcsIdx - 1;
 				else		// Â¦¼ö.
-					nR = nPcsId - nNodeY * nC;
+					nR = nPcsIdx - nNodeY * nC;
 			}
 
 			pPnlBuf[nR][nC] = (short)nDefCode;	// nPnlÀÇ ¿­ Á¤º¸.

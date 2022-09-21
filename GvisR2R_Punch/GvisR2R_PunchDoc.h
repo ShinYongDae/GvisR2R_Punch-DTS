@@ -385,6 +385,8 @@ public:
 
 	void SetMkPcsIdxOnDts(int nSerial);
 	void SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
+	void SetMergePcsIdxUp(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
+	void SetMergePcsIdxDn(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
 
 	BOOL LoadAoiSpec();
 

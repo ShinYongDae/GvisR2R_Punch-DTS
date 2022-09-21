@@ -136,7 +136,7 @@ class CGvisR2R_PunchView : public CFormView
 	int m_nRtnMyMsgBoxIdx;
 
 	int m_nPrevStepAuto, m_nPrevMkStAuto;
-	int m_nStepMk[4], m_nMkPcs[4]; 	// [0] Auto-Left, [1] Auto-Right, [2] Manual-Left, [3] Manual-Right ; m_nStepMk(마킹Sequence), m_nMkPcs(마킹한 count)
+	int m_nStepMk[4], nMkOrderIdx[4]; 	// [0] Auto-Left, [1] Auto-Right, [2] Manual-Left, [3] Manual-Right ; m_nStepMk(마킹Sequence), nMkOrderIdx(마킹한 count)
 	int m_nMkStrip[2][4]; // [nCam][nStrip] - [좌/우][] : 스트립에 펀칭한 피스 수 count
 	int m_nErrCnt;
 	int m_nStepInitView;
@@ -809,8 +809,8 @@ public:
 	BOOL IsRdyTest1();
 	BOOL LoadPcrUp(int nSerial, BOOL bFromShare = FALSE);
 	BOOL LoadPcrDn(int nSerial, BOOL bFromShare = FALSE);
-	BOOL OrederingMkUp(int nSerial, BOOL bDualTest);
-	BOOL OrederingMkDn(int nSerial);
+	BOOL OrderingMkUp(int nSerial, BOOL bDualTest);
+	BOOL OrderingMkDn(int nSerial);
 	int GetPcsIdxForPnl(int nMkIdx);				// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
 	int GetPcsIdxForMk(int nSerial, int nMkIdx);	// nMkIdx : 마킹순서 인덱스 , PcxIdx : 판넬의 불량피스 인덱스
 	void MoveAoi(double dOffset);
@@ -837,10 +837,10 @@ public:
 	void ChgLot();
 
 	void SetLotLastShot();
-	int GetMkStripIdx0(int nDefPcsId); // 0 : Fail , 1~4 : Strip Idx
-	int GetMkStripIdx1(int nDefPcsId); // 0 : Fail , 1~4 : Strip Idx
-	int GetMkStripIdx0(int nSerial, int nMkPcs); // 0 : Fail , 1~4 : Strip Idx
-	int GetMkStripIdx1(int nSerial, int nMkPcs); // 0 : Fail , 1~4 : Strip Idx
+	int GetMkStripIdx0(int nMkOrderIdx); // 0 : Fail , 1~4 : Strip Idx
+	int GetMkStripIdx1(int nMkOrderIdx); // 0 : Fail , 1~4 : Strip Idx
+	int GetMkStripIdx0(int nSerial, int nMkOrderIdx); // 0 : Fail , 1~4 : Strip Idx
+	int GetMkStripIdx1(int nSerial, int nMkOrderIdx); // 0 : Fail , 1~4 : Strip Idx
 
 	BOOL IsMkStrip(int nStripIdx);
 	void CycleStop();

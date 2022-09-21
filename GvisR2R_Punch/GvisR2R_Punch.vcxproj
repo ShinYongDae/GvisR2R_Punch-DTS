@@ -127,8 +127,8 @@
       <LargeAddressAware>true</LargeAddressAware>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <GenerateDebugInformation>Debug</GenerateDebugInformation>
-      <HeapReserveSize>10485760</HeapReserveSize>
-      <StackReserveSize>10485760</StackReserveSize>
+      <HeapReserveSize>100000000</HeapReserveSize>
+      <StackReserveSize>20000000</StackReserveSize>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -268,6 +268,7 @@
     <ClInclude Include="Dialog\DlgUtil04.h" />
     <ClInclude Include="Dialog\DlgUtil05.h" />
     <ClInclude Include="Dialog\DlgUtil07.h" />
+    <ClInclude Include="Dialog\DlgUtil08.h" />
     <ClInclude Include="Dialog\Label.h" />
     <ClInclude Include="Dialog\MyBtn.h" />
     <ClInclude Include="Dialog\MyEdit.h" />
@@ -366,6 +367,7 @@
     <ClCompile Include="Dialog\DlgUtil04.cpp" />
     <ClCompile Include="Dialog\DlgUtil05.cpp" />
     <ClCompile Include="Dialog\DlgUtil07.cpp" />
+    <ClCompile Include="Dialog\DlgUtil08.cpp" />
     <ClCompile Include="Dialog\Label.cpp" />
     <ClCompile Include="Dialog\MyBtn.cpp" />
     <ClCompile Include="Dialog\MyEdit.cpp" />

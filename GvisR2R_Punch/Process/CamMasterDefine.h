@@ -4,7 +4,7 @@
 #define RGN_STRIP_VARIABLE_NUM	23		// REGION_STRIP 구조체에서 배열을 제외한 변수의 갯수
 #define MAX_STRIP				4
 #define MAX_NodeNumX			100		//200
-#define MAX_NodeNumY			50		//200
+#define MAX_NodeNumY			100		//200
 #define MAX_NMSWATH				100
 
 #define MAX_PCS					10000

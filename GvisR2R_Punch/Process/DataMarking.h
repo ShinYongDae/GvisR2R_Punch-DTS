@@ -31,6 +31,7 @@ public:
 	CString m_sModel, m_sLayer, m_sLot;
 	int m_nErrPnl, m_nSerial, m_nTotDef, m_nCamId;
 	int *m_pLayer;		// 0:Up, 1:Dn 
+	int *m_pReadOrder;	// 피스인덱스별 PCR파일에서 읽어온 순서
 	int *m_pDefPcsMk;	// 마킹순서가 정해진 불량 피스 인덱스 : PCR에서 읽어온 순서에 불량피스 인덱스와 별도로 마킹을 위한 인덱스를 저장.
 	int *m_pDefPcs;		// 불량 피스 인덱스
 	int *m_pDefType;	// 불량코드 (0:양품, 1~:불량코드)

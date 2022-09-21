@@ -620,7 +620,8 @@ BOOL CMyFile::ChkLotEnd(CString sPath)
 		FileData = (char*)calloc(nFileSize+1, sizeof(char));
 
 		nRSize = fread(FileData, sizeof(char), nFileSize, fp);
-		strFileData.Format(_T("%s"), CharToString(FileData));
+		//strFileData.Format(_T("%s"), CharToString(FileData));
+		strFileData = CharToString(FileData);
 		fclose(fp);
 		free( FileData );
 	}
@@ -633,31 +634,31 @@ BOOL CMyFile::ChkLotEnd(CString sPath)
 	nTemp = strFileData.Find(',', 0);
 	strHeaderErrorInfo = strFileData.Left(nTemp);		// 1(정상), -1(Align Error, 노광불량), -2(Lot End)
 	strFileData.Delete(0, nTemp+1);
-	nFileSize = nFileSize - nTemp - 1;
+	//nFileSize = nFileSize - nTemp - 1;
 
 	// Model
 	nTemp = strFileData.Find(',', 0);
 	strModel = strFileData.Left(nTemp);
 	strFileData.Delete(0, nTemp+1);
-	nFileSize = nFileSize - nTemp - 1;
+	//nFileSize = nFileSize - nTemp - 1;
 
 	// Layer
 	nTemp = strFileData.Find(',', 0);
 	strLayer = strFileData.Left(nTemp);
 	strFileData.Delete(0, nTemp+1);
-	nFileSize = nFileSize - nTemp - 1;
+	//nFileSize = nFileSize - nTemp - 1;
 
 	// Lot
 	nTemp = strFileData.Find('\n', 0);
 	strLot = strFileData.Left(nTemp);
 	strFileData.Delete(0, nTemp+1);
-	nFileSize = nFileSize - nTemp - 1;
+	//nFileSize = nFileSize - nTemp - 1;
 
 	//strTotalBadPieceNum = strFileData;
 	nTemp = strFileData.Find('\n', 0);
 	strTotalBadPieceNum = strFileData.Left(nTemp);;
 	strFileData.Delete(0, nTemp+1);
-	nFileSize = nFileSize - nTemp - 1;
+	//nFileSize = nFileSize - nTemp - 1;
 
 	
 	if(_tstoi(strHeaderErrorInfo) == -2)

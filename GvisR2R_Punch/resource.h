@@ -103,6 +103,7 @@
 #define IDD_DLG_CLIENT                  350
 #define IDD_DIALOG2                     352
 #define IDD_DLG_UTIL_07                 352
+#define IDD_DLG_UTIL_08                 353
 #define IDC_SVR_PORT                    374
 #define IDC_TXT_MESSAGE                 376
 #define IDC_BTN_START                   486
@@ -120,6 +121,7 @@
 #define IDC_PROGRESS                    1001
 #define IDC_CHECK_ENGRAVE               1001
 #define IDC_EDIT2                       1001
+#define IDC_STATIC_PATH                 1001
 #define IDC_PIC_CAD_002                 1002
 #define IDC_BUTTON2                     1002
 #define IDC_PIC_CAD_003                 1003

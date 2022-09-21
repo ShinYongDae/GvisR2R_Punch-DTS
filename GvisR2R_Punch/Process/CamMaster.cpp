@@ -117,10 +117,10 @@ BOOL CCamMaster::LoadMstInfo()
 		LoadCadImg();
 		LoadCadAlignMkPos(); //.pch
 
-		InitOrederingMk();
+		InitOrderingMk();
 
 #ifdef TEST_MODE
-		WriteOrederingMk();
+		WriteOrderingMk();
 #endif
 
 	}
@@ -2225,7 +2225,7 @@ CRect CCamMaster::GetPcsRgn(int nPcsId)
 
 // for Punching Order
 
-void CCamMaster::WriteOrederingMk()
+void CCamMaster::WriteOrderingMk()
 {
 	CFile file;
 	CFileException pError;
@@ -2302,10 +2302,12 @@ void CCamMaster::WriteOrederingMk()
 	delete pRtn;
 }
 
-void CCamMaster::InitOrederingMk()
+void CCamMaster::InitOrderingMk()
 {
 	int nPcsIdx, nCol, nRow, nInc, nRrev;
-	int nArrangTable[MAX_PCE_ROW][MAX_PCE_COL] = { -1 };
+	int nArrangTable[MAX_PCE_ROW][MAX_PCE_COL];
+	memset(nArrangTable, -1, sizeof(int)*MAX_PCE_ROW*MAX_PCE_COL);
+
 	int nTotPcs = GetTotPcs();
 	int nNodeY, nNodeX;
 	GetShotRowCol(nNodeY, nNodeX);

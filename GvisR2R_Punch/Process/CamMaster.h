@@ -23,7 +23,7 @@ class CCamMaster : public CWnd
 	int PieceRgnNum;									// Panel내 총 피스 수
 	int m_nCornerNum;									// 피스의 꼭지점 수
 	int m_nDummy[MAX_PATH];
-	int m_nPieceNum[MAX_PATH];							// Strip내 총 피스 수
+	int m_nPieceNum[MAX_STRIP];							// Strip내 총 피스 수
 	REGIONS_FRAME FrameRgnPix[MAX_FRAME_RGN_NUM];
 	REGIONS_FRAME_ID FrameRgnID[MAX_FRAME_RGN_NUM];
 	REGIONS_PIECE_2 PieceRgnPix[MAX_PIECE_RGN_NUM];
@@ -66,8 +66,8 @@ class CCamMaster : public CWnd
 	BOOL CADImgBufAlloc(TCHAR *strCADImg, int CellNum, BOOL bOppLayerF);
 	void AlignImgFree(int nPos=-1); // -1 : All
 	BOOL AlignImgBufAlloc(TCHAR *strCADImg, int nPos);
-	void InitOrederingMk();
-	void WriteOrederingMk();
+	void InitOrderingMk();
+	void WriteOrderingMk();
 
 // Construction
 public:

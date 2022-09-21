@@ -17,6 +17,7 @@ static char THIS_FILE[] = __FILE__;
 CDataMarking::CDataMarking(CWnd* pParent /*=NULL*/)
 {
 	m_pLayer = NULL;
+	m_pReadOrder = NULL;
 	m_pDefPcsMk = NULL;
 	m_pDefPcs = NULL;
 	m_pDefPos = NULL;
@@ -40,6 +41,12 @@ void CDataMarking::FreeMem()
 	{
 		delete[] m_pLayer;
 		m_pLayer = NULL;
+	}
+
+	if (m_pReadOrder)
+	{
+		delete[] m_pReadOrder;
+		m_pReadOrder = NULL;
 	}
 
 	if (m_pDefPcsMk)
@@ -120,6 +127,7 @@ void CDataMarking::Init(int nSerial, int nTot) // 제품시리얼, Shot내 총불량 피스
 	if(nTot > 0)
 	{
 		m_pLayer = new int[nTot];
+		m_pReadOrder = new int[10000];	// MAX_PCS
 		m_pDefPcsMk = new int[nTot];
 		m_pDefPcs = new int[nTot];
 		m_pDefPos = new CPoint[nTot];
@@ -129,11 +137,14 @@ void CDataMarking::Init(int nSerial, int nTot) // 제품시리얼, Shot내 총불량 피스
 		m_pImgSz = new int[nTot];
 		m_pImg = new int[nTot];
 		m_pMk = new int[nTot];
+
+		memset(m_pReadOrder, -1, sizeof(int) * 10000);
 	}
 
 	for (i = 0; i < nTot; i++)
 	{
 		m_pLayer[i] = -1;
+		//m_pReadOrder[i] = -1;
 		m_pDefPcsMk[i] = -1;
 		m_pDefPcs[i] = -1;
 		m_pDefPos[i] = CPoint(0,0);

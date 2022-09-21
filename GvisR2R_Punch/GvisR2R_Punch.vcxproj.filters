@@ -351,6 +351,9 @@
     <ClInclude Include="Process\CamMasterDefine.h">
       <Filter>Process</Filter>
     </ClInclude>
+    <ClInclude Include="Dialog\DlgUtil08.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GvisR2R_Punch.cpp">
@@ -607,6 +610,9 @@
     </ClCompile>
     <ClCompile Include="Device\User.cpp">
       <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgUtil08.cpp">
+      <Filter>Dialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
