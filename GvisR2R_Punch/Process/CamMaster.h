@@ -31,6 +31,10 @@ class CCamMaster : public CWnd
 	CPoint	**PolygonPoints;
 	int m_MkOrder2PnlPcsIdx[MAX_PIECE_RGN_NUM];			// 마킹순서별 피스 인덱스 (좌상단부터 지그재그로 마킹)
 	int m_PnlPcsIdx2MkOrder[MAX_PIECE_RGN_NUM];			// 캠마스터 피스 인덱스의 마킹순서
+	int m_MkOrder2PnlPcsIdxMirror[MAX_PIECE_RGN_NUM];	// 좌우 미러된 마킹순서별 피스 인덱스 (좌상단부터 지그재그로 마킹)
+	int m_PnlPcsIdx2MkOrderMirror[MAX_PIECE_RGN_NUM];	// 좌우 미러된 캠마스터 피스 인덱스의 마킹순서
+
+	int m_PcsIdxMirror[MAX_PIECE_RGN_NUM];				// 캠마스터 피스 인덱스에 대한 좌우 미러된 피스 인덱스
 
 	void AllocPolygonRgnData();
 	void FreePolygonRgnData();
@@ -68,6 +72,7 @@ class CCamMaster : public CWnd
 	BOOL AlignImgBufAlloc(TCHAR *strCADImg, int nPos);
 	void InitOrderingMk();
 	void WriteOrderingMk();
+	void WriteOrderingMkMirror();
 
 // Construction
 public:
@@ -128,6 +133,9 @@ public:
 	// for Punching order
 	int GetPnlMkPcsIdx(int nMkIdx);									// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
 	int GetPnlMkPcsOrder(int nPcsIdx);								// 판넬 전체 피스 인덱스에 대한 마킹순서 인덱스
+	int GetPnlMkPcsIdxMirror(int nMkIdx);							// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
+	int GetPnlMkPcsOrderMirror(int nPcsIdx);						// 판넬 전체 피스 인덱스에 대한 마킹순서 인덱스
+	int GetPnlPcsIdxMirror(int nIdx);								// 판넬 전체 피스 인덱스에 대한 좌우미러된 인덱스
 
 	// Generated message map functions
 protected:

@@ -5665,13 +5665,14 @@ int CGvisR2R_PunchDoc::LoadPCRDn(int nSerial, BOOL bFromShare)	// return : 2(Fai
 
 			// LoadStripPieceRegion_Binary()에 의해 PCS Index가 결정됨.
 			if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
-				nPcsIdx = _tstoi(strPieceID);				// DTS용
+				nPcsIdx = MirroringStrpcs(_tstoi(strPieceID));				// DTS용
+				//nPcsIdx = _tstoi(strPieceID);								// DTS용
 			else
-				nPcsIdx = Mirroring(_tstoi(strPieceID));	// 초기 양면검사기용
+				nPcsIdx = Mirroring(_tstoi(strPieceID));					// 초기 양면검사기용
 
 			m_pPcr[1][nIdx]->m_pDefPcs[i] = nPcsIdx;
 			m_pPcr[1][nIdx]->m_pLayer[i] = 1;	// Dn
-			m_pPcr[1][nIdx]->m_pReadOrder[nPcsIdx] = i;		// 피스인덱스의 읽어온 순서
+			m_pPcr[1][nIdx]->m_pReadOrder[nPcsIdx] = i;						// 피스인덱스의 읽어온 순서
 
 			// BadPointPosX
 			nTemp = strFileData.Find(',', 0);
@@ -8061,6 +8062,50 @@ CString CGvisR2R_PunchDoc::GetMax(int nDlgId, int nCtrlId)
 #endif
 
 	return _T("");
+}
+
+/*
+nInc = 0;																	// 마킹순서 인덱스
+for (nCol = 0; nCol < nNodeX; nCol++)
+{
+	for (nRow = 0; nRow < nNodeY; nRow++)
+	{
+		if (nCol % 2)														// NodeY방향으로 인덱스가 증가하도록 정렬할 때
+		{
+			nRrev = (nNodeY - 1) - nRow;
+			if (nArrangTable[nRrev][nCol] > -1)
+			{
+				m_MkOrder2PnlPcsIdx[nInc] = nArrangTable[nRrev][nCol];		// Y축 -방향(nRow 감소방향)으로 마킹순서의 피스 인덱스를 정렬 : 마킹순서인덱스(nInc)별 CamMaster의 피스인덱스(nArrangTable[nRow][nCol])
+				m_PnlPcsIdx2MkOrder[m_MkOrder2PnlPcsIdx[nInc]] = nInc;		// CamMaster의 피스인덱스(m_MkOrder2PnlPcsIdx[nInc])에 해당하는 마킹순서인덱스(nInc)
+
+				nCrev = (nNodeX - 1) - nCol;
+				m_MkOrder2PnlPcsIdxMirror[nInc] = nArrangTable[nRrev][nCrev];
+				m_PnlPcsIdx2MkOrderMirror[m_MkOrder2PnlPcsIdxMirror[nInc]] = nInc;
+
+				nInc++;
+			}
+		}
+		else																// NodeY방향으로 인덱스가 감소하도록 정렬할 때
+		{
+			if (nArrangTable[nRow][nCol] > -1)
+			{
+				m_MkOrder2PnlPcsIdx[nInc] = nArrangTable[nRow][nCol];		// Y축 +방향(nRow 증가방향)으로 마킹순서의 피스 인덱스를 정렬 : 마킹순서인덱스(nInc)별 CamMaster의 피스인덱스(nArrangTable[nRow][nCol])
+				m_PnlPcsIdx2MkOrder[m_MkOrder2PnlPcsIdx[nInc]] = nInc;		// CamMaster의 피스인덱스(m_MkOrder2PnlPcsIdx[nInc])에 해당하는 마킹순서인덱스(nInc)
+
+				nCrev = (nNodeX - 1) - nCol;
+				m_MkOrder2PnlPcsIdxMirror[nInc] = nArrangTable[nRow][nCrev];
+				m_PnlPcsIdx2MkOrderMirror[m_MkOrder2PnlPcsIdxMirror[nInc]] = nInc;
+
+				nInc++;
+			}
+		}
+	}
+}
+*/
+int CGvisR2R_PunchDoc::MirroringStrpcs(int nPcsId)
+{
+	int nId = m_MasterDB.GetPnlPcsIdxMirror(nPcsId);	//m_PcsIdxMirror[nPcsId]
+	return nId;
 }
 
 int CGvisR2R_PunchDoc::Mirroring(int nPcsId)

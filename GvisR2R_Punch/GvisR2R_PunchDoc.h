@@ -310,6 +310,7 @@ public:
 	int GetLastShotDn();	// pView->m_pDlgFrameHigh->m_nAoiLastShot[1]
 
 	int Mirroring(int nPcsId);
+	int MirroringStrpcs(int nPcsId);
 
 	BOOL GetPcrInfo(CString sPath, stModelInfo &stInfo);
 
