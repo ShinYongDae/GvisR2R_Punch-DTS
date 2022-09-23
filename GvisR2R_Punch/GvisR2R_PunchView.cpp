@@ -16347,7 +16347,10 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 			}
 
 			if (!bDualTest)
+			{
+				SetMkPcsIdx(m_nShareUpS);
 				UpdateReelmap(m_nShareUpS);
+			}
 
 			if (!m_bLastProc)
 			{
@@ -16481,11 +16484,13 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 
 			if (LoadPcrDn(m_nShareDnS))				// Default: From Buffer, TRUE: From Share
 			{
-				OrderingMkDn(m_nShareDnS);
+				OrderingMkDn(m_nShareDnS);			// LoadPCRAllUp, LoadPCRAllDn을 수행하여 Merging작업을 함. --> SetMkPcsIdx()
 			}
 
 			if (bDualTest)
+			{
 				UpdateReelmap(m_nShareDnS); // After inspect bottom side.
+			}
 
 
 			if (!m_bLastProc)
@@ -21267,7 +21272,10 @@ void CGvisR2R_PunchView::LoadPcrFromBuf()
 			{
 				OrderingMkUp(m_pBufSerial[0][i], bDualTest);
 				if (!bDualTest)
+				{
+					SetMkPcsIdx(m_pBufSerial[0][i]);
 					UpdateReelmap(m_pBufSerial[0][i]);
+				}
 			}
 		}
 	}
@@ -22629,4 +22637,9 @@ BOOL CGvisR2R_PunchView::LoadMasterSpec()
 	//sPath.Format(_T("%s%s\\%s.ini"), sSpecDir, sModel, sLayer);
 
 	return TRUE;
+}
+
+void CGvisR2R_PunchView::SetMkPcsIdx(int nSerial)
+{
+	pDoc->SetMkPcsIdx(nSerial);
 }

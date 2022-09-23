@@ -384,7 +384,8 @@ public:
 	BOOL DirectoryExists(LPCTSTR szPath);
 
 	void SetMkPcsIdxOnDts(int nSerial);
-	void SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
+	void SetMkPcsIdx(int nSerial);														// 단면검사모드시
+	void SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);	// 양면검사모드시
 	void SetMergePcsIdxUp(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
 	void SetMergePcsIdxDn(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
 

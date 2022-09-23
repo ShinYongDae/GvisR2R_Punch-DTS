@@ -916,6 +916,8 @@ public:
 	BOOL LoadAoiSpec();
 	BOOL LoadMasterSpec();
 
+	void SetMkPcsIdx(int nSerial);
+
 // 재정의입니다.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

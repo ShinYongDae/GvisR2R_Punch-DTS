@@ -4783,6 +4783,74 @@ void CGvisR2R_PunchDoc::SetMkPcsIdxOnDts(int nSerial)
 	}
 }
 
+void CGvisR2R_PunchDoc::SetMkPcsIdx(int nSerial) //, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs)
+{
+	int nOrd, nOrd2;
+
+	int nIdx;
+	if (m_bNewLotShare[0] && (WorkingInfo.LastJob.bLotSep || m_bDoneChgLot))
+		nIdx = GetPcrIdx0(nSerial, TRUE); // 릴맵화면 표시 인덱스
+	else
+		nIdx = GetPcrIdx0(nSerial);
+
+	int nTotPcs = m_MasterDB.GetTotPcs();
+	int nTotDefPcs = pDoc->m_pPcr[0][nIdx]->m_nTotDef;			// 상면 불량 피스 수
+
+	m_pPcrMk[nIdx]->Init(nSerial, nTotDefPcs);				// 제품시리얼, Shot내 총불량 피스수
+
+	int nId[2], id;											// [0]: 상면 0~불량피스순서, [1]: 하면 0~불량피스순서
+	int idx = 0;											// 마킹순서 0~불량피스수만큼 정하기위해 현시점의 idx를 초기화함.
+	int nMkPcsIdx, nPcsIdx;
+
+	if (nTotDefPcs > 0)										// 상 / 하면 Merge한 총 불량피스수.
+	{
+		if (WorkingInfo.System.bStripPcsRgnBin)
+		{
+			for (nOrd = 0; nOrd < nTotDefPcs; nOrd++)											// Merging된 총 Piece수를 파일로딩상의 순서에서 마킹순서상으로 pcr파일을 재정렬.(m_pDefPcsMk[nOrd]와 m_pDefPcs[nOrd] 동일해짐)
+			{
+				nMkPcsIdx = m_pPcr[0][nIdx]->m_pDefPcsMk[nOrd];								// 마킹 순서(nOrd)에서의 재정렬된 마킹할 피스의 인덱스																								
+				//m_pPcrMk[nIdx]->m_nCamId = m_pPcr[0][nIdx]->m_nCamId;							// nIdx: 릴맵화면 표시 인덱스																								
+				//m_pPcrMk[nIdx]->m_pDefPcsMk[nOrd] = nMkPcsIdx;									// 현시점에서 순서가 아닌 저장시점의 마킹순서별 저장된 불량피스 인덱스를 마킹순서로 저장
+				//m_pPcrMk[nIdx]->m_pDefPcs[nOrd] = m_pPcr[0][nIdx]->m_pDefPcs[nOrd];
+				//m_pPcrMk[nIdx]->m_pLayer[nOrd] = m_pPcr[0][nIdx]->m_pLayer[nOrd];
+				//m_pPcrMk[nIdx]->m_pDefPos[nOrd].x = m_pPcr[0][nIdx]->m_pDefPos[nOrd].x;
+				//m_pPcrMk[nIdx]->m_pDefPos[nOrd].y = m_pPcr[0][nIdx]->m_pDefPos[nOrd].y;
+				//m_pPcrMk[nIdx]->m_pDefType[nOrd] = m_pPcr[0][nIdx]->m_pDefType[nOrd];
+				//m_pPcrMk[nIdx]->m_pCell[nOrd] = m_pPcr[0][nIdx]->m_pCell[nOrd];
+				//m_pPcrMk[nIdx]->m_pImgSz[nOrd] = m_pPcr[0][nIdx]->m_pImgSz[nOrd];
+				//m_pPcrMk[nIdx]->m_pImg[nOrd] = m_pPcr[0][nIdx]->m_pImg[nOrd];
+				//m_pPcrMk[nIdx]->m_pMk[nOrd] = m_pPcr[0][nIdx]->m_pMk[nOrd];
+
+				for (nOrd2 = nOrd; nOrd2 < nTotDefPcs; nOrd2++)									// 불량피스 전부를 마킹순서상의 피스 인덱스와 일치하는 피스인덱스의 파일로딩상의 순서까지 반복수행. 
+				{
+					nPcsIdx = m_pPcr[0][nIdx]->m_pDefPcs[nOrd2];
+
+					if (nMkPcsIdx == nPcsIdx)
+					{
+						m_pPcrMk[nIdx]->m_pDefPcs[nOrd] = nPcsIdx;
+						m_pPcrMk[nIdx]->m_pLayer[nOrd] = m_pPcr[0][nIdx]->m_pLayer[nOrd2];
+						// BadPointPosX
+						m_pPcrMk[nIdx]->m_pDefPos[nOrd].x = m_pPcr[0][nIdx]->m_pDefPos[nOrd2].x;
+						// BadPointPosY
+						m_pPcrMk[nIdx]->m_pDefPos[nOrd].y = m_pPcr[0][nIdx]->m_pDefPos[nOrd2].y;
+						// BadName
+						m_pPcrMk[nIdx]->m_pDefType[nOrd] = m_pPcr[0][nIdx]->m_pDefType[nOrd2];
+						// CellNum
+						m_pPcrMk[nIdx]->m_pCell[nOrd] = m_pPcr[0][nIdx]->m_pCell[nOrd2];
+						// ImageSize
+						m_pPcrMk[nIdx]->m_pImgSz[nOrd] = m_pPcr[0][nIdx]->m_pImgSz[nOrd2];
+						// ImageNum
+						m_pPcrMk[nIdx]->m_pImg[nOrd] = m_pPcr[0][nIdx]->m_pImg[nOrd2];
+						// strMarkingCode : -2 (NoMarking)
+						m_pPcrMk[nIdx]->m_pMk[nOrd] = m_pPcr[0][nIdx]->m_pMk[nOrd2];
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
 void CGvisR2R_PunchDoc::SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs)
 {
 	int nOrd, nOrd2;
@@ -4795,9 +4863,10 @@ void CGvisR2R_PunchDoc::SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDe
 
 	m_pPcrMk[nIdx]->Init(nSerial, nTotDefPcs);				// 제품시리얼, Shot내 총불량 피스수
 
-	int nId[2], id;												// [0]: 상면 0~불량피스순서, [1]: 하면 0~불량피스순서
+	int nId[2], id;											// [0]: 상면 0~불량피스순서, [1]: 하면 0~불량피스순서
 	int idx = 0;											// 마킹순서 0~불량피스수만큼 정하기위해 현시점의 idx를 초기화함.
-	//if (nTotDefPcs > 0)										// 상 / 하면 Merge한 총 불량피스수.
+/*				
+	//if (nTotDefPcs > 0)									// 상 / 하면 Merge한 총 불량피스수.
 	//{
 	//	for (int nPcsId = 0; nPcsId < nTotPcs; nPcsId++)	// Shot내 총 Piece수
 	//	{
@@ -4857,6 +4926,9 @@ void CGvisR2R_PunchDoc::SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDe
 	//			idx++;
 	//		}
 	//	}
+*/
+
+	int nMkPcsIdx, nPcsIdx;
 
 	if (nTotDefPcs > 0)										// 상 / 하면 Merge한 총 불량피스수.
 	{
@@ -4864,15 +4936,15 @@ void CGvisR2R_PunchDoc::SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDe
 		{
 			for (nOrd = 0; nOrd < nTotDefPcs; nOrd++)											// Merging된 총 Piece수를 파일로딩상의 순서에서 마킹순서상으로 pcr파일을 재정렬.(m_pDefPcsMk[nOrd]와 m_pDefPcs[nOrd] 동일해짐)
 			{
-				int nMkPcsIdx = m_pPcr[2][nIdx]->m_pDefPcsMk[nOrd];								// 마킹 순서(nOrd)에서의 재정렬된 마킹할 피스의 인덱스
+				nMkPcsIdx = m_pPcr[2][nIdx]->m_pDefPcsMk[nOrd];								// 마킹 순서(nOrd)에서의 재정렬된 마킹할 피스의 인덱스
 																								// Cam ID
-				m_pPcrMk[nIdx]->m_nCamId = m_pPcr[2][nIdx]->m_nCamId;							// nIdx: 릴맵화면 표시 인덱스
-																								// Piece Number
-				m_pPcrMk[nIdx]->m_pDefPcsMk[nOrd] = nMkPcsIdx;									// 현시점에서 순서가 아닌 저장시점의 마킹순서별 저장된 불량피스 인덱스를 마킹순서로 저장
+				//m_pPcrMk[nIdx]->m_nCamId = m_pPcr[2][nIdx]->m_nCamId;							// nIdx: 릴맵화면 표시 인덱스
+				//																				// Piece Number
+				//m_pPcrMk[nIdx]->m_pDefPcsMk[nOrd] = nMkPcsIdx;									// 현시점에서 순서가 아닌 저장시점의 마킹순서별 저장된 불량피스 인덱스를 마킹순서로 저장
 
 				for (nOrd2 = nOrd; nOrd2 < nTotDefPcs; nOrd2++)									// 불량피스 전부를 마킹순서상의 피스 인덱스와 일치하는 피스인덱스의 파일로딩상의 순서까지 반복수행. 
 				{
-					int nPcsIdx = m_pPcr[2][nIdx]->m_pDefPcs[nOrd2];
+					nPcsIdx = m_pPcr[2][nIdx]->m_pDefPcs[nOrd2];
 
 					if (nMkPcsIdx == nPcsIdx)
 					{
@@ -4897,7 +4969,7 @@ void CGvisR2R_PunchDoc::SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDe
 				}
 			}
 		}
-
+/*
 		//if (WorkingInfo.System.bStripPcsRgnBin)
 		//{
 		//	for (nOrd = 0; nOrd < nTotDefPcs; nOrd++)											// Merging된 총 Piece수를 파일로딩상의 순서에서 마킹순서상으로 pcr파일을 재정렬.(m_pDefPcsMk[nOrd]와 m_pDefPcs[nOrd] 동일해짐)
@@ -4935,6 +5007,7 @@ void CGvisR2R_PunchDoc::SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDe
 		//		}
 		//	}
 		//}
+*/	
 	}
 }
 
@@ -5029,14 +5102,14 @@ int CGvisR2R_PunchDoc::LoadPCRAllDn(int nSerial, BOOL bFromShare)	// return : 2(
 	m_pPcr[3][nIdx]->Init(nSerial, nTotDef[2]); // 제품시리얼, Shot내 총불량 피스수
 
 	SetMergePcsIdxDn(nSerial, pPcrMgr, nTotDef[2], nTotPcs);
-
+/*
 	//SetMkPcsIdx(nSerial, pPcrMgr, nTotDef[2], nTotPcs);
 	//if (pView && pView->m_pDts && pView->m_pDts->IsUseDts())
 	//{
 	//	SetMkPcsIdxOnDts(nSerial);
 	//}
 
-/*
+
 	int nId[2];
 	idx = 0;
 	if (nTotDef[2] > 0)
