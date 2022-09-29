@@ -335,11 +335,11 @@ public:
 	int m_nLotEndSerial;
 
 	BOOL m_bTIM_INIT_VIEW;
-	BOOL m_bCam;
+	BOOL m_bCam, m_bReview;
 
-	DWORD m_dwThreadTick[3];
-	BOOL m_bThread[3];
-	CThreadTask m_Thread[3];
+	DWORD m_dwThreadTick[4];
+	BOOL m_bThread[4];
+	CThreadTask m_Thread[4];
 
 	double m_dEnc[MAX_AXIS], m_dTarget[MAX_AXIS];
 	double m_dNextTarget[MAX_AXIS];
@@ -358,6 +358,8 @@ public:
 	BOOL m_bTHREAD_MK[4];	// [0] Auto-Left, [1] Auto-Right, [2] Manual-Left, [3] Manual-Right
 	BOOL m_bTHREAD_DISP_DEF;
 	int	m_nStepTHREAD_DISP_DEF;
+	BOOL m_bTHREAD_UPDATAE_YIELD[2];		// [0] : Cam0, [1] : Cam1
+	int	m_nSerialTHREAD_UPDATAE_YIELD[2];	// [0] : Cam0, [1] : Cam1
 	// 	BOOL m_bTIM_MK_START;
 
 	BOOL m_bSwRun, m_bSwRunF;
@@ -422,6 +424,7 @@ public:
 
 	BOOL m_bCycleStop, m_bContDiffLot;
 	CString m_sDispMain;
+	BOOL m_bStopF_Verify;
 
 	BOOL m_bShowMyMsg;
 	CWnd *m_pMyMsgForeground;
@@ -527,6 +530,7 @@ public:
 	static UINT ThreadProc0(LPVOID lpContext); // Safety check thread procedure
 	static UINT ThreadProc1(LPVOID lpContext); // Safety check thread procedure
 	static UINT ThreadProc2(LPVOID lpContext); // Safety check thread procedure
+	static UINT ThreadProc3(LPVOID lpContext); // Safety check thread procedure
 
 											   // Auto Sequence
 	BOOL IsReady();
@@ -917,6 +921,9 @@ public:
 	BOOL LoadMasterSpec();
 
 	void SetMkPcsIdx(int nSerial);
+
+	void UpdateYield();
+	void UpdateYield(int nSerial);
 
 // 재정의입니다.
 public:

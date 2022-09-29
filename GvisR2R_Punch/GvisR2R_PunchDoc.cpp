@@ -1509,6 +1509,11 @@ BOOL CGvisR2R_PunchDoc::LoadWorkingInfo()
 	else
 		WorkingInfo.LastJob.sVerifyLen = _T("");
 
+	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Verify Period"), NULL, szData, sizeof(szData), sPath))
+		WorkingInfo.LastJob.nVerifyPeriod = _ttoi(szData);
+	else
+		WorkingInfo.LastJob.nVerifyPeriod = 0;
+
 	if (0 < ::GetPrivateProfileString(_T("Last Job"), _T("Use Review"), NULL, szData, sizeof(szData), sPath))
 		WorkingInfo.LastJob.bReview = _ttoi(szData) ? TRUE : FALSE;
 	else
@@ -3241,6 +3246,9 @@ void CGvisR2R_PunchDoc::SaveWorkingInfo()
 
 	sData = WorkingInfo.LastJob.sVerifyLen;
 	::WritePrivateProfileString(_T("Last Job"), _T("Verify Length"), sData, sPath);
+
+	sData.Format(_T("%d"), WorkingInfo.LastJob.nVerifyPeriod);
+	::WritePrivateProfileString(_T("Last Job"), _T("Verify Period"), sData, sPath);
 
 	sData.Format(_T("%d"), WorkingInfo.LastJob.bReview ? 1 : 0);
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Review"), sData, sPath);

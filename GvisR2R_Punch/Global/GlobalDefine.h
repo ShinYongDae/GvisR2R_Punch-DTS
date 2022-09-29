@@ -702,6 +702,7 @@ struct stLastJob
 	CString sJogSpd, sLotSerial; //sLightVal, 
 	BOOL bLightOn, bMkOnePnl, bAoiOnePnl, bEngraveOnePnl;
 	BOOL bVerify, bReview;
+	int nVerifyPeriod;
 	CString sVerifyLen;
 	// 	CString sDistAoiMk;
 	CString sFurgeNum, sFurgeRun;
@@ -744,6 +745,7 @@ struct stLastJob
 		bLightOn = FALSE; bMkOnePnl = FALSE; bAoiOnePnl = FALSE; bEngraveOnePnl = FALSE;
 		bVerify = FALSE; bReview = FALSE;
 		sVerifyLen = _T("");
+		nVerifyPeriod = 0;
 		// 		sDistAoiMk = _T("");
 		sFurgeNum = _T(""); sFurgeRun = _T("");
 		sMkLastShot = _T("0");
