@@ -392,6 +392,10 @@ public:
 
 	BOOL LoadAoiSpec();
 
+	int GetTestMode();
+	void SetTestMode(int nMode = MODE_NONE);
+	BOOL GetInnerInfo(CString sCurrLot);
+
 // 재정의입니다.
 public:
 	virtual BOOL OnNewDocument();

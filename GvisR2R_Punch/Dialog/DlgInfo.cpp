@@ -93,6 +93,8 @@ BEGIN_MESSAGE_MAP(CDlgInfo, CDialog)
 	ON_BN_CLICKED(IDC_CHK_85, &CDlgInfo::OnBnClickedChk85)
 	ON_BN_CLICKED(IDC_CHK_1187, &CDlgInfo::OnBnClickedChk1187)
 	ON_BN_CLICKED(IDC_CHK_1188, &CDlgInfo::OnBnClickedChk1188)
+	ON_STN_CLICKED(IDC_STC_36, &CDlgInfo::OnStnClickedStc36)
+	ON_CBN_SELCHANGE(IDC_COMBO_LOT, OnSelchangeComboLot)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -390,6 +392,15 @@ void CDlgInfo::InitStcTitle()
 	myStcTitle[57].SubclassDlgItem(IDC_STC_182, this); //양품율
 	myStcTitle[58].SubclassDlgItem(IDC_STC_184, this); //%
 
+	myStcTitle[59].SubclassDlgItem(IDC_STC_34, this); //불량 확인
+	myStcTitle[60].SubclassDlgItem(IDC_STC_35, this); //Period
+	myStcTitle[61].SubclassDlgItem(IDC_STC_37, this); //Shot
+
+	myStcTitle[62].SubclassDlgItem(IDC_STC_80, this); //내층 정보
+	myStcTitle[63].SubclassDlgItem(IDC_STC_LT, this); //내층 정보 - LOT
+	myStcTitle[64].SubclassDlgItem(IDC_STC_LAY, this); //내층 정보 - 상면 레이어
+	myStcTitle[65].SubclassDlgItem(IDC_STC_LAY2, this); //내층 정보 - 하면 레이어
+
 	for(int i=0; i<MAX_INFO_STC; i++)
 	{
 		myStcTitle[i].SetFontName(_T("Arial"));
@@ -403,6 +414,7 @@ void CDlgInfo::InitStcTitle()
 		case 0:
 		case 3:
 		case 20:
+		case 62:
 			myStcTitle[i].SetTextColor(RGB_NAVY);
 			myStcTitle[i].SetBkColor(RGB_LTDKORANGE);
 			myStcTitle[i].SetFontBold(TRUE);
@@ -434,6 +446,13 @@ void CDlgInfo::InitStcTitle()
 			myStcTitle[i].SetBkColor(RGB_WHITE);
 			myStcTitle[i].SetFontBold(TRUE);
 			break;
+		case 63:
+		case 64:
+		case 65:
+			myStcTitle[i].SetFontBold(TRUE);
+			myStcTitle[i].SetTextColor(RGB_WHITE);
+			myStcTitle[i].SetBkColor(RGB_DARKBLUE);
+			break;
 		default:
 			myStcTitle[i].SetTextColor(RGB_NAVY);
 			myStcTitle[i].SetBkColor(RGB_LTYELLOW);
@@ -461,6 +480,12 @@ void CDlgInfo::InitStcData()
 
 	myStcData[13].SubclassDlgItem(IDC_STC_32, this); // 초음파세정기 동작 검사시작 후 시작시간 [초]
 	myStcData[14].SubclassDlgItem(IDC_STC_183, this); // 고객출하수율
+
+	myStcData[15].SubclassDlgItem(IDC_STC_36, this); // 불량 확인 Period [Shot]
+
+	myStcData[16].SubclassDlgItem(IDC_STC_LOT, this); // 내층 정보 - LOT
+	myStcData[17].SubclassDlgItem(IDC_STC_LAYER_UP, this); // 내층 정보 - 상면 레이어
+	myStcData[18].SubclassDlgItem(IDC_STC_LAYER_DN, this); // 내층 정보 - 하면 레이어
 
 	for(int i=0; i<MAX_INFO_STC_DATA; i++)
 	{
@@ -529,6 +554,8 @@ void CDlgInfo::Disp()
  	myStcData[12].SetText(pDoc->WorkingInfo.LastJob.sSampleTestShotNum);
 	myStcData[13].SetText(pDoc->WorkingInfo.LastJob.sUltraSonicCleannerStTim);
 	myStcData[14].SetText(pDoc->WorkingInfo.LastJob.sCustomNeedRatio);
+	str.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
+	myStcData[15].SetText(str);
 
 	if(pDoc->WorkingInfo.LastJob.bLotSep)
 		myBtn[1].SetCheck(TRUE);
@@ -647,6 +674,18 @@ void CDlgInfo::Disp()
 		myBtn[22].SetCheck(TRUE);
 	else
 		myBtn[22].SetCheck(FALSE);
+
+	if (pDoc->GetTestMode() == MODE_INNER)
+		myBtn[23].SetCheck(TRUE);
+	else
+		myBtn[23].SetCheck(FALSE);
+
+	if (pDoc->GetTestMode() == MODE_OUTER)
+		myBtn[24].SetCheck(TRUE);
+	else
+		myBtn[24].SetCheck(FALSE);
+
+	ShowInnerInfo();
 }
 
 void CDlgInfo::OnStc0008() 
@@ -1227,11 +1266,12 @@ void CDlgInfo::OnStc61()
 
 void CDlgInfo::SetTestMode(int nMode)
 {
-	pDoc->WorkingInfo.LastJob.nTestMode = nMode; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
+	//pDoc->WorkingInfo.LastJob.nTestMode = nMode; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
+	pDoc->SetTestMode(nMode); // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
 
-	CString sData;
-	sData.Format(_T("%d"), nMode);
-	::WritePrivateProfileString(_T("Last Job"), _T("Test Mode"), sData, PATH_WORKING_INFO);
+	//CString sData;
+	//sData.Format(_T("%d"), nMode);
+	//::WritePrivateProfileString(_T("Last Job"), _T("Test Mode"), sData, PATH_WORKING_INFO);
 
 	switch (nMode)
 	{
@@ -1244,6 +1284,8 @@ void CDlgInfo::SetTestMode(int nMode)
 	default:
 		break;
 	}
+
+	ShowInnerInfo();
 
 	myBtn[23].RedrawWindow();
 	myBtn[24].RedrawWindow();
@@ -1559,4 +1601,179 @@ void CDlgInfo::OnBnClickedChk1188()
 void CDlgInfo::UpdateData()
 {
 	Disp();
+}
+
+
+void CDlgInfo::OnStnClickedStc36()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	myStcData[15].SetBkColor(RGB_RED);
+	myStcData[15].RedrawWindow();
+
+	CPoint pt;	CRect rt;
+	GetDlgItem(IDC_STC_36)->GetWindowRect(&rt);
+	pt.x = rt.right; pt.y = rt.bottom;
+	ShowKeypad(IDC_STC_36, pt, TO_BOTTOM | TO_RIGHT);
+
+	myStcData[15].SetBkColor(RGB_WHITE);
+	myStcData[15].RedrawWindow();
+
+	CString sVal;
+	GetDlgItem(IDC_STC_36)->GetWindowText(sVal);
+	pDoc->WorkingInfo.LastJob.nVerifyPeriod = _ttoi(sVal);
+
+	::WritePrivateProfileString(_T("Last Job"), _T("Verify Period"), sVal, PATH_WORKING_INFO);
+}
+
+void CDlgInfo::ShowInnerInfo()
+{
+	CString sCurrLot;
+	//if (pDoc->WorkingInfo.LastJob.nTestMode == MODE_OUTER) // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
+	if (pDoc->GetTestMode() == MODE_OUTER) // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
+	{
+		myStcTitle[62].ShowWindow(SW_SHOW); //내층 정보
+
+		myStcTitle[63].ShowWindow(SW_SHOW); //내층 정보 - LOT
+		myStcTitle[64].ShowWindow(SW_SHOW); //내층 정보 - 상면 레이어
+		myStcTitle[65].ShowWindow(SW_SHOW); //내층 정보 - 하면 레이어
+
+		if(pView->IsRun())
+		{
+			myStcData[16].ShowWindow(SW_SHOW); // 내층 정보 - LOT 
+			((CComboBox*)GetDlgItem(IDC_COMBO_LOT))->ShowWindow(SW_HIDE); // 내층 정보 - LOT
+
+			sCurrLot = pDoc->WorkingInfo.LastJob.sLotUp;
+		}
+		else
+		{ 
+			myStcData[16].ShowWindow(SW_HIDE); // 내층 정보 - LOT 
+			((CComboBox*)GetDlgItem(IDC_COMBO_LOT))->ShowWindow(SW_SHOW); // 내층 정보 - LOT
+
+			((CComboBox*)GetDlgItem(IDC_COMBO_LOT))->GetWindowText(sCurrLot);
+		}
+
+		myStcData[17].ShowWindow(SW_SHOW); // 내층 정보 - 상면 레이어
+		myStcData[18].ShowWindow(SW_SHOW); // 내층 정보 - 하면 레이어
+
+		if (ModifyLotData())
+		{
+			if (GetInnerInfo(sCurrLot))
+			{
+				if (pView->IsRun())
+					myStcData[16].SetWindowText(pDoc->WorkingInfo.LastJob.sInnerLotUp);
+				else
+				{
+					((CComboBox*)GetDlgItem(IDC_COMBO_LOT))->SetWindowText(pDoc->WorkingInfo.LastJob.sInnerLotUp);
+				}
+
+				myStcData[17].SetWindowText(pDoc->WorkingInfo.LastJob.sInnerLayerUp);
+				myStcData[18].SetWindowText(pDoc->WorkingInfo.LastJob.sInnerLayerDn);
+			}
+			else
+			{
+				myStcData[17].SetWindowText(_T(""));
+				myStcData[18].SetWindowText(_T(""));
+			}
+		}
+	}
+	else
+	{
+		myStcTitle[62].ShowWindow(SW_HIDE); //내층 정보
+
+		myStcTitle[63].ShowWindow(SW_HIDE); //내층 정보 - LOT
+		myStcTitle[64].ShowWindow(SW_HIDE); //내층 정보 - 상면 레이어
+		myStcTitle[65].ShowWindow(SW_HIDE); //내층 정보 - 하면 레이어
+
+		((CComboBox*)GetDlgItem(IDC_COMBO_LOT))->ShowWindow(SW_HIDE); // 내층 정보 - LOT
+		myStcData[16].ShowWindow(SW_HIDE); // 내층 정보 - LOT
+		myStcData[17].ShowWindow(SW_HIDE); // 내층 정보 - 상면 레이어
+		myStcData[18].ShowWindow(SW_HIDE); // 내층 정보 - 하면 레이어
+	}
+}
+
+BOOL CDlgInfo::GetInnerInfo(CString sCurrLot)
+{
+	return pDoc->GetInnerInfo(sCurrLot);
+}
+
+BOOL CDlgInfo::ModifyLotData()
+{
+	((CComboBox*)GetDlgItem(IDC_COMBO_LOT))->ResetContent();
+
+	CString sPathOldFolder;
+	CString sFileN = _T("InnerLayerInfo.txt");
+
+	CString sPath;
+	sPath.Format(_T("%s"), pDoc->WorkingInfo.System.sPathOldFile);
+	int pos = sPath.ReverseFind('\\');
+	if (pos != -1)
+		sPath.Delete(pos, sPath.GetLength() - pos);
+
+	if (!pDoc->DirectoryExists(sPath))
+	{
+		CreateDirectory(sPath, NULL);
+		return FALSE;
+	}
+
+	sPath.Format(_T("%s\\%s"), sPath, sFileN);
+
+	CFileFind finder;
+
+	if (finder.FindFile(sPath) == FALSE)
+	{
+		return FALSE;
+	}
+
+	TCHAR szData[MAX_PATH];
+	CString sDataPath;
+	//TCHAR sep[] = { _T(",;\r\n\t") };
+	int nTotalLot = 0;
+
+	if (0 < ::GetPrivateProfileString(_T("Header"), _T("TotalLot"), NULL, szData, sizeof(szData), sPath))
+		nTotalLot = _ttoi(szData);
+	else
+	{
+		return FALSE;
+	}
+
+
+	int nIdx, nI=0;
+	CString sLot, sItem;
+
+	for (nIdx = nTotalLot; nIdx > 0; nIdx--)
+	{
+		sItem.Format(_T("%d"), nIdx);
+		if (0 < ::GetPrivateProfileString(_T("Lot List"), sItem, NULL, szData, sizeof(szData), sPath))
+			sLot = CString(szData);
+		else
+		{
+			return FALSE;
+		}
+
+		((CComboBox*)GetDlgItem(IDC_COMBO_LOT))->InsertString(nI, sLot);
+		nI++;
+	}
+}
+
+void CDlgInfo::OnSelchangeComboLot()
+{
+	CString sLot;
+	int nIndex = ((CComboBox*)GetDlgItem(IDC_COMBO_LOT))->GetCurSel();
+	if (nIndex != LB_ERR)
+	{
+		((CComboBox*)GetDlgItem(IDC_COMBO_LOT))->GetLBText(nIndex, sLot);
+		((CComboBox*)GetDlgItem(IDC_COMBO_LOT))->SetWindowText(sLot);
+
+		if (GetInnerInfo(sLot))
+		{
+			((CComboBox*)GetDlgItem(IDC_COMBO_LOT))->SetWindowText(pDoc->WorkingInfo.LastJob.sInnerLotUp);
+			myStcData[17].SetWindowText(pDoc->WorkingInfo.LastJob.sInnerLayerUp);
+			myStcData[18].SetWindowText(pDoc->WorkingInfo.LastJob.sInnerLayerDn);
+		}
+		else
+		{
+			myStcData[17].SetWindowText(_T(""));
+			myStcData[18].SetWindowText(_T(""));
+		}
+	}
 }

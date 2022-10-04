@@ -687,6 +687,8 @@ struct stLastJob
 	CString sProcessNum;
 	CString sModelUp, sLayerUp, sLotUp, sSerialUp, sCompletedSerialUp;
 	CString sModelDn, sLayerDn, sLotDn, sSerialDn, sCompletedSerialDn;
+	CString sInnerModelUp, sInnerLayerUp, sInnerLotUp;
+	CString sInnerModelDn, sInnerLayerDn, sInnerLotDn;
 
 	CString sSelUserName, sReelTotLen, sOnePnlLen;
 	BOOL bLotSep;
@@ -710,7 +712,8 @@ struct stLastJob
 	CString sAoiLastShot[2]; // [Up/Dn]
 	CString sPartialSpd;
 	BOOL bOneMetal, bTwoMetal;
-	BOOL bDualTest, bSampleTest, nTestMode;
+	BOOL bDualTest, bInnerDualTest, bSampleTest;
+	int nTestMode; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
 	BOOL bCore150Recoiler, bCore150Uncoiler;
 	CString sSampleTestShotNum;
 	BOOL bUse2Layer;
@@ -726,6 +729,8 @@ struct stLastJob
 		sProcessNum = _T("");
 		sModelUp = _T(""); sLayerUp = _T(""); sLotUp = _T(""); sSerialUp = _T(""); sCompletedSerialUp = _T("");
 		sModelDn = _T(""); sLayerDn = _T(""); sLotDn = _T(""); sSerialDn = _T(""); sCompletedSerialDn = _T("");
+		sInnerModelUp = _T(""); sInnerLayerUp = _T(""); sInnerLotUp = _T("");
+		sInnerModelDn = _T(""); sInnerLayerDn = _T(""); sInnerLotDn = _T("");
 
 		sSelUserName = _T(""); sReelTotLen = _T(""); sOnePnlLen = _T("");
 		bLotSep = FALSE;
@@ -754,7 +759,9 @@ struct stLastJob
 		sPartialSpd = _T("10");
 
 		bOneMetal = FALSE; bTwoMetal = FALSE;
-		bDualTest = TRUE; bSampleTest = FALSE; nTestMode = 0;
+		bDualTest = TRUE; bSampleTest = FALSE; 
+		bInnerDualTest = TRUE;
+		nTestMode = MODE_NONE; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
 		bCore150Recoiler = FALSE; bCore150Uncoiler = FALSE;
 		sSampleTestShotNum = _T("");
 		bUseEngraveCleanner = FALSE; bUseAoiDnCleanner = FALSE;

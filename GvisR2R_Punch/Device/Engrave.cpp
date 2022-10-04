@@ -874,7 +874,8 @@ void CEngrave::GetOpInfo(SOCKET_DATA SockData)
 		pDoc->WorkingInfo.LastJob.sSampleTestShotNum = sVal;
 		break;
 	case _TestMode:
-		pDoc->WorkingInfo.LastJob.nTestMode = (int)SockData.nData1; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2
+		pDoc->SetTestMode((int)SockData.nData1); // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2
+		//pDoc->WorkingInfo.LastJob.nTestMode = (int)SockData.nData1; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2
 		break;
 	case _RecoilerCcw:
 		pDoc->WorkingInfo.LastJob.bOneMetal = (SockData.nData1 > 0) ? TRUE : FALSE;	// OneMetal : TRUE -> SetTwoMetal(FALSE);
@@ -3072,7 +3073,8 @@ void CEngrave::SetTestMode()
 	SocketData.nCmdCode = _SetData;
 
 	SocketData.nMsgID = _TestMode;
-	SocketData.nData1 = pDoc->WorkingInfo.LastJob.nTestMode; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2
+	//SocketData.nData1 = pDoc->WorkingInfo.LastJob.nTestMode; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2
+	SocketData.nData1 = pDoc->GetTestMode(); // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2
 	SendCommand(SocketData);
 }
 

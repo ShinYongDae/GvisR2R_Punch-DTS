@@ -8819,3 +8819,117 @@ BOOL CGvisR2R_PunchDoc::LoadAoiSpec()
 
 	return TRUE;
 }
+
+int CGvisR2R_PunchDoc::GetTestMode()
+{
+	return WorkingInfo.LastJob.nTestMode;
+}
+
+void CGvisR2R_PunchDoc::SetTestMode(int nMode)
+{
+	WorkingInfo.LastJob.nTestMode = nMode;
+
+	CString sData;
+	sData.Format(_T("%d"), nMode);
+	::WritePrivateProfileString(_T("Last Job"), _T("Test Mode"), sData, PATH_WORKING_INFO);
+}
+
+BOOL CGvisR2R_PunchDoc::GetInnerInfo(CString sCurrLot)
+{
+	CString sPathOldFolder;
+	CString sFileN = _T("InnerLayerInfo.txt");
+	CString sPathOldFile = pDoc->WorkingInfo.System.sPathOldFile;
+
+	CString sPath;
+
+	sPath.Format(_T("%s"), pDoc->WorkingInfo.System.sPathOldFile);
+	int pos = sPath.ReverseFind('\\');
+	if (pos != -1)
+		sPath.Delete(pos, sPath.GetLength() - pos);
+
+	if (!pDoc->DirectoryExists(sPath))
+	{
+		CreateDirectory(sPath, NULL);
+		return FALSE;
+	}
+
+	sPath.Format(_T("%s\\%s"), sPath, sFileN);
+
+	CFileFind finder;
+
+	if (finder.FindFile(sPath) == FALSE)
+	{
+		return FALSE;
+	}
+
+	TCHAR szData[MAX_PATH];
+	CString sDataPath;
+	//TCHAR sep[] = { _T(",;\r\n\t") };
+	int nDualMode = 0;
+
+	//CString sCurrLot = pDoc->WorkingInfo.LastJob.sLotUp;
+
+	if (0 < ::GetPrivateProfileString(_T("WorkingInfoPath"), sCurrLot, NULL, szData, sizeof(szData), sPath))
+		sDataPath = CString(szData);
+	else
+	{
+		return FALSE;
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("MODE_INNER"), _T("DualMode"), NULL, szData, sizeof(szData), sDataPath))
+	{
+		nDualMode = _ttoi(szData);
+		WorkingInfo.LastJob.bInnerDualTest = nDualMode ? TRUE : FALSE;
+	}
+	else
+	{
+		return FALSE;
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("MODE_INNER"), _T("AoiUpModel"), NULL, szData, sizeof(szData), sDataPath))
+		WorkingInfo.LastJob.sInnerModelUp = CString(szData);
+	else
+	{
+		return FALSE;
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("MODE_INNER"), _T("AoiUpLot"), NULL, szData, sizeof(szData), sDataPath))
+		WorkingInfo.LastJob.sInnerLotUp = CString(szData);
+	else
+	{
+		return FALSE;
+	}
+
+	if (0 < ::GetPrivateProfileString(_T("MODE_INNER"), _T("AoiUpLayer"), NULL, szData, sizeof(szData), sDataPath))
+		WorkingInfo.LastJob.sInnerLayerUp = CString(szData);
+	else
+	{
+		return FALSE;
+	}
+
+	if (nDualMode)
+	{
+		if (0 < ::GetPrivateProfileString(_T("MODE_INNER"), _T("AoiDnModel"), NULL, szData, sizeof(szData), sDataPath))
+			WorkingInfo.LastJob.sInnerModelDn = CString(szData);
+		else
+		{
+			return FALSE;
+		}
+
+		if (0 < ::GetPrivateProfileString(_T("MODE_INNER"), _T("AoiDnLot"), NULL, szData, sizeof(szData), sDataPath))
+			WorkingInfo.LastJob.sInnerLotDn = CString(szData);
+		else
+		{
+			return FALSE;
+		}
+
+		if (0 < ::GetPrivateProfileString(_T("MODE_INNER"), _T("AoiDnLayer"), NULL, szData, sizeof(szData), sDataPath))
+			WorkingInfo.LastJob.sInnerLayerDn = CString(szData);
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}

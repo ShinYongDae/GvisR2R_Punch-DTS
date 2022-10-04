@@ -126,8 +126,10 @@
 #define IDC_BUTTON2                     1002
 #define IDC_PIC_CAD_003                 1003
 #define IDC_BTN_00                      1003
+#define IDC_STC_LAYER_UP                1003
 #define IDC_PIC_CAD_004                 1004
 #define IDC_BTN_01                      1004
+#define IDC_COMBO_LOT                   1004
 #define IDC_PIC_CAD_005                 1005
 #define IDC_BTN_02                      1005
 #define IDC_PIC_CAD_006                 1006
@@ -430,6 +432,7 @@
 #define IDC_STC_GOOD_NUM_ALL            1152
 #define IDC_BTN_BUFF_UP                 1152
 #define IDC_STC_014                     1152
+#define IDC_STC_35                      1152
 #define IDC_STC_0015                    1153
 #define IDC_STC_GOOD_RATIO_ALL          1153
 #define IDC_BTN_BUFF_DN                 1153
@@ -799,15 +802,19 @@
 #define IDC_STC_12_22                   1245
 #define IDC_STC_76                      1245
 #define IDC_STC_UTIL04_14               1245
+#define IDC_STC_34                      1245
 #define IDC_CHK_18                      1246
 #define IDC_STC_77                      1246
 #define IDC_STC_UTIL04_15               1246
+#define IDC_STC_36                      1246
 #define IDC_STC_12_24                   1247
 #define IDC_STC_78                      1247
 #define IDC_STC_UTIL04_16               1247
+#define IDC_STC_37                      1247
 #define IDC_STC_12_23                   1248
 #define IDC_STC_79                      1248
 #define IDC_STC_UTIL04_17               1248
+#define IDC_STC_LAYER_DN                1248
 #define IDC_STC_12_25                   1249
 #define IDC_STC_80                      1249
 #define IDC_STC_UTIL04_18               1249
@@ -1298,7 +1305,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        354
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1003
+#define _APS_NEXT_CONTROL_VALUE         1005
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

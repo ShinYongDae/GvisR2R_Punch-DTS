@@ -10,8 +10,8 @@
 #include "MyBtn.h"
 #include "MyStatic.h"
 
-#define MAX_INFO_STC				59
-#define MAX_INFO_STC_DATA			15
+#define MAX_INFO_STC				66
+#define MAX_INFO_STC_DATA			19
 #define MAX_INFO_BTN				25
 
 /////////////////////////////////////////////////////////////////////////////
@@ -39,6 +39,9 @@ class CDlgInfo : public CDialog
 	void SetTwoMetal(BOOL bOn=TRUE);
 	void SetTestMode(int nMode);
 
+	BOOL ModifyLotData();
+	void ShowInnerInfo();
+
 // Construction
 public:
 	CDlgInfo(CWnd* pParent = NULL);   // standard constructor
@@ -48,6 +51,7 @@ public:
 	void AtDlgHide();
 
 	void UpdateData();
+	BOOL GetInnerInfo(CString sCurrLot);
 
 // Dialog Data
 	//{{AFX_DATA(CDlgInfo)
@@ -114,6 +118,8 @@ public:
 	afx_msg void OnBnClickedChk85();
 	afx_msg void OnBnClickedChk1187();
 	afx_msg void OnBnClickedChk1188();
+	afx_msg void OnStnClickedStc36();
+	afx_msg void OnSelchangeComboLot();
 };
 
 //{{AFX_INSERT_LOCATION}}

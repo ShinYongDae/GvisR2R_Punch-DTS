@@ -244,6 +244,7 @@ public:
 	//afx_msg void OnDoubleclickedChkMk3();
 	//afx_msg void OnDoubleclickedChkMk4();
 	//afx_msg void OnBnClickedChkTpStop();
+	afx_msg void OnStnClickedStcLotSrl();
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -133,6 +133,7 @@ BEGIN_MESSAGE_MAP(CDlgMenu01, CDialog)
 	//ON_BN_CLICKED(IDC_CHK_TP_STOP, &CDlgMenu01::OnBnClickedChkTpStop)
 	ON_MESSAGE(WM_MYBTN_DOWN, OnMyBtnDown)
 	ON_MESSAGE(WM_MYBTN_UP, OnMyBtnUp)
+	ON_STN_CLICKED(IDC_STC_LOT_SRL, &CDlgMenu01::OnStnClickedStcLotSrl)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2823,8 +2824,10 @@ void CDlgMenu01::UpdateData()
 		//sVal.Format(_T("%.1f"), dLotLen / 1000.0);
 		//myStcData[11].SetText(sVal);	// 로트분리길이
 
-		if(!pDoc->m_bDoneChgLot)
-			myStcData[14].SetText(_T(""));	// 진행Lot시리얼
+		//if(!pDoc->m_bDoneChgLot)
+		//	myStcData[14].SetText(_T(""));	// 진행Lot시리얼
+		sVal.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
+		myStcData[14].SetText(sVal);
 	}
 
 	myStcData[11].SetText(pDoc->WorkingInfo.LastJob.sCustomNeedRatio);	// 고객출하수율
@@ -2875,8 +2878,12 @@ void CDlgMenu01::UpdateWorking()
 	else
 	{
 		myStcData[6].SetText(_T(""));		// 로트진행율
-		myStcData[14].SetText(_T(""));		// 진행Lot시리얼
+		//myStcData[14].SetText(_T(""));		// 진행Lot시리얼
 	}
+
+	sVal.Format(_T("%d"), pDoc->WorkingInfo.LastJob.nVerifyPeriod);
+	myStcData[14].SetText(sVal);
+
 
 	sVal.Format(_T("%.1f"), pView->GetTotVel());
 	myStcData[7].SetText(sVal);			// 전체속도
@@ -4980,4 +4987,26 @@ void CDlgMenu01::ChkTpStop()
 	CString sData = bUse ? _T("1") : _T("0");
 	::WritePrivateProfileString(_T("Last Job"), _T("Use Temporary Pause"), sData, PATH_WORKING_INFO);
 	this->MoveWindow(m_pRect, TRUE);
+}
+
+
+void CDlgMenu01::OnStnClickedStcLotSrl()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	myStcData[14].SetBkColor(RGB_RED);
+	myStcData[14].RedrawWindow();
+
+	CPoint pt;	CRect rt;
+	GetDlgItem(IDC_STC_LOT_SRL)->GetWindowRect(&rt);
+	pt.x = rt.right; pt.y = rt.bottom;
+	ShowKeypad(IDC_STC_LOT_SRL, pt, TO_BOTTOM | TO_RIGHT);
+
+	myStcData[14].SetBkColor(RGB_WHITE);
+	myStcData[14].RedrawWindow();
+
+	CString sVal;
+	GetDlgItem(IDC_STC_LOT_SRL)->GetWindowText(sVal);
+	pDoc->WorkingInfo.LastJob.nVerifyPeriod = _ttoi(sVal);
+
+	::WritePrivateProfileString(_T("Last Job"), _T("Verify Period"), sVal, PATH_WORKING_INFO);
 }
