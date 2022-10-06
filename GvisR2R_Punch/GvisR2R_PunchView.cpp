@@ -14176,6 +14176,11 @@ void CGvisR2R_PunchView::DoMark0()
 		}
 		break;
 	case 7:
+		if (bDualTest)
+			nSerial = m_nBufDnSerial[0];//GetBuffer0();
+		else
+			nSerial = m_nBufUpSerial[0];//GetBuffer0();
+
 		if (!WaitDelay0(1))		// F:Done, T:On Waiting....		// Delay후에
 		{
 			nMkOrderIdx[0] = 0;
@@ -14192,8 +14197,13 @@ void CGvisR2R_PunchView::DoMark0()
 				}
 				else											// Review가 아니면
 				{
-					nMkOrderIdx[0] = GetTotDefPcs0(nSerial);
-					m_nStepMk[0] = MK_END;						// Punching 종료.
+					if (m_bReview)
+					{
+						nMkOrderIdx[0] = GetTotDefPcs0(nSerial);
+						m_nStepMk[0] = MK_END;						// Punching 종료.
+					}
+					else
+						m_nStepMk[0]++;
 				}
 			}
 		}
@@ -14869,6 +14879,11 @@ void CGvisR2R_PunchView::DoMark1()
 		}
 		break;
 	case 7:
+		if (bDualTest)
+			nSerial = m_nBufDnSerial[1];//GetBuffer1();
+		else
+			nSerial = m_nBufUpSerial[1];//GetBuffer1();
+
 		if (!WaitDelay1(6))		// F:Done, T:On Waiting....
 		{
 			nMkOrderIdx[1] = 0;
@@ -16153,6 +16168,7 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 	int nSerial = 0;
 	CString sNewLot;
+	CString sCurrLot, sCurrModel;
 	int nNewLot = 0;
 	BOOL bPcrInShare[2];
 	BOOL bNewModel = FALSE;
@@ -16638,6 +16654,16 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 				UpdateReelmap(m_nShareDnS); // After inspect bottom side.
 			}
 
+			if (pDoc->GetTestMode() == MODE_INNER)
+			{
+				pDoc->SetInnerInfo(m_nShareDnS);
+			}
+			else if (pDoc->GetTestMode() == MODE_OUTER)
+			{
+				pDoc->SetOuterInfo(m_nShareDnS);
+			}
+			else
+				pDoc->SetDefaultInfo(m_nShareDnS);
 
 			if (!m_bLastProc)
 			{
@@ -16699,6 +16725,19 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 					}
 				}
 			}
+		}
+		else
+		{
+			if (pDoc->GetTestMode() == MODE_INNER)
+			{
+				pDoc->SetInnerInfo(m_nShareUpS);
+			}
+			else if (pDoc->GetTestMode() == MODE_OUTER)
+			{
+				pDoc->SetOuterInfo(m_nShareDnS);
+			}
+			else
+				pDoc->SetDefaultInfo(m_nShareDnS);
 		}
 		break;
 

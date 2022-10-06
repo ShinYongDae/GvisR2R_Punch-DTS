@@ -1064,6 +1064,7 @@ void CDlgMenu03::InitStatic()
 
 void CDlgMenu03::Disp()
 {
+	pView->GetPlcParam();
 	DispMain();
 	DispRecoiler();
 	DispPunch();

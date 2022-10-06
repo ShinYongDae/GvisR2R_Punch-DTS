@@ -4653,6 +4653,7 @@ int CGvisR2R_PunchDoc::LoadPCRAllUp(int nSerial, BOOL bFromShare)	// return : 2(
 	SetMergePcsIdxUp(nSerial, pPcrMgr, nTotDef[2], nTotPcs);
 
 	SetMkPcsIdx(nSerial, pPcrMgr, nTotDef[2], nTotPcs);
+
 	if (pView && pView->m_pDts && pView->m_pDts->IsUseDts())
 	{
 		SetMkPcsIdxOnDts(nSerial);
@@ -8933,3 +8934,473 @@ BOOL CGvisR2R_PunchDoc::GetInnerInfo(CString sCurrLot)
 
 	return TRUE;
 }
+
+BOOL CGvisR2R_PunchDoc::SetInnerInfo(int nSerial)
+{
+	if (nSerial < 1)
+		return FALSE;
+
+	CString sPathOldFolder;
+	CString sFileN = _T("InnerLayerInfo.txt");
+	CString sFileW = _T("WorkingInfo.txt");
+	CString sPathOldFile = pDoc->WorkingInfo.System.sPathOldFile;
+
+	CString sRootPath, sInnerPath, sWorkingInfoPath;
+	CFileFind finder;
+
+	CString sCurrModelUp = pDoc->m_pPcr[0][pDoc->GetPcrIdx0(nSerial)]->m_sModel;
+	CString sCurrLotUp = pDoc->m_pPcr[0][pDoc->GetPcrIdx0(nSerial)]->m_sLot;
+	CString sCurrLayerUp = pDoc->m_pPcr[0][pDoc->GetPcrIdx0(nSerial)]->m_sLayer;
+	CString sCurrModelDn = pDoc->m_pPcr[1][pDoc->GetPcrIdx1(nSerial)]->m_sModel;
+	CString sCurrLotDn = pDoc->m_pPcr[1][pDoc->GetPcrIdx1(nSerial)]->m_sLot;
+	CString sCurrLayerDn = pDoc->m_pPcr[1][pDoc->GetPcrIdx1(nSerial)]->m_sLayer;
+
+
+
+	sRootPath.Format(_T("%s"), pDoc->WorkingInfo.System.sPathOldFile);
+	int pos = sRootPath.ReverseFind('\\');
+	if (pos != -1)
+		sRootPath.Delete(pos, sRootPath.GetLength() - pos);
+
+	if (!pDoc->DirectoryExists(sRootPath))
+	{
+		CreateDirectory(sRootPath, NULL);
+		return FALSE;
+	}
+
+	sInnerPath.Format(_T("%s\\%s"), sRootPath, sFileN);
+
+	sWorkingInfoPath.Format(_T("%s\\%s"), sRootPath, sCurrModelUp);
+	if (!pDoc->DirectoryExists(sWorkingInfoPath))
+	{
+		CreateDirectory(sWorkingInfoPath, NULL);
+		return FALSE;
+	}
+
+	sWorkingInfoPath.Format(_T("%s\\%s\\%s"), sRootPath, sCurrModelUp, sCurrLotUp);
+	if (!pDoc->DirectoryExists(sWorkingInfoPath))
+	{
+		CreateDirectory(sWorkingInfoPath, NULL);
+		return FALSE;
+	}
+
+	sWorkingInfoPath.Format(_T("%s\\%s\\%s\\%s"), sRootPath, sCurrModelUp, sCurrLotUp, sFileW);
+
+	char* pRtn = NULL;
+	FILE *fp = NULL;
+	char FileName[MAX_PATH];
+
+	StrToChar(sWorkingInfoPath, FileName);
+
+	if (finder.FindFile(sWorkingInfoPath) == FALSE)
+	{
+		fp = fopen(FileName, "a+");
+		if (fp == NULL)
+		{
+			pView->MsgBox(_T("It is trouble to open WorkingInfo.txt"));
+			return FALSE;
+		}
+
+		fprintf(fp, "[MODE_NONE]\n");
+		fprintf(fp, "DualMode = \n");
+		fprintf(fp, "InnerMode = \n");
+		fprintf(fp, "OuterMode = \n");
+		fprintf(fp, "AoiUpModel = \n");
+		fprintf(fp, "AoiUpLot = \n");
+		fprintf(fp, "AoiUpLayer = \n");
+		fprintf(fp, "AoiDnModel = \n");
+		fprintf(fp, "AoiDnLot = \n");
+		fprintf(fp, "AoiDnLayer = \n");
+		fprintf(fp, "\n");
+
+		fprintf(fp, "[MODE_INNER]\n");
+		fprintf(fp, "DualMode = \n");
+		fprintf(fp, "InnerMode = \n");
+		fprintf(fp, "OuterMode = \n");
+		fprintf(fp, "AoiUpModel = \n");
+		fprintf(fp, "AoiUpLot = \n");
+		fprintf(fp, "AoiUpLayer = \n");
+		fprintf(fp, "AoiDnModel = \n");
+		fprintf(fp, "AoiDnLot = \n");
+		fprintf(fp, "AoiDnLayer = \n");
+		fprintf(fp, "\n");
+
+		fprintf(fp, "[MODE_OUTER]\n");
+		fprintf(fp, "DualMode = \n");
+		fprintf(fp, "InnerMode = \n");
+		fprintf(fp, "OuterMode = \n");
+		fprintf(fp, "AoiUpModel = \n");
+		fprintf(fp, "AoiUpLot = \n");
+		fprintf(fp, "AoiUpLayer = \n");
+		fprintf(fp, "AoiDnModel = \n");
+		fprintf(fp, "AoiDnLot = \n");
+		fprintf(fp, "AoiDnLayer = \n");
+		fprintf(fp, "\n");
+	}
+
+	TCHAR szData[MAX_PATH];
+	CString sData;
+	//TCHAR sep[] = { _T(",;\r\n\t") };
+	int nTotalLot = 0;
+
+	// InnerLayerInfo.txt
+	if (0 < ::GetPrivateProfileString(_T("Header"), _T("TotalLot"), NULL, szData, sizeof(szData), sInnerPath))
+		nTotalLot = _ttoi(szData);
+	else
+		nTotalLot = 0;
+
+	nTotalLot++;
+	sData.Format(_T("%d"), nTotalLot);
+	::WritePrivateProfileString(_T("Header"), _T("TotalLot"), sData, sInnerPath);
+	::WritePrivateProfileString(_T("Lot List"), sData, sCurrLotUp, sInnerPath);
+	::WritePrivateProfileString(_T("WorkingInfoPath"), sCurrLotUp, sWorkingInfoPath, sInnerPath);
+
+
+	// WorkingInfo.txt
+	sData.Format(_T("%d"), WorkingInfo.LastJob.bDualTest ? 1 : 0);
+	::WritePrivateProfileString(_T("MODE_INNER"), _T("DualMode"), sData, sWorkingInfoPath);
+
+	sData = _T("1");
+	::WritePrivateProfileString(_T("MODE_INNER"), _T("InnerMode"), sData, sWorkingInfoPath);
+
+	sData = _T("0");
+	::WritePrivateProfileString(_T("MODE_INNER"), _T("OuterMode"), sData, sWorkingInfoPath);
+
+	sData = sCurrModelUp;
+	::WritePrivateProfileString(_T("MODE_INNER"), _T("AoiUpModel"), sData, sWorkingInfoPath);
+
+	sData = sCurrLotUp;
+	::WritePrivateProfileString(_T("MODE_INNER"), _T("AoiUpLot"), sData, sWorkingInfoPath);
+
+	sData = sCurrLayerUp;
+	::WritePrivateProfileString(_T("MODE_INNER"), _T("AoiUpLayer"), sData, sWorkingInfoPath);
+
+	if(WorkingInfo.LastJob.bDualTest)
+	{
+		sData = sCurrModelDn;
+		::WritePrivateProfileString(_T("MODE_INNER"), _T("AoiDnModel"), sData, sWorkingInfoPath);
+
+		sData = sCurrLotDn;
+		::WritePrivateProfileString(_T("MODE_INNER"), _T("AoiDnLot"), sData, sWorkingInfoPath);
+
+		sData = sCurrLayerDn;
+		::WritePrivateProfileString(_T("MODE_INNER"), _T("AoiDnLayer"), sData, sWorkingInfoPath);
+	}
+
+	return TRUE;
+}
+
+BOOL CGvisR2R_PunchDoc::SetOuterInfo(int nSerial)
+{
+	if (nSerial < 1)
+		return FALSE;
+
+	CString sPathOldFolder;
+	CString sFileW = _T("WorkingInfo.txt");
+	CString sPathOldFile = pDoc->WorkingInfo.System.sPathOldFile;
+
+	CString sRootPath, sWorkingInfoPath;
+	CFileFind finder;
+
+	CString sCurrModelUp = pDoc->m_pPcr[0][pDoc->GetPcrIdx0(nSerial)]->m_sModel;
+	CString sCurrLotUp = pDoc->m_pPcr[0][pDoc->GetPcrIdx0(nSerial)]->m_sLot;
+	CString sCurrLayerUp = pDoc->m_pPcr[0][pDoc->GetPcrIdx0(nSerial)]->m_sLayer;
+	CString sCurrModelDn = pDoc->m_pPcr[1][pDoc->GetPcrIdx1(nSerial)]->m_sModel;
+	CString sCurrLotDn = pDoc->m_pPcr[1][pDoc->GetPcrIdx1(nSerial)]->m_sLot;
+	CString sCurrLayerDn = pDoc->m_pPcr[1][pDoc->GetPcrIdx1(nSerial)]->m_sLayer;
+
+
+
+	sRootPath.Format(_T("%s"), pDoc->WorkingInfo.System.sPathOldFile);
+	int pos = sRootPath.ReverseFind('\\');
+	if (pos != -1)
+		sRootPath.Delete(pos, sRootPath.GetLength() - pos);
+
+	if (!pDoc->DirectoryExists(sRootPath))
+	{
+		CreateDirectory(sRootPath, NULL);
+		return FALSE;
+	}
+
+	sWorkingInfoPath.Format(_T("%s\\%s"), sRootPath, sCurrModelUp);
+	if (!pDoc->DirectoryExists(sWorkingInfoPath))
+	{
+		CreateDirectory(sWorkingInfoPath, NULL);
+		return FALSE;
+	}
+
+	sWorkingInfoPath.Format(_T("%s\\%s\\%s"), sRootPath, sCurrModelUp, sCurrLotUp);
+	if (!pDoc->DirectoryExists(sWorkingInfoPath))
+	{
+		CreateDirectory(sWorkingInfoPath, NULL);
+		return FALSE;
+	}
+
+	sWorkingInfoPath.Format(_T("%s\\%s\\%s\\%s"), sRootPath, sCurrModelUp, sCurrLotUp, sFileW);
+
+	char* pRtn = NULL;
+	FILE *fp = NULL;
+	char FileName[MAX_PATH];
+
+	StrToChar(sWorkingInfoPath, FileName);
+
+	if (finder.FindFile(sWorkingInfoPath) == FALSE)
+	{
+		fp = fopen(FileName, "a+");
+		if (fp == NULL)
+		{
+			pView->MsgBox(_T("It is trouble to open WorkingInfo.txt"));
+			return FALSE;
+		}
+
+		fprintf(fp, "[MODE_NONE]\n");
+		fprintf(fp, "DualMode = \n");
+		fprintf(fp, "InnerMode = \n");
+		fprintf(fp, "OuterMode = \n");
+		fprintf(fp, "AoiUpModel = \n");
+		fprintf(fp, "AoiUpLot = \n");
+		fprintf(fp, "AoiUpLayer = \n");
+		fprintf(fp, "AoiDnModel = \n");
+		fprintf(fp, "AoiDnLot = \n");
+		fprintf(fp, "AoiDnLayer = \n");
+		fprintf(fp, "\n");
+
+		fprintf(fp, "[MODE_INNER]\n");
+		fprintf(fp, "DualMode = \n");
+		fprintf(fp, "InnerMode = \n");
+		fprintf(fp, "OuterMode = \n");
+		fprintf(fp, "AoiUpModel = \n");
+		fprintf(fp, "AoiUpLot = \n");
+		fprintf(fp, "AoiUpLayer = \n");
+		fprintf(fp, "AoiDnModel = \n");
+		fprintf(fp, "AoiDnLot = \n");
+		fprintf(fp, "AoiDnLayer = \n");
+		fprintf(fp, "\n");
+
+		fprintf(fp, "[MODE_OUTER]\n");
+		fprintf(fp, "DualMode = \n");
+		fprintf(fp, "InnerMode = \n");
+		fprintf(fp, "OuterMode = \n");
+		fprintf(fp, "AoiUpModel = \n");
+		fprintf(fp, "AoiUpLot = \n");
+		fprintf(fp, "AoiUpLayer = \n");
+		fprintf(fp, "AoiDnModel = \n");
+		fprintf(fp, "AoiDnLot = \n");
+		fprintf(fp, "AoiDnLayer = \n");
+		fprintf(fp, "\n");
+	}
+
+	TCHAR szData[MAX_PATH];
+	CString sData;
+	//TCHAR sep[] = { _T(",;\r\n\t") };
+	int nTotalLot = 0;
+
+	// WorkingInfo.txt
+	sData.Format(_T("%d"), WorkingInfo.LastJob.bDualTest ? 1 : 0);
+	::WritePrivateProfileString(_T("MODE_OUTER"), _T("DualMode"), sData, sWorkingInfoPath);
+
+	sData = _T("1");
+	::WritePrivateProfileString(_T("MODE_OUTER"), _T("InnerMode"), sData, sWorkingInfoPath);
+
+	sData = _T("0");
+	::WritePrivateProfileString(_T("MODE_OUTER"), _T("OuterMode"), sData, sWorkingInfoPath);
+
+	sData = sCurrModelUp;
+	::WritePrivateProfileString(_T("MODE_OUTER"), _T("AoiUpModel"), sData, sWorkingInfoPath);
+
+	sData = sCurrLotUp;
+	::WritePrivateProfileString(_T("MODE_OUTER"), _T("AoiUpLot"), sData, sWorkingInfoPath);
+
+	sData = sCurrLayerUp;
+	::WritePrivateProfileString(_T("MODE_OUTER"), _T("AoiUpLayer"), sData, sWorkingInfoPath);
+
+	if (WorkingInfo.LastJob.bDualTest)
+	{
+		sData = sCurrModelDn;
+		::WritePrivateProfileString(_T("MODE_OUTER"), _T("AoiDnModel"), sData, sWorkingInfoPath);
+
+		sData = sCurrLotDn;
+		::WritePrivateProfileString(_T("MODE_OUTER"), _T("AoiDnLot"), sData, sWorkingInfoPath);
+
+		sData = sCurrLayerDn;
+		::WritePrivateProfileString(_T("MODE_OUTER"), _T("AoiDnLayer"), sData, sWorkingInfoPath);
+	}
+
+	return TRUE;
+}
+
+BOOL CGvisR2R_PunchDoc::SetDefaultInfo(int nSerial)
+{
+	if (nSerial < 1)
+		return FALSE;
+
+	CString sPathOldFolder;
+	CString sFileW = _T("WorkingInfo.txt");
+	CString sPathOldFile = pDoc->WorkingInfo.System.sPathOldFile;
+
+	CString sRootPath, sWorkingInfoPath;
+	CFileFind finder;
+
+	CString sCurrModelUp = pDoc->m_pPcr[0][pDoc->GetPcrIdx0(nSerial)]->m_sModel;
+	CString sCurrLotUp = pDoc->m_pPcr[0][pDoc->GetPcrIdx0(nSerial)]->m_sLot;
+	CString sCurrLayerUp = pDoc->m_pPcr[0][pDoc->GetPcrIdx0(nSerial)]->m_sLayer;
+	CString sCurrModelDn = pDoc->m_pPcr[1][pDoc->GetPcrIdx1(nSerial)]->m_sModel;
+	CString sCurrLotDn = pDoc->m_pPcr[1][pDoc->GetPcrIdx1(nSerial)]->m_sLot;
+	CString sCurrLayerDn = pDoc->m_pPcr[1][pDoc->GetPcrIdx1(nSerial)]->m_sLayer;
+
+
+
+	sRootPath.Format(_T("%s"), pDoc->WorkingInfo.System.sPathOldFile);
+	int pos = sRootPath.ReverseFind('\\');
+	if (pos != -1)
+		sRootPath.Delete(pos, sRootPath.GetLength() - pos);
+
+	if (!pDoc->DirectoryExists(sRootPath))
+	{
+		CreateDirectory(sRootPath, NULL);
+		return FALSE;
+	}
+
+	sWorkingInfoPath.Format(_T("%s\\%s"), sRootPath, sCurrModelUp);
+	if (!pDoc->DirectoryExists(sWorkingInfoPath))
+	{
+		CreateDirectory(sWorkingInfoPath, NULL);
+		return FALSE;
+	}
+
+	sWorkingInfoPath.Format(_T("%s\\%s\\%s"), sRootPath, sCurrModelUp, sCurrLotUp);
+	if (!pDoc->DirectoryExists(sWorkingInfoPath))
+	{
+		CreateDirectory(sWorkingInfoPath, NULL);
+		return FALSE;
+	}
+
+	sWorkingInfoPath.Format(_T("%s\\%s\\%s\\%s"), sRootPath, sCurrModelUp, sCurrLotUp, sFileW);
+
+	char* pRtn = NULL;
+	FILE *fp = NULL;
+	char FileName[MAX_PATH];
+
+	StrToChar(sWorkingInfoPath, FileName);
+
+	if (finder.FindFile(sWorkingInfoPath) == FALSE)
+	{
+		fp = fopen(FileName, "a+");
+		if (fp == NULL)
+		{
+			pView->MsgBox(_T("It is trouble to open WorkingInfo.txt"));
+			return FALSE;
+		}
+
+		fprintf(fp, "[MODE_NONE]\n");
+		fprintf(fp, "DualMode = \n");
+		fprintf(fp, "InnerMode = \n");
+		fprintf(fp, "OuterMode = \n");
+		fprintf(fp, "AoiUpModel = \n");
+		fprintf(fp, "AoiUpLot = \n");
+		fprintf(fp, "AoiUpLayer = \n");
+		fprintf(fp, "AoiDnModel = \n");
+		fprintf(fp, "AoiDnLot = \n");
+		fprintf(fp, "AoiDnLayer = \n");
+		fprintf(fp, "\n");
+
+		fprintf(fp, "[MODE_INNER]\n");
+		fprintf(fp, "DualMode = \n");
+		fprintf(fp, "InnerMode = \n");
+		fprintf(fp, "OuterMode = \n");
+		fprintf(fp, "AoiUpModel = \n");
+		fprintf(fp, "AoiUpLot = \n");
+		fprintf(fp, "AoiUpLayer = \n");
+		fprintf(fp, "AoiDnModel = \n");
+		fprintf(fp, "AoiDnLot = \n");
+		fprintf(fp, "AoiDnLayer = \n");
+		fprintf(fp, "\n");
+
+		fprintf(fp, "[MODE_OUTER]\n");
+		fprintf(fp, "DualMode = \n");
+		fprintf(fp, "InnerMode = \n");
+		fprintf(fp, "OuterMode = \n");
+		fprintf(fp, "AoiUpModel = \n");
+		fprintf(fp, "AoiUpLot = \n");
+		fprintf(fp, "AoiUpLayer = \n");
+		fprintf(fp, "AoiDnModel = \n");
+		fprintf(fp, "AoiDnLot = \n");
+		fprintf(fp, "AoiDnLayer = \n");
+		fprintf(fp, "\n");
+	}
+
+	TCHAR szData[MAX_PATH];
+	CString sData;
+	//TCHAR sep[] = { _T(",;\r\n\t") };
+	int nTotalLot = 0;
+
+	// WorkingInfo.txt
+	sData.Format(_T("%d"), WorkingInfo.LastJob.bDualTest ? 1 : 0);
+	::WritePrivateProfileString(_T("MODE_NONE"), _T("DualMode"), sData, sWorkingInfoPath);
+
+	sData = _T("1");
+	::WritePrivateProfileString(_T("MODE_NONE"), _T("InnerMode"), sData, sWorkingInfoPath);
+
+	sData = _T("0");
+	::WritePrivateProfileString(_T("MODE_NONE"), _T("OuterMode"), sData, sWorkingInfoPath);
+
+	sData = sCurrModelUp;
+	::WritePrivateProfileString(_T("MODE_NONE"), _T("AoiUpModel"), sData, sWorkingInfoPath);
+
+	sData = sCurrLotUp;
+	::WritePrivateProfileString(_T("MODE_NONE"), _T("AoiUpLot"), sData, sWorkingInfoPath);
+
+	sData = sCurrLayerUp;
+	::WritePrivateProfileString(_T("MODE_NONE"), _T("AoiUpLayer"), sData, sWorkingInfoPath);
+
+	if (WorkingInfo.LastJob.bDualTest)
+	{
+		sData = sCurrModelDn;
+		::WritePrivateProfileString(_T("MODE_NONE"), _T("AoiDnModel"), sData, sWorkingInfoPath);
+
+		sData = sCurrLotDn;
+		::WritePrivateProfileString(_T("MODE_NONE"), _T("AoiDnLot"), sData, sWorkingInfoPath);
+
+		sData = sCurrLayerDn;
+		::WritePrivateProfileString(_T("MODE_NONE"), _T("AoiDnLayer"), sData, sWorkingInfoPath);
+	}
+
+	return TRUE;
+}
+
+char* CGvisR2R_PunchDoc::StrToChar(CString str) // char* returned must be deleted... 
+{
+	char*		szStr = NULL;
+	wchar_t*	wszStr;
+	int				nLenth;
+
+	USES_CONVERSION;
+	//1. CString to wchar_t* conversion
+	wszStr = T2W(str.GetBuffer(str.GetLength()));
+
+	//2. wchar_t* to char* conversion
+	nLenth = WideCharToMultiByte(CP_ACP, 0, wszStr, -1, NULL, 0, NULL, NULL); //char* 형에 대한길이를 구함 
+	szStr = new char[nLenth];  //메모리 할당 
+
+							   //3. wchar_t* to char* conversion
+	WideCharToMultiByte(CP_ACP, 0, wszStr, -1, szStr, nLenth, 0, 0);
+	return szStr;
+}
+
+void CGvisR2R_PunchDoc::StrToChar(CString str, char* pCh) // char* returned must be deleted... 
+{
+	wchar_t*	wszStr;
+	int				nLenth;
+
+	USES_CONVERSION;
+	//1. CString to wchar_t* conversion
+	wszStr = T2W(str.GetBuffer(str.GetLength()));
+
+	//2. wchar_t* to char* conversion
+	nLenth = WideCharToMultiByte(CP_ACP, 0, wszStr, -1, NULL, 0, NULL, NULL); //char* 형에 대한길이를 구함 
+
+																			  //3. wchar_t* to char* conversion
+	WideCharToMultiByte(CP_ACP, 0, wszStr, -1, pCh, nLenth, 0, 0);
+	return;
+}
+
