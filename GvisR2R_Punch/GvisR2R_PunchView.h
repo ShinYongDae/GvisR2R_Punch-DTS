@@ -810,10 +810,17 @@ public:
 	BOOL IsRdyTest();
 	BOOL IsRdyTest0();
 	BOOL IsRdyTest1();
+
 	BOOL LoadPcrUp(int nSerial, BOOL bFromShare = FALSE);
 	BOOL LoadPcrDn(int nSerial, BOOL bFromShare = FALSE);
-	BOOL OrderingMkUp(int nSerial, BOOL bDualTest);
-	BOOL OrderingMkDn(int nSerial);
+	BOOL OrderingMkUp(int nSerial, BOOL bDualTest);	// 불량피스의 마킹 순서를 재정렬함.
+	BOOL OrderingMkDn(int nSerial);					// 불량피스의 마킹 순서를 재정렬함.
+
+	BOOL LoadPcrInnerUp(int nSerial, BOOL bFromShare = FALSE);
+	BOOL LoadPcrInnerDn(int nSerial, BOOL bFromShare = FALSE);
+	BOOL OrderingMkInnerUp(int nSerial, BOOL bDualTest);	// 불량피스의 마킹 순서를 재정렬함.
+	BOOL OrderingMkInnerDn(int nSerial);					// 불량피스의 마킹 순서를 재정렬함.
+
 	int GetPcsIdxForPnl(int nMkIdx);				// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
 	int GetPcsIdxForMk(int nSerial, int nMkIdx);	// nMkIdx : 마킹순서 인덱스 , PcxIdx : 판넬의 불량피스 인덱스
 	void MoveAoi(double dOffset);

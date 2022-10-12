@@ -57,6 +57,7 @@ public:
 	CDataMarking* m_pPcr[MAX_PCR][MAX_PCR_PNL];			//릴맵화면표시를 위한 데이터			// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
 	CDataMarking* m_pPcrMk[MAX_PCR_PNL];				//릴맵화면표시를 위한 데이터를 마킹순서로 정렬 (마킹순서 인덱스순으로 pcr내용을 재정렬)
 	CDataMarking* m_pPcrInner[MAX_PCR][MAX_PCR_PNL];	//내층관련 릴맵화면표시를 위한 데이터 	// [0]:AOI-Up , [1]:AOI-Dn , [2]:AOI-AllUp , [3]:AOI-AllDn
+	CDataMarking* m_pPcrMkInner[MAX_PCR_PNL];				//릴맵화면표시를 위한 데이터를 마킹순서로 정렬 (마킹순서 인덱스순으로 pcr내용을 재정렬)
 
 	stMpeIoWrite m_pIo[TOT_M_IO];
 
@@ -131,6 +132,13 @@ public:
 	int LoadPCRDn(int nSerial, BOOL bFromShare = FALSE);	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
 	int LoadPCRAllUp(int nSerial, BOOL bFromShare = FALSE);	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
 	int LoadPCRAllDn(int nSerial, BOOL bFromShare = FALSE);	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+
+	int LoadPCR0Inner(int nSerial, BOOL bFromShare = FALSE);		// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	int LoadPCR1Inner(int nSerial, BOOL bFromShare = FALSE);		// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	int LoadPCRInnerUp(int nSerial, BOOL bFromShare = FALSE);		// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	int LoadPCRInnerDn(int nSerial, BOOL bFromShare = FALSE);		// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	int LoadPCRAllInnerUp(int nSerial, BOOL bFromShare = FALSE);	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	int LoadPCRAllInnerDn(int nSerial, BOOL bFromShare = FALSE);	// return : 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
 
 	int GetPcrIdx(int nSerial, BOOL bNewLot = FALSE);
 	int GetPcrIdx0(int nSerial, BOOL bNewLot = FALSE); // Up - 릴맵화면 표시를 위한 Display buffer의 Shot 인덱스
@@ -392,6 +400,8 @@ public:
 	void SetMkPcsIdx(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);	// 양면검사모드시
 	void SetMergePcsIdxUp(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
 	void SetMergePcsIdxDn(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
+	void SetMergeInnerPcsIdxUp(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
+	void SetMergeInnerPcsIdxDn(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
 
 	BOOL LoadAoiSpec();
 

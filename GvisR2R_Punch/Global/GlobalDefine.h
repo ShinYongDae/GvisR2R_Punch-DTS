@@ -1465,11 +1465,11 @@ struct stMpeIoWrite
 
 struct stPcrMerge
 {
-	int nIdx, nIdxUp, nIdxDn;
+	int nIdx, nIdxUp, nIdxDn, nIdxUpInner, nIdxDnInner;
 
 	stPcrMerge()
 	{
-		nIdx = -1; nIdxUp = -1; nIdxDn = -1;
+		nIdx = -1; nIdxUp = -1; nIdxDn = -1; nIdxUpInner = -1; nIdxDnInner = -1;
 	}
 };
 

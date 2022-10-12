@@ -11511,23 +11511,6 @@ BOOL CGvisR2R_PunchView::LoadPcrDn(int nSerial, BOOL bFromShare)
 	return TRUE;
 }
 
-int CGvisR2R_PunchView::GetPcsIdxForPnl(int nMkIdx)					// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
-{
-	int nPcxIdx = pDoc->m_MasterDB.GetPnlMkPcsIdx(nMkIdx);
-	return nPcxIdx;
-}
-
-int CGvisR2R_PunchView::GetPcsIdxForMk(int nSerial, int nMkIdx)		// nMkIdx : 마킹순서 인덱스 , PcxIdx : 판넬의 불량피스 인덱스
-{
-	int nPcsIdx = -1;
-	int nIdx = pDoc->GetPcrIdx0(nSerial);
-
-	if(pDoc->m_pPcr[0][nIdx])
-		nPcsIdx = pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[nMkIdx];
-
-	return nPcsIdx;
-}
-
 BOOL CGvisR2R_PunchView::OrderingMkUp(int nSerial, BOOL bDualTest)
 {
 	int i, nIdx, nTotDef;
@@ -11692,6 +11675,231 @@ BOOL CGvisR2R_PunchView::OrderingMkDn(int nSerial)
 		return FALSE;
 
 	return TRUE;
+}
+
+
+BOOL CGvisR2R_PunchView::LoadPcrInnerUp(int nSerial, BOOL bFromShare)
+{
+	if (nSerial <= 0)
+	{
+		pView->ClrDispMsg();
+		AfxMessageBox(_T("Serial Error.52"));
+		return FALSE;
+	}
+
+	int nHeadInfo = pDoc->LoadPCR0Inner(nSerial, bFromShare);			// 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	if (nHeadInfo >= 2)
+	{
+		MsgBox(_T("Error-LoadPCR0Inner()"));
+		return FALSE;
+	}
+	return TRUE;
+}
+
+BOOL CGvisR2R_PunchView::LoadPcrInnerDn(int nSerial, BOOL bFromShare)
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	if (!bDualTest)
+		return 0;
+
+	if (nSerial <= 0)
+	{
+		pView->ClrDispMsg();
+		AfxMessageBox(_T("Serial Error.53"));
+		return 0;
+	}
+
+	int nHeadInfo = pDoc->LoadPCR1Inner(nSerial, bFromShare);			// 2(Failed), 1(정상), -1(Align Error, 노광불량), -2(Lot End)
+	if (nHeadInfo >= 2)
+	{
+		MsgBox(_T("Error-LoadPCR1()"));
+		return FALSE;
+	}
+	return TRUE;
+}
+
+BOOL CGvisR2R_PunchView::OrderingMkInnerUp(int nSerial, BOOL bDualTest)
+{
+	int i, nIdx, nTotDef;
+
+	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+	{
+		int nPcsIdx;
+		int nCol, nRow, nC, nR, nRrev;
+		int nArrangTable[MAX_PCE_ROW][MAX_PCE_COL];
+		memset(nArrangTable, -1, sizeof(int)*MAX_PCE_ROW*MAX_PCE_COL);
+
+		nIdx = pDoc->GetPcrIdx0(nSerial);														// 릴맵화면버퍼 인덱스
+		nTotDef = pDoc->m_pPcrInner[0][nIdx]->m_nTotDef;										// 상면 불량 피스 수
+
+		for (i = 0; i < nTotDef; i++)															// 상면 불량 피스 수
+		{
+			nPcsIdx = pDoc->m_pPcrInner[0][nIdx]->m_pDefPcs[i];									// nPcsIdx : CamMaster Pcs Index , nIdx : 릴맵화면 버퍼 인덱스
+			pDoc->m_MasterDB.GetMkMatrix(nPcsIdx, nCol, nRow);
+			nArrangTable[nRow][nCol] = nPcsIdx;													// ArrangTable에 불량 피스의 인덱스를 펼쳐 놓음.
+		}
+
+		i = 0;																					// 마킹순서 인덱스
+		for (nC = 0; nC < MAX_PCE_COL; nC++)
+		{
+			for (nR = 0; nR < MAX_PCE_ROW; nR++)
+			{
+				if (nC % 2)																		// (홀수Col) NodeY방향으로 인덱스가 감소하도록 정렬할 때 
+				{
+					nRrev = MAX_PCE_ROW - nR - 1;
+					if (nArrangTable[nRrev][nC] > -1)
+					{
+						pDoc->m_pPcrInner[0][nIdx]->m_pDefPcsMk[i] = nArrangTable[nRrev][nC];	// Y축 -방향(nR 감소방향)으로 불량피스 인덱스를 정렬
+						i++;
+					}
+				}
+				else																			// (짝수Col)  NodeY방향으로 인덱스가 증가하도록 정렬할 때 
+				{
+					if (nArrangTable[nR][nC] > -1)
+					{
+						pDoc->m_pPcrInner[0][nIdx]->m_pDefPcsMk[i] = nArrangTable[nR][nC];		// Y축 +방향(nR 증가방향)으로 불량피스 인덱스를 정렬
+						i++;
+					}
+				}
+			}
+		}
+
+		if (!bDualTest)
+		{
+			int nOrd, nOrd2, nPcsIdx;
+			for (nOrd = 0; nOrd < nTotDef; nOrd++)															// Merging된 총 Piece수를 파일로딩상의 순서에서 마킹순서상으로 pcr파일을 재정렬.(m_pDefPcsMk[nOrd]와 m_pDefPcs[nOrd] 동일해짐)
+			{
+				int nMkPcsIdx = pDoc->m_pPcrInner[0][nIdx]->m_pDefPcsMk[nOrd];									// 마킹 순서(nOrd)에서의 재정렬된 마킹할 피스의 인덱스
+																											// Cam ID
+				pDoc->m_pPcrMkInner[nIdx]->m_nCamId = pDoc->m_pPcrInner[0][nIdx]->m_nCamId;							// nIdx: 릴맵화면 표시 인덱스																											
+				pDoc->m_pPcrMkInner[nIdx]->m_pDefPcsMk[nOrd] = nMkPcsIdx;										// 마킹순서별 저장된 불량피스 인덱스를 m_pPcrMk에 마킹순서데로 피스 인덱스를 저장
+
+				for (nOrd2 = 0; nOrd2 < nTotDef; nOrd2++)													// 불량피스 전부를 마킹순서상의 피스 인덱스와 일치하는 피스인덱스의 파일로딩상의 순서까지 반복수행. 
+				{
+					nPcsIdx = pDoc->m_pPcrInner[0][nIdx]->m_pDefPcs[nOrd2];
+
+					if (nMkPcsIdx == nPcsIdx)																// 마킹순서상의 피스 인덱스와 일치하는 피스인덱스
+					{
+						pDoc->m_pPcrMkInner[nIdx]->m_pDefPcs[nOrd] = nPcsIdx;
+						pDoc->m_pPcrMkInner[nIdx]->m_pLayer[nOrd] = pDoc->m_pPcrInner[0][nIdx]->m_pLayer[nOrd2];
+						// BadPointPosX
+						pDoc->m_pPcrMkInner[nIdx]->m_pDefPos[nOrd].x = pDoc->m_pPcrInner[0][nIdx]->m_pDefPos[nOrd2].x;
+						// BadPointPosY
+						pDoc->m_pPcrMkInner[nIdx]->m_pDefPos[nOrd].y = pDoc->m_pPcrInner[0][nIdx]->m_pDefPos[nOrd2].y;
+						// BadName
+						pDoc->m_pPcrMkInner[nIdx]->m_pDefType[nOrd] = pDoc->m_pPcrInner[0][nIdx]->m_pDefType[nOrd2];
+						// CellNum
+						pDoc->m_pPcrMkInner[nIdx]->m_pCell[nOrd] = pDoc->m_pPcrInner[0][nIdx]->m_pCell[nOrd2];
+						// ImageSize
+						pDoc->m_pPcrMkInner[nIdx]->m_pImgSz[nOrd] = pDoc->m_pPcrInner[0][nIdx]->m_pImgSz[nOrd2];
+						// ImageNum
+						pDoc->m_pPcrMkInner[nIdx]->m_pImg[nOrd] = pDoc->m_pPcrInner[0][nIdx]->m_pImg[nOrd2];
+						// strMarkingCode : -2 (NoMarking)
+						pDoc->m_pPcrMkInner[nIdx]->m_pMk[nOrd] = pDoc->m_pPcrInner[0][nIdx]->m_pMk[nOrd2];
+						break;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		nIdx = pDoc->GetPcrIdx0(nSerial);													// 릴맵화면버퍼 인덱스
+		nTotDef = pDoc->m_pPcrInner[0][nIdx]->m_nTotDef;											// 상면 불량 피스 수
+
+		for (i = 0; i < nTotDef; i++)														// 상면 불량 피스 수
+		{
+			pDoc->m_pPcrInner[0][nIdx]->m_pDefPcsMk[i] = pDoc->m_pPcrInner[0][nIdx]->m_pDefPcs[i];	// nPcsIdx : CamMaster Pcs Index , nIdx : 릴맵화면 버퍼 인덱스
+		}
+	}
+
+	return TRUE;
+}
+
+BOOL CGvisR2R_PunchView::OrderingMkInnerDn(int nSerial)
+{
+	int i, nIdx, nTotDef;
+
+	if (pDoc->WorkingInfo.System.bStripPcsRgnBin)
+	{
+		int nPcsIdx;
+		int nCol, nRow, nC, nR, nRrev;
+		int nArrangTable[MAX_PCE_ROW][MAX_PCE_COL];
+		memset(nArrangTable, -1, sizeof(int)*MAX_PCE_ROW*MAX_PCE_COL);
+
+		nIdx = pDoc->GetPcrIdx1(nSerial);													// 릴맵화면버퍼 인덱스
+		nTotDef = pDoc->m_pPcrInner[1][nIdx]->m_nTotDef;											// 하면 불량 피스 수
+
+		for (i = 0; i < nTotDef; i++)														// 하면 불량 피스 수
+		{
+			nPcsIdx = pDoc->m_pPcrInner[1][nIdx]->m_pDefPcs[i];									// nPcsIdx : CamMaster Pcs Index , nIdx : 릴맵화면 버퍼 인덱스
+			pDoc->m_MasterDB.GetMkMatrix(nPcsIdx, nCol, nRow);
+			nArrangTable[nRow][nCol] = nPcsIdx;												// ArrangTable에 불량 피스의 인덱스를 펼쳐 놓음.
+		}
+
+		i = 0;																				// 마킹순서 인덱스
+		for (nC = 0; nC < MAX_PCE_COL; nC++)
+		{
+			for (nR = 0; nR < MAX_PCE_ROW; nR++)
+			{
+				if (nC % 2)																	// (홀수Col) NodeY방향으로 인덱스가 감소하도록 정렬할 때 
+				{
+					nRrev = MAX_PCE_ROW - nR - 1;
+					if (nArrangTable[nRrev][nC] > -1)
+					{
+						pDoc->m_pPcrInner[1][nIdx]->m_pDefPcsMk[i] = nArrangTable[nRrev][nC];	// Y축 -방향(nR 감소방향)으로 불량피스 인덱스를 정렬
+						i++;
+					}
+				}
+				else																		// (짝수Col) NodeY방향으로 인덱스가 증가하도록 정렬할 때 
+				{
+					if (nArrangTable[nR][nC] > -1)
+					{
+						pDoc->m_pPcrInner[1][nIdx]->m_pDefPcsMk[i] = nArrangTable[nR][nC];		// Y축 +방향(nR 증가방향)으로 불량피스 인덱스를 정렬
+						i++;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		nIdx = pDoc->GetPcrIdx1(nSerial);													// 릴맵화면버퍼 인덱스
+		nTotDef = pDoc->m_pPcrInner[1][nIdx]->m_nTotDef;											// 하면 불량 피스 수
+
+		for (i = 0; i < nTotDef; i++)														// 하면 불량 피스 수
+		{
+			pDoc->m_pPcrInner[1][nIdx]->m_pDefPcsMk[i] = pDoc->m_pPcrInner[1][nIdx]->m_pDefPcs[i];	// nPcsIdx : CamMaster Pcs Index , nIdx : 릴맵화면 버퍼 인덱스
+		}
+	}
+
+	int nRtn[2] = { 1 };
+	nRtn[0] = pDoc->LoadPCRAllInnerDn(nSerial);											// 상하면 불량피스 인덱스를 하면기준으로 Merge함.
+	nRtn[1] = pDoc->LoadPCRAllInnerUp(nSerial);											// 상하면 불량피스 인덱스를 상면기준으로 Merge함.
+	if (nRtn[0] != 1)
+		return FALSE;
+	if (nRtn[1] != 1)
+		return FALSE;
+
+	return TRUE;
+}
+
+
+int CGvisR2R_PunchView::GetPcsIdxForPnl(int nMkIdx)					// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
+{
+	int nPcxIdx = pDoc->m_MasterDB.GetPnlMkPcsIdx(nMkIdx);
+	return nPcxIdx;
+}
+
+int CGvisR2R_PunchView::GetPcsIdxForMk(int nSerial, int nMkIdx)		// nMkIdx : 마킹순서 인덱스 , PcxIdx : 판넬의 불량피스 인덱스
+{
+	int nPcsIdx = -1;
+	int nIdx = pDoc->GetPcrIdx0(nSerial);
+
+	if(pDoc->m_pPcr[0][nIdx])
+		nPcsIdx = pDoc->m_pPcr[0][nIdx]->m_pDefPcsMk[nMkIdx];
+
+	return nPcsIdx;
 }
 
 BOOL CGvisR2R_PunchView::UpdateReelmap(int nSerial)
@@ -16409,7 +16617,7 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 			m_nShareUpCnt++;
 
 
-			bNewModel = GetAoiUpInfo(m_nShareUpS, &nNewLot);
+			bNewModel = GetAoiUpInfo(m_nShareUpS, &nNewLot); // Buffer에서 PCR파일의 헤드 정보를 얻음.
 
 			if (bNewModel)	// AOI 정보(AoiCurrentInfoPath) -> AOI Feeding Offset
 			{
@@ -16503,9 +16711,18 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 						OpenReelmapFromBuf(m_nShareUpS);
 				}
 			}
-			if (LoadPcrUp(m_nShareUpS))				// Default: From Buffer, TRUE: From Share
+
+			if (LoadPcrUp(m_nShareUpS), FALSE)				// Default: From Buffer, TRUE: From Share
 			{
 				OrderingMkUp(m_nShareUpS, bDualTest);
+			}
+
+			if (pDoc->GetTestMode() == MODE_OUTER)
+			{
+				if (LoadPcrInnerUp(m_nShareUpS), FALSE)				// Default: From Buffer, TRUE: From Share
+				{
+					OrderingMkInnerUp(m_nShareUpS, bDualTest);
+				}
 			}
 
 			if (!bDualTest)
@@ -16598,7 +16815,31 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 		m_nStepAuto++;
 
 		if (!bDualTest)
+		{
+			if (pDoc->GetTestMode() == MODE_OUTER)
+			{
+				if (pDoc->WorkingInfo.LastJob.bInnerDualTest)
+				{
+					if (LoadPcrInnerDn(m_nShareUpS), FALSE)				// Default: From Buffer, TRUE: From Share
+					{
+						OrderingMkInnerDn(m_nShareUpS);
+					}
+				}
+			}
+
+			if (pDoc->GetTestMode() == MODE_INNER)
+			{
+				pDoc->SetInnerInfo(m_nShareUpS);
+			}
+			else if (pDoc->GetTestMode() == MODE_OUTER)
+			{
+				pDoc->SetOuterInfo(m_nShareDnS);
+			}
+			else
+				pDoc->SetDefaultInfo(m_nShareDnS);
+
 			break;
+		}
 
 		if (m_bChkLastProcVs)
 		{
@@ -16647,6 +16888,14 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 			if (LoadPcrDn(m_nShareDnS))				// Default: From Buffer, TRUE: From Share
 			{
 				OrderingMkDn(m_nShareDnS);			// LoadPCRAllUp, LoadPCRAllDn을 수행하여 Merging작업을 함. --> SetMkPcsIdx()
+			}
+
+			if (pDoc->GetTestMode() == MODE_OUTER)
+			{
+				if (LoadPcrInnerDn(m_nShareUpS), FALSE)				// Default: From Buffer, TRUE: From Share
+				{
+					OrderingMkInnerDn(m_nShareUpS);
+				}
 			}
 
 			if (bDualTest)
