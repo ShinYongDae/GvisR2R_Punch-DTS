@@ -12,6 +12,7 @@
 #include "Dialog/DlgMenu03.h"
 #include "Dialog/DlgMenu04.h"
 #include "Dialog/DlgMenu05.h"
+#include "Dialog/DlgMenu06.h"
 #include "Dialog/DlgUtil01.h"
 #include "Dialog/DlgUtil02.h"
 // #include "Dialog/DlgUtil03.h"
@@ -321,11 +322,14 @@ public:
 	CEvent      m_evtWaitClrDispMsg;
 
 	CDlgFrameHigh *m_pDlgFrameHigh;
+
 	CDlgMenu01 *m_pDlgMenu01;
 	CDlgMenu02 *m_pDlgMenu02;
 	CDlgMenu03 *m_pDlgMenu03;
 	CDlgMenu04 *m_pDlgMenu04;
 	CDlgMenu05 *m_pDlgMenu05;
+	CDlgMenu06 *m_pDlgMenu06;
+
 	CDlgUtil01 *m_pDlgUtil01;
 	CDlgUtil02 *m_pDlgUtil02;
 	// 	CDlgUtil03 *m_pDlgUtil03;
@@ -816,11 +820,6 @@ public:
 	BOOL OrderingMkUp(int nSerial, BOOL bDualTest);	// 불량피스의 마킹 순서를 재정렬함.
 	BOOL OrderingMkDn(int nSerial);					// 불량피스의 마킹 순서를 재정렬함.
 
-	BOOL LoadPcrInnerUp(int nSerial, BOOL bFromShare = FALSE);
-	BOOL LoadPcrInnerDn(int nSerial, BOOL bFromShare = FALSE);
-	BOOL OrderingMkInnerUp(int nSerial, BOOL bDualTest);	// 불량피스의 마킹 순서를 재정렬함.
-	BOOL OrderingMkInnerDn(int nSerial);					// 불량피스의 마킹 순서를 재정렬함.
-
 	int GetPcsIdxForPnl(int nMkIdx);				// 판넬 전체 피스의 마킹순서에 대한 피스 인덱스
 	int GetPcsIdxForMk(int nSerial, int nMkIdx);	// nMkIdx : 마킹순서 인덱스 , PcxIdx : 판넬의 불량피스 인덱스
 	void MoveAoi(double dOffset);
@@ -931,6 +930,21 @@ public:
 	void UpdateYield();
 	void UpdateYield(int nSerial);
 	void GetPlcParam();
+
+	void UpdateRstInner();
+	BOOL ReloadRstInner();
+	void OpenReelmapInner();
+	void OpenReelmapInnerUp();
+	void OpenReelmapInnerDn();
+
+	BOOL LoadPcrInnerUp(int nSerial, BOOL bFromShare = FALSE);
+	BOOL LoadPcrInnerDn(int nSerial, BOOL bFromShare = FALSE);
+	BOOL OrderingMkInnerUp(int nSerial, BOOL bDualTest);	// 불량피스의 마킹 순서를 재정렬함.
+	BOOL OrderingMkInnerDn(int nSerial);					// 불량피스의 마킹 순서를 재정렬함.
+
+	void SetInnerPathAtBuf();
+	void SetInnerPathAtBufUp();
+	void SetInnerPathAtBufDn();
 
 // 재정의입니다.
 public:

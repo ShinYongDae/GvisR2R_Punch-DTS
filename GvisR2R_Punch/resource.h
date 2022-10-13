@@ -104,6 +104,7 @@
 #define IDD_DIALOG2                     352
 #define IDD_DLG_UTIL_07                 352
 #define IDD_DLG_UTIL_08                 353
+#define IDD_DLG_MENU_06                 354
 #define IDC_SVR_PORT                    374
 #define IDC_TXT_MESSAGE                 376
 #define IDC_BTN_START                   486
@@ -132,8 +133,10 @@
 #define IDC_COMBO_LOT                   1004
 #define IDC_PIC_CAD_005                 1005
 #define IDC_BTN_02                      1005
+#define IDC_STC_REELMAP_OUTER           1005
 #define IDC_PIC_CAD_006                 1006
 #define IDC_EDIT1                       1006
+#define IDC_STC_REELMAP_INNER           1006
 #define IDC_PIC_CAD_007                 1007
 #define IDC_PIC_CAD_008                 1008
 #define IDC_PIC_CAD_009                 1009
@@ -258,6 +261,7 @@
 #define IDC_BTN_JOG_LF                  1089
 #define IDC_STC_DEF_SPACE               1090
 #define IDC_BTN_JOG_RT                  1090
+#define IDC_CHK_MENU_06                 1090
 #define IDC_STC_DEF_EX                  1091
 #define IDC_CHK_JOG_VF                  1091
 #define IDC_STC_DEF_EXTRA               1092
@@ -1303,9 +1307,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        354
+#define _APS_NEXT_RESOURCE_VALUE        356
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1005
+#define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

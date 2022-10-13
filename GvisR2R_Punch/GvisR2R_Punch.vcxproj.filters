@@ -354,6 +354,9 @@
     <ClInclude Include="Dialog\DlgUtil08.h">
       <Filter>Dialog</Filter>
     </ClInclude>
+    <ClInclude Include="Dialog\DlgMenu06.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GvisR2R_Punch.cpp">
@@ -612,6 +615,9 @@
       <Filter>Device</Filter>
     </ClCompile>
     <ClCompile Include="Dialog\DlgUtil08.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\DlgMenu06.cpp">
       <Filter>Dialog</Filter>
     </ClCompile>
   </ItemGroup>

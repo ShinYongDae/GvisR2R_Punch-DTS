@@ -108,11 +108,14 @@ CGvisR2R_PunchView::CGvisR2R_PunchView()
 	m_pDlgMsgBox = NULL;
 
 	m_pDlgFrameHigh = NULL;
+
 	m_pDlgMenu01 = NULL;
 	m_pDlgMenu02 = NULL;
 	m_pDlgMenu03 = NULL;
 	m_pDlgMenu04 = NULL;
 	m_pDlgMenu05 = NULL;
+	m_pDlgMenu06 = NULL;
+
 	m_pDlgUtil01 = NULL;
 	m_pDlgUtil02 = NULL;
 	// 	m_pDlgUtil03 = NULL;
@@ -681,41 +684,42 @@ void CGvisR2R_PunchView::OnTimer(UINT_PTR nIDEvent)
 			break;
 		case 6:
 			m_nStepInitView++;
+			DispMsg(_T("화면구성을 생성합니다.-2"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
+			ShowDlg(IDD_DLG_MENU_01);
 			// 			ShowDlg(IDD_DLG_UTIL_02);
 			break;
 		case 7:
 			m_nStepInitView++;
+			DispMsg(_T("화면구성을 생성합니다.- 3"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
+			ShowDlg(IDD_DLG_MENU_03);
 			// 			DispMsg(_T("화면구성을 생성합니다.- 2"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			// 			ShowDlg(IDD_DLG_UTIL_03);
 			break;
 		case 8:
 			m_nStepInitView++;
-			DispMsg(_T("화면구성을 생성합니다.-2"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
-			ShowDlg(IDD_DLG_MENU_01);
+			DispMsg(_T("화면구성을 생성합니다.- 4"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
+			ShowDlg(IDD_DLG_MENU_04);
 			break;
 		case 9:
 			m_nStepInitView++;
-			DispMsg(_T("화면구성을 생성합니다.- 3"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
+			DispMsg(_T("화면구성을 생성합니다.- 5"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
+			ShowDlg(IDD_DLG_MENU_05);
 			// 			ShowDlg(IDD_DLG_MENU_02);
 			break;
 		case 10:
 			m_nStepInitView++;
-			DispMsg(_T("화면구성을 생성합니다.- 4"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
-			ShowDlg(IDD_DLG_MENU_03);
+			DispMsg(_T("화면구성을 생성합니다.- 6"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
+			ShowDlg(IDD_DLG_MENU_06);
 			break;
 		case 11:
 			m_nStepInitView++;
-			DispMsg(_T("화면구성을 생성합니다.- 5"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
-			ShowDlg(IDD_DLG_MENU_04);
+			DispMsg(_T("화면구성을 생성합니다.- 7"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			break;
 		case 12:
 			m_nStepInitView++;
-			DispMsg(_T("화면구성을 생성합니다.- 6"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
-			ShowDlg(IDD_DLG_MENU_05);
 			break;
 		case 13:
 			m_nStepInitView++;
-			DispMsg(_T("화면구성을 생성합니다.- 7"), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
 			ShowDlg(IDD_DLG_FRAME_HIGH);
 			if (m_pDlgFrameHigh)
 				m_pDlgFrameHigh->ChkMenu01();
@@ -752,6 +756,16 @@ void CGvisR2R_PunchView::OnTimer(UINT_PTR nIDEvent)
 					m_pDlgMenu01->SelMap(UP);
 			}
 #endif
+
+			if (pDoc->GetTestMode() == MODE_OUTER)
+			{
+				if (m_pDlgMenu06)
+					m_pDlgMenu06->RedrawWindow();
+
+				DispMsg(_T("레이어릴맵을 초기화합니다."), _T("알림"), RGB_GREEN, DELAY_TIME_MSG);
+				OpenReelmap();
+			}
+
 			Init();
 			Sleep(300);
 			break;
@@ -886,6 +900,17 @@ void CGvisR2R_PunchView::OnTimer(UINT_PTR nIDEvent)
 					UpdateRst();
 #endif
 					UpdateLotTime();
+				}
+
+				if (pDoc->GetTestMode() == MODE_OUTER)
+				{
+					if (pDoc->m_pReelMapInner)
+					{
+#ifndef TEST_MODE
+						ReloadRstInner();
+						UpdateRstInner();
+#endif
+					}
 				}
 			}
 
@@ -1762,6 +1787,22 @@ void CGvisR2R_PunchView::ShowDlg(int nID)
 		}
 		break;
 
+	case IDD_DLG_MENU_06:
+		if (!m_pDlgMenu06)
+		{
+			m_pDlgMenu06 = new CDlgMenu06(this);
+			if (m_pDlgMenu06->GetSafeHwnd() == 0)
+			{
+				m_pDlgMenu06->Create();
+				m_pDlgMenu06->ShowWindow(SW_SHOW);
+			}
+		}
+		else
+		{
+			m_pDlgMenu06->ShowWindow(SW_SHOW);
+		}
+		break;
+
 	case IDD_DLG_UTIL_01:
 		// 		if(!m_pDlgUtil01)
 		// 		{
@@ -1839,6 +1880,11 @@ void CGvisR2R_PunchView::HideAllDlg()
 		if (m_pDlgMenu05->IsWindowVisible())
 			m_pDlgMenu05->ShowWindow(SW_HIDE);
 	}
+	if (m_pDlgMenu06 && m_pDlgMenu06->GetSafeHwnd())
+	{
+		if (m_pDlgMenu06->IsWindowVisible())
+			m_pDlgMenu06->ShowWindow(SW_HIDE);
+	}
 
 	if (m_pDlgUtil01 && m_pDlgUtil01->GetSafeHwnd())
 	{
@@ -1875,6 +1921,11 @@ void CGvisR2R_PunchView::DelAllDlg()
 		m_pDlgUtil01 = NULL;
 	}
 
+	if (m_pDlgMenu06 != NULL)
+	{
+		delete m_pDlgMenu06;
+		m_pDlgMenu06 = NULL;
+	}
 	if (m_pDlgMenu05 != NULL)
 	{
 		delete m_pDlgMenu05;
@@ -9633,6 +9684,10 @@ BOOL CGvisR2R_PunchView::SetSerialReelmap(int nSerial, BOOL bDumy)
 {
 	if (!m_pDlgMenu01)
 		return FALSE;
+
+	if (!m_pDlgMenu06)
+		return FALSE;
+
 	return m_pDlgMenu01->SetSerialReelmap(nSerial, bDumy);
 }
 
@@ -10069,6 +10124,11 @@ void CGvisR2R_PunchView::ModelChange(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn
 		}
 
 		pDoc->m_pSpecLocal->MakeDir(pDoc->Status.PcrShare[0].sModel, pDoc->Status.PcrShare[0].sLayer);
+
+		if (pDoc->GetTestMode() == MODE_OUTER)
+		{
+			OpenReelmapInner();
+		}
 	}
 	else if (nAoi == 1)
 	{
@@ -11379,11 +11439,7 @@ CString CGvisR2R_PunchView::GetRmapPath(int nRmap)
 			}
 			break;
 		case RMAP_ALLUP:
-//#ifdef TEST_MODE
-//			str = _T("ReelMapDataAllUp.txt");
-//#else
 			str = _T("ReelMapDataAll.txt");
-//#endif
 			if (pDoc->m_bDoneChgLot || !pDoc->m_bNewLotShare[0])
 			{
 				sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
@@ -11421,11 +11477,7 @@ CString CGvisR2R_PunchView::GetRmapPath(int nRmap)
 			}
 			break;
 		case RMAP_ALLDN:
-//#ifdef TEST_MODE
-//			str = _T("ReelMapDataAllDn.txt");
-//#else
 			str = _T("ReelMapDataAll.txt");
-//#endif
 			if (pDoc->m_bDoneChgLot || !pDoc->m_bNewLotShare[1])
 			{
 				sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
@@ -11447,26 +11499,93 @@ CString CGvisR2R_PunchView::GetRmapPath(int nRmap)
 	}
 	else
 	{
-		str = _T("ReelMapDataUp.txt");
-		if (pDoc->m_bDoneChgLot || !pDoc->m_bNewLotShare[0])
+		if (pDoc->GetTestMode() != MODE_OUTER)
 		{
-			sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
-				pDoc->WorkingInfo.LastJob.sModelUp,
-				pDoc->WorkingInfo.LastJob.sLotUp,
-				pDoc->WorkingInfo.LastJob.sLayerUp,
-				str);
-		}
-		else if (!pDoc->m_bDoneChgLot && pDoc->m_bNewLotShare[0])
-		{
-			sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
-				pDoc->WorkingInfo.LastJob.sModelUp,
-				pDoc->Status.PcrShare[0].sLot,
-				pDoc->WorkingInfo.LastJob.sLayerUp,
-				str);
+			str = _T("ReelMapDataUp.txt");
+			if (pDoc->m_bDoneChgLot || !pDoc->m_bNewLotShare[0])
+			{
+				sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
+					pDoc->WorkingInfo.LastJob.sModelUp,
+					pDoc->WorkingInfo.LastJob.sLotUp,
+					pDoc->WorkingInfo.LastJob.sLayerUp,
+					str);
+			}
+			else if (!pDoc->m_bDoneChgLot && pDoc->m_bNewLotShare[0])
+			{
+				sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
+					pDoc->WorkingInfo.LastJob.sModelUp,
+					pDoc->Status.PcrShare[0].sLot,
+					pDoc->WorkingInfo.LastJob.sLayerUp,
+					str);
+			}
+
+			return sPath;
 		}
 	}
 
 	//	pDoc->m_pReelMap->m_nLayer = nRmap;
+
+	if (pDoc->GetTestMode() == MODE_OUTER)
+	{
+		int nIdx;
+		CString Path[4];
+
+		//bDualTest = pDoc->WorkingInfo.LastJob.bInnerDualTest;
+		//if (bDualTest)
+		{
+			switch (nRmap)
+			{
+			case RMAP_INNER_UP:
+				str = _T("ReelMapDataUp.txt");
+				Path[0] = pDoc->WorkingInfo.System.sPathOldFile;
+				Path[1] = pDoc->WorkingInfo.LastJob.sInnerModelUp;
+				Path[2] = pDoc->WorkingInfo.LastJob.sInnerLotUp;
+				Path[3] = pDoc->WorkingInfo.LastJob.sInnerLayerUp;
+				sPath.Format(_T("%s%s\\%s\\%s\\%s"), Path[0], Path[1], Path[2], Path[3], str);
+				break;
+			case RMAP_INNER_DN:
+				str = _T("ReelMapDataDn.txt");
+				Path[0] = pDoc->WorkingInfo.System.sPathOldFile;
+				Path[1] = pDoc->WorkingInfo.LastJob.sInnerModelDn;
+				Path[2] = pDoc->WorkingInfo.LastJob.sInnerLotDn;
+				Path[3] = pDoc->WorkingInfo.LastJob.sInnerLayerDn;
+				sPath.Format(_T("%s%s\\%s\\%s\\%s"), Path[0], Path[1], Path[2], Path[3], str);
+				break;
+			case RMAP_INNER_ALLUP:
+				str = _T("ReelMapDataAll.txt");
+				Path[0] = pDoc->WorkingInfo.System.sPathOldFile;
+				Path[1] = pDoc->WorkingInfo.LastJob.sInnerModelUp;
+				Path[2] = pDoc->WorkingInfo.LastJob.sInnerLotUp;
+				Path[3] = pDoc->WorkingInfo.LastJob.sInnerLayerUp;
+				sPath.Format(_T("%s%s\\%s\\%s\\%s"), Path[0], Path[1], Path[2], Path[3], str);
+				break;
+			case RMAP_INNER_ALLDN:
+				str = _T("ReelMapDataAll.txt");
+				Path[0] = pDoc->WorkingInfo.System.sPathOldFile;
+				Path[1] = pDoc->WorkingInfo.LastJob.sInnerModelDn;
+				Path[2] = pDoc->WorkingInfo.LastJob.sInnerLotDn;
+				Path[3] = pDoc->WorkingInfo.LastJob.sInnerLayerDn;
+				sPath.Format(_T("%s%s\\%s\\%s\\%s"), Path[0], Path[1], Path[2], Path[3], str);
+				break;
+			case RMAP_INOUTER_UP:
+				str = _T("ReelMapDataIO.txt");
+				sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
+					pDoc->WorkingInfo.LastJob.sModelUp,
+					pDoc->WorkingInfo.LastJob.sLotUp,
+					pDoc->WorkingInfo.LastJob.sLayerUp,
+					str);
+				break;
+			case RMAP_INOUTER_DN:
+				str = _T("ReelMapDataIO.txt");
+				sPath.Format(_T("%s%s\\%s\\%s\\%s"), pDoc->WorkingInfo.System.sPathOldFile,
+					pDoc->WorkingInfo.LastJob.sModelDn,
+					pDoc->WorkingInfo.LastJob.sLotDn,
+					pDoc->WorkingInfo.LastJob.sLayerDn,
+					str);
+				break;
+			}
+		}
+	}
 #endif
 	return sPath;
 }
@@ -12047,6 +12166,11 @@ void CGvisR2R_PunchView::InitReelmap()
 	pDoc->SetReelmap(ROT_NONE);
 	// 	pDoc->SetReelmap(ROT_CCW_90);
 	pDoc->UpdateData();
+
+	if (pDoc->GetTestMode() == MODE_OUTER)
+	{
+		pDoc->InitReelmapInner();
+	}
 }
 
 void CGvisR2R_PunchView::InitReelmapUp()
@@ -12055,18 +12179,34 @@ void CGvisR2R_PunchView::InitReelmapUp()
 	pDoc->SetReelmap(ROT_NONE);
 	// 	pDoc->SetReelmap(ROT_CCW_90);
 	pDoc->UpdateData();
+
+	if (pDoc->GetTestMode() == MODE_OUTER)
+	{
+		pDoc->InitReelmapInnerUp();
+	}
 }
 
 void CGvisR2R_PunchView::InitReelmapDn()
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
-	if (!bDualTest)
-		return;
+	//if (!bDualTest)
+	//	return;
 
-	pDoc->InitReelmapDn();
-	pDoc->SetReelmap(ROT_NONE);
-	// 	pDoc->SetReelmap(ROT_CCW_90);
-	pDoc->UpdateData();
+	if (bDualTest)
+	{
+		pDoc->InitReelmapDn();
+		pDoc->SetReelmap(ROT_NONE);
+		// 	pDoc->SetReelmap(ROT_CCW_90);
+		pDoc->UpdateData();
+	}
+
+	if (pDoc->GetTestMode() == MODE_OUTER)
+	{
+		bDualTest = pDoc->WorkingInfo.LastJob.bInnerDualTest;
+
+		if (bDualTest)
+			pDoc->InitReelmapInnerDn();
+	}
 }
 
 // void CGvisR2R_PunchView::LoadMstInfo()
@@ -20552,6 +20692,41 @@ void CGvisR2R_PunchView::OpenReelmap()
 	}
 }
 
+void CGvisR2R_PunchView::OpenReelmapInner()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bInnerDualTest;
+
+	if (pDoc->m_pReelMapInnerUp)
+		pDoc->m_pReelMapInnerUp->Open(GetRmapPath(RMAP_INNER_UP));
+
+	if (bDualTest)
+	{
+		if (pDoc->m_pReelMapInnerDn)
+			pDoc->m_pReelMapInnerDn->Open(GetRmapPath(RMAP_INNER_DN));
+		if (pDoc->m_pReelMapInnerAllUp)
+			pDoc->m_pReelMapInnerAllUp->Open(GetRmapPath(RMAP_INNER_ALLUP));
+		if (pDoc->m_pReelMapInnerAllDn)
+			pDoc->m_pReelMapInnerAllDn->Open(GetRmapPath(RMAP_INNER_ALLDN));
+	}
+
+	//if (pDoc->m_pReelMapInner)
+	//{
+	//	if (pDoc->m_pReelMapInner->m_nLayer < 0)
+	//		pDoc->m_pReelMapInner->m_nLayer = pView->m_nSelRmap;
+	//	pDoc->m_pReelMapInner->Open(GetRmapPath(pDoc->m_pReelMapInner->m_nLayer));
+	//}
+
+	if (pDoc->m_pReelMapInOuterUp)
+		pDoc->m_pReelMapInOuterUp->Open(GetRmapPath(RMAP_INOUTER_UP));
+
+	bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+	if (bDualTest)
+	{
+		if (pDoc->m_pReelMapInOuterDn)
+			pDoc->m_pReelMapInOuterDn->Open(GetRmapPath(RMAP_INOUTER_UP));
+	}
+}
+
 void CGvisR2R_PunchView::OpenReelmapUp()
 {
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
@@ -21757,6 +21932,11 @@ void CGvisR2R_PunchView::SetPathAtBuf()
 
 		pDoc->m_pReelMap->SetPathAtBuf(GetRmapPath(pDoc->m_pReelMap->m_nLayer));
 	}
+
+	if (pDoc->GetTestMode() == MODE_OUTER)
+	{
+		SetInnerPathAtBuf();
+	}
 }
 
 void CGvisR2R_PunchView::SetPathAtBufUp()
@@ -21780,6 +21960,11 @@ void CGvisR2R_PunchView::SetPathAtBufUp()
 		if (pDoc->m_pReelMap->m_nLayer == RMAP_UP || pDoc->m_pReelMap->m_nLayer == RMAP_ALLUP)
 			pDoc->m_pReelMap->SetPathAtBuf(GetRmapPath(pDoc->m_pReelMap->m_nLayer));
 	}
+
+	if (pDoc->GetTestMode() == MODE_OUTER)
+	{
+		SetInnerPathAtBufUp();
+	}
 }
 
 void CGvisR2R_PunchView::SetPathAtBufDn()
@@ -21801,7 +21986,108 @@ void CGvisR2R_PunchView::SetPathAtBufDn()
 		if (pDoc->m_pReelMap->m_nLayer == RMAP_DN || pDoc->m_pReelMap->m_nLayer == RMAP_ALLDN)
 			pDoc->m_pReelMap->SetPathAtBuf(GetRmapPath(pDoc->m_pReelMap->m_nLayer));
 	}
+
+	if (pDoc->GetTestMode() == MODE_OUTER)
+	{
+		SetInnerPathAtBufDn();
+	}
 }
+
+
+void CGvisR2R_PunchView::SetInnerPathAtBuf()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bInnerDualTest;
+
+	if (pDoc->m_pReelMapInnerUp)
+		pDoc->m_pReelMapInnerUp->SetPathAtBuf(GetRmapPath(RMAP_INNER_UP));
+	if (bDualTest)
+	{
+		if (pDoc->m_pReelMapInnerDn)
+			pDoc->m_pReelMapInnerDn->SetPathAtBuf(GetRmapPath(RMAP_INNER_DN));
+		if (pDoc->m_pReelMapInnerAllUp)
+			pDoc->m_pReelMapInnerAllUp->SetPathAtBuf(GetRmapPath(RMAP_INNER_ALLUP));
+		if (pDoc->m_pReelMapInnerAllDn)
+			pDoc->m_pReelMapInnerAllDn->SetPathAtBuf(GetRmapPath(RMAP_INNER_ALLDN));
+	}
+
+	bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+
+	if (pDoc->m_pReelMapInOuterUp)
+		pDoc->m_pReelMapInOuterUp->SetPathAtBuf(GetRmapPath(RMAP_INOUTER_UP));
+	if (bDualTest)
+	{
+		if (pDoc->m_pReelMapInOuterDn)
+			pDoc->m_pReelMapInOuterDn->SetPathAtBuf(GetRmapPath(RMAP_INOUTER_DN));
+	}
+
+	//if (pDoc->m_pReelMapInner)
+	//{
+	//	if (pDoc->m_pReelMapInner->m_nLayer < 0)
+	//		pDoc->m_pReelMapInner->m_nLayer = pView->m_nSelRmap;
+
+	//	pDoc->m_pReelMapInner->SetPathAtBuf(GetRmapPath(pDoc->m_pReelMap->m_nLayer));
+	//}
+}
+
+void CGvisR2R_PunchView::SetInnerPathAtBufUp()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bInnerDualTest;
+
+	if (pDoc->m_pReelMapInnerUp)
+		pDoc->m_pReelMapInnerUp->SetPathAtBuf(GetRmapPath(RMAP_INNER_UP));
+
+	if (bDualTest)
+	{
+		if (pDoc->m_pReelMapInnerAllUp)
+			pDoc->m_pReelMapInnerAllUp->SetPathAtBuf(GetRmapPath(RMAP_INNER_ALLUP));
+	}
+
+	if (pDoc->m_pReelMapInOuterUp)
+		pDoc->m_pReelMapInOuterUp->SetPathAtBuf(GetRmapPath(RMAP_INOUTER_UP));
+
+	//if (pDoc->m_pReelMapInner)
+	//{
+	//	if (pDoc->m_pReelMapInner->m_nLayer < 0)
+	//		pDoc->m_pReelMapInner->m_nLayer = pView->m_nSelRmap;
+
+	//	if (pDoc->m_pReelMapInner->m_nLayer == RMAP_UP || pDoc->m_pReelMapInner->m_nLayer == RMAP_ALLUP)
+	//		pDoc->m_pReelMapInner->SetPathAtBuf(GetRmapPath(pDoc->m_pReelMapInner->m_nLayer));
+	//}
+}
+
+void CGvisR2R_PunchView::SetInnerPathAtBufDn()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bInnerDualTest;
+
+	if (bDualTest)
+	{
+		if (pDoc->m_pReelMapInnerDn)
+			pDoc->m_pReelMapInnerDn->SetPathAtBuf(GetRmapPath(RMAP_INNER_DN));
+		if (pDoc->m_pReelMapInnerAllDn)
+			pDoc->m_pReelMapInnerAllDn->SetPathAtBuf(GetRmapPath(RMAP_INNER_ALLDN));
+	}
+
+	bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
+
+	if (pDoc->m_pReelMapInOuterUp)
+		pDoc->m_pReelMapInOuterUp->SetPathAtBuf(GetRmapPath(RMAP_INOUTER_UP));
+
+	if (bDualTest)
+	{
+		if (pDoc->m_pReelMapInOuterDn)
+			pDoc->m_pReelMapInOuterDn->SetPathAtBuf(GetRmapPath(RMAP_INOUTER_DN));
+	}
+
+	//if (pDoc->m_pReelMap)
+	//{
+	//	if (pDoc->m_pReelMap->m_nLayer < 0)
+	//		pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
+
+	//	if (pDoc->m_pReelMap->m_nLayer == RMAP_DN || pDoc->m_pReelMap->m_nLayer == RMAP_ALLDN)
+	//		pDoc->m_pReelMap->SetPathAtBuf(GetRmapPath(pDoc->m_pReelMap->m_nLayer));
+	//}
+}
+
 
 
 void  CGvisR2R_PunchView::SetLotLastShot()

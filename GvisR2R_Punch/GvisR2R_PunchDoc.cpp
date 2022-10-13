@@ -61,6 +61,14 @@ CGvisR2R_PunchDoc::CGvisR2R_PunchDoc()
 	m_pReelMapAllUp = NULL;
 	m_pReelMapAllDn = NULL;
 
+	m_pReelMapInner = NULL;
+	m_pReelMapInnerUp = NULL;
+	m_pReelMapInnerDn = NULL;
+	m_pReelMapInnerAllUp = NULL;
+	m_pReelMapInnerAllDn = NULL;
+	m_pReelMapInOuterUp = NULL;
+	m_pReelMapInOuterDn = NULL;
+
 	for (i = 0; i < MAX_PCR; i++)
 	{
 		for (k = 0; k < MAX_PCR_PNL; k++)
@@ -278,6 +286,48 @@ CGvisR2R_PunchDoc::~CGvisR2R_PunchDoc()
 	{
 		delete m_pReelMapAllDn;
 		m_pReelMapAllDn = NULL;
+	}
+
+	if (m_pReelMapInner)
+	{
+		delete m_pReelMapInner;
+		m_pReelMapInner = NULL;
+	}
+
+	if (m_pReelMapInnerUp)
+	{
+		delete m_pReelMapInnerUp;
+		m_pReelMapInnerUp = NULL;
+	}
+
+	if (m_pReelMapInnerDn)
+	{
+		delete m_pReelMapInnerDn;
+		m_pReelMapInnerDn = NULL;
+	}
+
+	if (m_pReelMapInnerAllUp)
+	{
+		delete m_pReelMapInnerAllUp;
+		m_pReelMapInnerAllUp = NULL;
+	}
+
+	if (m_pReelMapInnerAllDn)
+	{
+		delete m_pReelMapInnerAllDn;
+		m_pReelMapInnerAllDn = NULL;
+	}
+
+	if (m_pReelMapInOuterUp)
+	{
+		delete m_pReelMapInOuterUp;
+		m_pReelMapInOuterUp = NULL;
+	}
+
+	if (m_pReelMapInOuterDn)
+	{
+		delete m_pReelMapInOuterDn;
+		m_pReelMapInOuterDn = NULL;
 	}
 
 	if (pMkInfo)
@@ -3707,9 +3757,10 @@ BOOL CGvisR2R_PunchDoc::InitReelmap()
 		return FALSE;
 	}
 
-	int nTotPcs = m_MasterDB.GetTotPcs();
 	//int nTotPcs = m_MasterDB.m_pPcsRgn->GetTotPcs();
 	//int nTotPcs = m_MasterDB.m_pPcsRgn->nTotPcs;
+
+	int nTotPcs = m_MasterDB.GetTotPcs();
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	if (m_pReelMap)
@@ -4419,6 +4470,8 @@ BOOL CGvisR2R_PunchDoc::GetAoiInfoUp(int nSerial, int *pNewLot, BOOL bFromBuf) /
 			{
 				pView->MsgBox(_T("Error - GetInnerInfo()"));
 			}
+
+			pView->OpenReelmapInner();
 		}
 	}
 
@@ -10514,3 +10567,237 @@ void CGvisR2R_PunchDoc::StrToChar(CString str, char* pCh) // char* returned must
 	return;
 }
 
+
+BOOL CGvisR2R_PunchDoc::InitReelmapInner()
+{
+	if (!m_MasterDB.m_pPcsRgn)
+	{
+		CString strMsg;
+		strMsg.Format(_T("피스 영역이 존재하지 않습니다."));
+		//pView->MsgBox(strMsg);
+		pView->ClrDispMsg();
+		AfxMessageBox(strMsg, MB_ICONSTOP);
+		return FALSE;
+	}
+
+	//int nTotPcs = m_MasterDB.m_pPcsRgn->GetTotPcs();
+	//int nTotPcs = m_MasterDB.m_pPcsRgn->nTotPcs;
+
+	int nTotPcs = m_MasterDB.GetTotPcs();
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bInnerDualTest;
+
+	if (m_pReelMapInner)
+	{
+		//m_pReelMap->ResetReelmap();
+		delete m_pReelMapInner;
+		m_pReelMapInner = NULL;
+	}
+	m_pReelMapInner = new CReelMap(RMAP_INNER_UP, MAX_DISP_PNL, nTotPcs); // Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
+
+	if (m_pReelMapInnerUp)
+	{
+		//m_pReelMapUp->ResetReelmap();
+		delete m_pReelMapInnerUp;
+		m_pReelMapInnerUp = NULL;
+	}
+	m_pReelMapInnerUp = new CReelMap(RMAP_INNER_UP, MAX_DISP_PNL, nTotPcs);
+	//m_pReelMapUp->m_nLayer = RMAP_UP;
+
+	if (m_pReelMapInOuterUp)
+	{
+		//m_pReelMap->ResetReelmap();
+		delete m_pReelMapInOuterUp;
+		m_pReelMapInOuterUp = NULL;
+	}
+	m_pReelMapInOuterUp = new CReelMap(RMAP_INOUTER_UP, MAX_DISP_PNL, nTotPcs); // Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
+
+	if (bDualTest)
+	{
+		if (m_pReelMapInnerDn)
+		{
+			//m_pReelMapDn->ResetReelmap();
+			delete m_pReelMapInnerDn;
+			m_pReelMapInnerDn = NULL;
+		}
+		m_pReelMapInnerDn = new CReelMap(RMAP_INNER_DN, MAX_DISP_PNL, nTotPcs);
+		//m_pReelMapDn->m_nLayer = RMAP_DN;
+
+		if (m_pReelMapInnerAllUp)
+		{
+			//m_pReelMapAllUp->ResetReelmap();
+			delete m_pReelMapInnerAllUp;
+			m_pReelMapInnerAllUp = NULL;
+		}
+		m_pReelMapInnerAllUp = new CReelMap(RMAP_INNER_ALLUP, MAX_DISP_PNL, nTotPcs);
+		//m_pReelMapAllUp->m_nLayer = RMAP_ALLUP;
+
+		if (m_pReelMapInnerAllDn)
+		{
+			//m_pReelMapAllDn->ResetReelmap();
+			delete m_pReelMapInnerAllDn;
+			m_pReelMapInnerAllDn = NULL;
+		}
+		m_pReelMapInnerAllDn = new CReelMap(RMAP_INNER_ALLDN, MAX_DISP_PNL, nTotPcs);
+		//m_pReelMapAllDn->m_nLayer = RMAP_ALLDN;
+
+		if (m_pReelMapInOuterDn)
+		{
+			//m_pReelMap->ResetReelmap();
+			delete m_pReelMapInOuterDn;
+			m_pReelMapInOuterDn = NULL;
+		}
+		m_pReelMapInOuterDn = new CReelMap(RMAP_INOUTER_DN, MAX_DISP_PNL, nTotPcs); // Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
+	}
+
+	//if (pMkInfo)
+	//{
+	//	delete[] pMkInfo;
+	//	pMkInfo = NULL;
+	//}
+	//if (!pMkInfo)
+	//	pMkInfo = new CString[nTotPcs];
+
+	return TRUE;
+}
+
+BOOL CGvisR2R_PunchDoc::InitReelmapInnerUp()
+{
+	if (!m_MasterDB.m_pPcsRgn)
+	{
+		CString strMsg;
+		strMsg.Format(_T("피스 영역이 존재하지 않습니다."));
+		pView->MsgBox(strMsg);
+		//AfxMessageBox(strMsg,MB_ICONSTOP);
+		return FALSE;
+	}
+
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bInnerDualTest;
+	int nTotPcs = m_MasterDB.GetTotPcs();
+	//int nTotPcs = m_MasterDB.m_pPcsRgn->GetTotPcs();
+	//int nTotPcs = m_MasterDB.m_pPcsRgn->nTotPcs;
+
+	if (m_pReelMapInner)
+	{
+		//m_pReelMap->ResetReelmap();
+		delete m_pReelMapInner;
+		m_pReelMapInner = NULL;
+	}
+	m_pReelMapInner = new CReelMap(RMAP_INNER_UP, MAX_DISP_PNL, nTotPcs);	// Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
+
+
+	//if (m_pReelMapInner->m_nLayer < 0)
+	//	m_pReelMapInner->m_nLayer = pView->m_nSelRmap;
+
+	//if (m_pReelMap->m_nLayer == RMAP_UP || m_pReelMap->m_nLayer == RMAP_ALLUP)
+	//{
+	//	if (pMkInfo)
+	//	{
+	//		delete[] pMkInfo;
+	//		pMkInfo = NULL;
+	//	}
+	//	if (!pMkInfo)
+	//		pMkInfo = new CString[nTotPcs];
+	//}
+
+	if (m_pReelMapInnerUp)
+	{
+		//m_pReelMapUp->ResetReelmap();
+		delete m_pReelMapInnerUp;
+		m_pReelMapInnerUp = NULL;
+	}
+	m_pReelMapInnerUp = new CReelMap(RMAP_INNER_UP, MAX_DISP_PNL, nTotPcs);
+	//m_pReelMapUp->m_nLayer = RMAP_UP;
+
+	if (m_pReelMapInOuterUp)
+	{
+		//m_pReelMap->ResetReelmap();
+		delete m_pReelMapInOuterUp;
+		m_pReelMapInOuterUp = NULL;
+	}
+	m_pReelMapInOuterUp = new CReelMap(RMAP_INOUTER_UP, MAX_DISP_PNL, nTotPcs); // Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
+
+	if (bDualTest)
+	{
+		if (m_pReelMapInnerAllUp)
+		{
+			//m_pReelMapAllUp->ResetReelmap();
+			delete m_pReelMapInnerAllUp;
+			m_pReelMapInnerAllUp = NULL;
+		}
+		m_pReelMapInnerAllUp = new CReelMap(RMAP_INNER_ALLUP, MAX_DISP_PNL, nTotPcs);
+		//m_pReelMapAllUp->m_nLayer = RMAP_ALLUP;
+	}
+
+	return TRUE;
+}
+
+BOOL CGvisR2R_PunchDoc::InitReelmapInnerDn()
+{
+	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bInnerDualTest;
+	if (!bDualTest)
+		return TRUE;
+
+	if (!m_MasterDB.m_pPcsRgn)
+	{
+		CString strMsg;
+		strMsg.Format(_T("피스 영역이 존재하지 않습니다."));
+		pView->MsgBox(strMsg);
+		//AfxMessageBox(strMsg,MB_ICONSTOP);
+		return FALSE;
+	}
+
+	int nTotPcs = m_MasterDB.GetTotPcs();
+	//int nTotPcs = m_MasterDB.m_pPcsRgn->GetTotPcs();
+	//int nTotPcs = m_MasterDB.m_pPcsRgn->nTotPcs;
+
+	if (m_pReelMapInner)
+	{
+		//m_pReelMap->ResetReelmap();
+		delete m_pReelMapInner;
+		m_pReelMapInner = NULL;
+	}
+	m_pReelMapInner = new CReelMap(RMAP_INNER_UP, MAX_DISP_PNL, nTotPcs);	// Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
+
+
+	//if (m_pReelMap->m_nLayer < 0)
+	//	m_pReelMap->m_nLayer = pView->m_nSelRmap;
+
+	//if (m_pReelMap->m_nLayer == RMAP_DN || m_pReelMap->m_nLayer == RMAP_ALLDN)
+	//{
+	//	if (pMkInfo)
+	//	{
+	//		delete[] pMkInfo;
+	//		pMkInfo = NULL;
+	//	}
+	//	if (!pMkInfo)
+	//		pMkInfo = new CString[nTotPcs];
+	//}
+
+	if (m_pReelMapInnerDn)
+	{
+		//m_pReelMapDn->ResetReelmap();
+		delete m_pReelMapInnerDn;
+		m_pReelMapInnerDn = NULL;
+	}
+	m_pReelMapInnerDn = new CReelMap(RMAP_INNER_DN, MAX_DISP_PNL, nTotPcs);
+	//m_pReelMapDn->m_nLayer = RMAP_DN;
+
+	if (m_pReelMapInnerAllDn)
+	{
+		//m_pReelMapAllDn->ResetReelmap();
+		delete m_pReelMapInnerAllDn;
+		m_pReelMapInnerAllDn = NULL;
+	}
+	m_pReelMapInnerAllDn = new CReelMap(RMAP_INNER_ALLDN, MAX_DISP_PNL, nTotPcs);
+	//m_pReelMapAllDn->m_nLayer = RMAP_ALLDN;
+	
+	if (m_pReelMapInOuterDn)
+	{
+		//m_pReelMap->ResetReelmap();
+		delete m_pReelMapInOuterDn;
+		m_pReelMapInOuterDn = NULL;
+	}
+	m_pReelMapInOuterDn = new CReelMap(RMAP_INOUTER_DN, MAX_DISP_PNL, nTotPcs); // Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
+
+	return TRUE;
+}

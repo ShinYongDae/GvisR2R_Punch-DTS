@@ -26,7 +26,7 @@ class CDlgFrameHigh : public CDialog
 	CMyPic myPic;
 	CMyLabel myLabel[MAX_FRMHIGH_LABEL];
 	CMyBtn myChkMenu01, myChkMenu02, myChkMenu03, 
-			myChkMenu04, myChkMenu05;
+			myChkMenu04, myChkMenu05, myChkMenu06;
 	CMyStatic myStc[MAX_FRMHIGH_STC];
 
 	BOOL m_bTIM_SIG_AOI;
@@ -58,6 +58,7 @@ public:
 	void ChkMenu03();
 	void ChkMenu04();
 	void ChkMenu05();
+	void ChkMenu06();
 
 	void SetMkLastShot(int nSerial);
 	void SetAoiLastShot(int nAoi, int nSerial);
@@ -95,6 +96,7 @@ protected:
 	afx_msg void OnChkMenu03();
 	afx_msg void OnChkMenu04();
 	afx_msg void OnChkMenu05();
+	afx_msg void OnChkMenu06();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);// (UINT nIDEvent);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

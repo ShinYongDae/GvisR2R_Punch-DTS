@@ -75,6 +75,7 @@ BEGIN_MESSAGE_MAP(CDlgFrameHigh, CDialog)
 	ON_BN_CLICKED(IDC_CHK_MENU_03, OnChkMenu03)
 	ON_BN_CLICKED(IDC_CHK_MENU_04, OnChkMenu04)
 	ON_BN_CLICKED(IDC_CHK_MENU_05, OnChkMenu05)
+	ON_BN_CLICKED(IDC_CHK_MENU_06, OnChkMenu06)
 	ON_WM_TIMER()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -142,6 +143,10 @@ void CDlgFrameHigh::LoadImg()
 	myChkMenu05.LoadBkImage(IMG_BTN_UP_DlgFrameHigh, BTN_IMG_UP);
 	myChkMenu05.LoadBkImage(IMG_BTN_DN_DlgFrameHigh, BTN_IMG_DN);
 
+	myChkMenu06.LoadImage(ICO_CHK_DlgFrameHigh, BTN_IMG_DN, CSize(30, 30));
+	myChkMenu06.LoadBkImage(IMG_BTN_UP_DlgFrameHigh, BTN_IMG_UP);
+	myChkMenu06.LoadBkImage(IMG_BTN_DN_DlgFrameHigh, BTN_IMG_DN);
+
 	int i;
 	for(i=0; i<MAX_FRMHIGH_LABEL; i++)
 	{
@@ -149,17 +154,17 @@ void CDlgFrameHigh::LoadImg()
 		{
 		case 0:
 		case 1:
-			myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(28,28), LBL_POS_CENTER);
-			myLabel[i].LoadImage(ICO_LED_BLU_DlgFrameHigh, LBL_IMG_DN, CSize(28,28), LBL_POS_CENTER);
+			myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(16, 16), LBL_POS_CENTER);
+			myLabel[i].LoadImage(ICO_LED_BLU_DlgFrameHigh, LBL_IMG_DN, CSize(16, 16), LBL_POS_CENTER);
 			break;
 		case 2:
 		case 3:
-			myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(28,28), LBL_POS_CENTER);
-			myLabel[i].LoadImage(ICO_LED_RED_DlgFrameHigh, LBL_IMG_DN, CSize(28,28), LBL_POS_CENTER);
+			myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(16, 16), LBL_POS_CENTER);
+			myLabel[i].LoadImage(ICO_LED_RED_DlgFrameHigh, LBL_IMG_DN, CSize(16, 16), LBL_POS_CENTER);
 			break;
 		case 4:
-			myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(28, 28), LBL_POS_CENTER);
-			myLabel[i].LoadImage(ICO_LED_BLU_DlgFrameHigh, LBL_IMG_DN, CSize(28, 28), LBL_POS_CENTER);
+			myLabel[i].LoadImage(ICO_LED_GRY_DlgFrameHigh, LBL_IMG_UP, CSize(16, 16), LBL_POS_CENTER);
+			myLabel[i].LoadImage(ICO_LED_BLU_DlgFrameHigh, LBL_IMG_DN, CSize(16, 16), LBL_POS_CENTER);
 			break;
 		}
 	}
@@ -172,6 +177,7 @@ void CDlgFrameHigh::DelImg()
  	myChkMenu03.DelImgList();
 	myChkMenu04.DelImgList();
  	myChkMenu05.DelImgList();
+	myChkMenu06.DelImgList();
 
 	int i;
 	for(i=0; i<MAX_FRMHIGH_LABEL; i++)
@@ -185,18 +191,21 @@ void CDlgFrameHigh::SetChk(int nID)
 	myChkMenu03.SetCheck(FALSE);
 	myChkMenu04.SetCheck(FALSE);
 	myChkMenu05.SetCheck(FALSE);
+	myChkMenu06.SetCheck(FALSE);
 
 	myChkMenu01.SetImage(BTN_IMG_UP);
 	myChkMenu02.SetImage(BTN_IMG_UP);
 	myChkMenu03.SetImage(BTN_IMG_UP);
 	myChkMenu04.SetImage(BTN_IMG_UP);
 	myChkMenu05.SetImage(BTN_IMG_UP);
+	myChkMenu06.SetImage(BTN_IMG_UP);
 
 	myChkMenu01.SetTextColor(RGB_BLACK);
 	myChkMenu02.SetTextColor(RGB_BLACK);
 	myChkMenu03.SetTextColor(RGB_BLACK);
 	myChkMenu04.SetTextColor(RGB_BLACK);
 	myChkMenu05.SetTextColor(RGB_BLACK);
+	myChkMenu06.SetTextColor(RGB_BLACK);
 
 	switch(nID)
 	{
@@ -224,6 +233,11 @@ void CDlgFrameHigh::SetChk(int nID)
 		myChkMenu05.SetImage(BTN_IMG_DN);
 		myChkMenu05.SetCheck(TRUE);
 		myChkMenu05.SetTextColor(RGB_NAVY);
+		break;
+	case IDC_CHK_MENU_06:
+		myChkMenu06.SetImage(BTN_IMG_DN);
+		myChkMenu06.SetCheck(TRUE);
+		myChkMenu06.SetTextColor(RGB_NAVY);
 		break;
 	}
 }
@@ -339,6 +353,12 @@ void CDlgFrameHigh::InitBtn()
 	myChkMenu05.SubclassDlgItem(IDC_CHK_MENU_05, this);
 	myChkMenu05.SetHwnd(this->GetSafeHwnd(), IDC_CHK_MENU_05);
 	//myChkMenu05.SetBtnType(BTN_TYPE_CHECK);
+
+	myChkMenu06.SetFont(_T("±¼¸²Ã¼"),16,TRUE);
+	myChkMenu06.SetTextColor(RGB_BLACK);
+	myChkMenu06.SubclassDlgItem(IDC_CHK_MENU_06, this);
+	myChkMenu06.SetHwnd(this->GetSafeHwnd(), IDC_CHK_MENU_06);
+	//myChkMenu05.SetBtnType(BTN_TYPE_CHECK);
 }
 
 void CDlgFrameHigh::InitLabel()
@@ -352,7 +372,7 @@ void CDlgFrameHigh::InitLabel()
 	for(int i=0; i<MAX_FRMHIGH_LABEL; i++)
 	{
 		myLabel[i].SetFontName(_T("Arial"));
-		myLabel[i].SetFontSize(18);
+		myLabel[i].SetFontSize(10);
 		myLabel[i].SetFontBold(TRUE);
 		myLabel[i].SetTextColor(RGB_DARKRED);
 		myLabel[i].SetImageBk(LBL_IMG_UP);
@@ -465,6 +485,24 @@ void CDlgFrameHigh::ChkMenu05()
 	// TODO: Add your control notification handler code here
 	SetChk(IDC_CHK_MENU_05);
 	pView->ShowDlg(IDD_DLG_MENU_05);		
+}
+
+void CDlgFrameHigh::OnChkMenu06() 
+{
+	// TODO: Add your control notification handler code here
+	if(myChkMenu06.GetCheck())
+	{
+		SetChk(IDC_CHK_MENU_06);
+		return;
+	}
+	ChkMenu06();		
+}
+
+void CDlgFrameHigh::ChkMenu06() 
+{
+	// TODO: Add your control notification handler code here
+	SetChk(IDC_CHK_MENU_06);
+	pView->ShowDlg(IDD_DLG_MENU_06);		
 }
 
 void CDlgFrameHigh::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)

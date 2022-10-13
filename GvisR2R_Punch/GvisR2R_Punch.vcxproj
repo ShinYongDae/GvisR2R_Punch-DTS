@@ -253,6 +253,7 @@
     <ClInclude Include="Dialog\DlgMenu03.h" />
     <ClInclude Include="Dialog\DlgMenu04.h" />
     <ClInclude Include="Dialog\DlgMenu05.h" />
+    <ClInclude Include="Dialog\DlgMenu06.h" />
     <ClInclude Include="Dialog\DlgMsgBox.h" />
     <ClInclude Include="Dialog\DlgMyKeypad.h" />
     <ClInclude Include="Dialog\DlgMyMsg.h" />
@@ -352,6 +353,7 @@
     <ClCompile Include="Dialog\DlgMenu03.cpp" />
     <ClCompile Include="Dialog\DlgMenu04.cpp" />
     <ClCompile Include="Dialog\DlgMenu05.cpp" />
+    <ClCompile Include="Dialog\DlgMenu06.cpp" />
     <ClCompile Include="Dialog\DlgMsgBox.cpp" />
     <ClCompile Include="Dialog\DlgMyKeypad.cpp" />
     <ClCompile Include="Dialog\DlgMyMsg.cpp" />
