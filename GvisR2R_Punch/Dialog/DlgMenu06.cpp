@@ -178,7 +178,7 @@ void CDlgMenu06::InitGL()
 	if (!m_pMyGL_Inner)
 	{
 		m_pMyGL_Inner = new CMyGL(this);
-		m_pMyGL_Inner->Init(IDC_STC_REELMAP_INNER);
+		m_pMyGL_Inner->Init(IDC_STC_REELMAP_INNER, pDoc->m_pReelMapInnerAllUp);
 	}
 	m_pMyGL_Inner->SetRgn();
 	m_pMyGL_Inner->SetPcsDef();
@@ -186,7 +186,7 @@ void CDlgMenu06::InitGL()
 	if (!m_pMyGL_Outer)
 	{
 		m_pMyGL_Outer = new CMyGL(this);
-		m_pMyGL_Outer->Init(IDC_STC_REELMAP_OUTER);
+		m_pMyGL_Outer->Init(IDC_STC_REELMAP_OUTER, pDoc->m_pReelMapAllUp);
 	}
 	m_pMyGL_Outer->SetRgn();
 	m_pMyGL_Outer->SetPcsDef();

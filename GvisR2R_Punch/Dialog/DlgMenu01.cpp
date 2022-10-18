@@ -1665,7 +1665,7 @@ void CDlgMenu01::InitGL()
 	if(!m_pMyGL)
 	{
 		m_pMyGL = new CMyGL(this);
-		m_pMyGL->Init(IDC_STC_REELMAP_IMG);
+		m_pMyGL->Init(IDC_STC_REELMAP_IMG, pDoc->m_pReelMap);
 	}
 // 	m_pMyGL->ResetRgn();
 	m_pMyGL->SetRgn();

@@ -11,6 +11,7 @@
 #include "../Global/GlobalDefine.h"
 #include "../Process/GVGL.h"
 #include "../Global/MyData.h"
+#include "../Process/ReelMap.h"
 
 #define MYGL_SIDE_MARGIN	10
 // #define MYGL_SIDE_MARGIN	22
@@ -73,10 +74,11 @@ public:
 
 // Attributes
 public:
+	CReelMap* m_pReelMap;
 
 // Operations
 public:
-	void Init(int nCtrlId);
+	void Init(int nCtrlId, CReelMap* pReelMap);
 	void Draw();
 
 	void SetRgn();
