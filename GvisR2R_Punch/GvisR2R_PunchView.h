@@ -793,7 +793,6 @@ public:
 
 	afx_msg LRESULT OnBufThreadDone(WPARAM wPara, LPARAM lPara);
 	int ChkSerial(); // 0: Continue, -: Previous, +:Discontinue
-	BOOL ReloadRst();
 	void OpenReelmap();
 	void OpenReelmapUp();
 	void OpenReelmapDn();
@@ -870,7 +869,10 @@ public:
 
 	void CntMk();
 	void ChkMyMsg();
+	BOOL ReloadRst();
 	BOOL ReloadRst(int nSerial);
+	BOOL ReloadRstInner();
+	BOOL ReloadRstInner(int nSerial);
 	BOOL IsSameUpDnLot();
 	BOOL ChkStShotNum();
 	BOOL ChkContShotNum();
@@ -932,7 +934,6 @@ public:
 	void GetPlcParam();
 
 	void UpdateRstInner();
-	BOOL ReloadRstInner();
 	void OpenReelmapInner();
 	void OpenReelmapInnerUp();
 	void OpenReelmapInnerDn();
