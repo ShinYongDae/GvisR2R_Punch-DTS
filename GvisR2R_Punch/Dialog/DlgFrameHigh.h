@@ -64,8 +64,8 @@ public:
 	void SetAoiLastShot(int nAoi, int nSerial);
 
 	void SetDualTest(BOOL bOn=TRUE);
-
 	void SetEngraveLastShot(int nSerial);
+	void ShowInnerLayer(BOOL bShow);
 
 // Dialog Data
 	//{{AFX_DATA(CDlgFrameHigh)

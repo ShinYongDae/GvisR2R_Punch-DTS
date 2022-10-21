@@ -288,11 +288,11 @@ CGvisR2R_PunchDoc::~CGvisR2R_PunchDoc()
 		m_pReelMapAllDn = NULL;
 	}
 
-	if (m_pReelMapInner)
-	{
-		delete m_pReelMapInner;
-		m_pReelMapInner = NULL;
-	}
+	//if (m_pReelMapInner)
+	//{
+	//	delete m_pReelMapInner;
+	//	m_pReelMapInner = NULL;
+	//}
 
 	if (m_pReelMapInnerUp)
 	{
@@ -4134,6 +4134,112 @@ void CGvisR2R_PunchDoc::SetReelmap(int nDir)
 				m_pReelMap->pPcsRgn[k][i].right = (rt.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData3;
 				//m_pReelMap->pPcsRgn[k][i].right = (m_MasterDB.m_pPcsRgn->rtFrm.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData3;
 				m_pReelMap->pPcsRgn[k][i].bottom = fData4;
+			}
+			break;
+		}
+	}
+}
+
+void CGvisR2R_PunchDoc::SetReelmapInner(int nDir)
+{
+	if (!m_pReelMapInner || !m_pReelMapAllUp || !m_MasterDB.m_pPcsRgn)
+		return;
+
+	if (!m_pReelMapInner->pFrmRgn || !m_pReelMapAllUp->pFrmRgn || !m_pReelMap->pPcsRgn)
+		return;
+
+	int i, k;
+	double fData1, fData2, fData3, fData4, fDistX, fDistY;
+	double fWidth, fHeight, fRight, fBottom;
+	CRect rt, pcsRt;
+	rt = m_MasterDB.m_pPcsRgn->GetShotRgn();
+
+	m_pReelMapInner->nDir = nDir;
+	m_pReelMapAllUp->nDir = nDir;
+
+	int nTotPnl = m_pReelMap->nTotPnl;
+	int nTotPcs = m_pReelMap->nTotPcs;
+
+	// 	double dScale = (MasterInfo.dPixelSize/10.0);
+	double dScale = (m_MasterDB.MasterInfo.dPixelSize / 10.0);
+	m_pReelMapInner->SetAdjRatio(dScale);
+	m_pReelMapAllUp->SetAdjRatio(dScale);
+	dScale = m_pReelMap->GetAdjRatio();
+
+	for (k = 0; k < nTotPnl; k++)
+	{
+		switch (nDir)
+		{
+		case ROT_NONE:
+			fWidth = m_MasterDB.GetPcsWidth();
+			fHeight = m_MasterDB.GetPcsHeight();
+			fRight = rt.right - fWidth * (1.0 - RMAP_PCS_SCALE);
+			fBottom = rt.bottom - fHeight * (1.0 - RMAP_PCS_SCALE);
+
+			m_pReelMapInner->pFrmRgn[k].left = (rt.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + rt.left;
+			m_pReelMapInner->pFrmRgn[k].top = rt.top;
+			m_pReelMapInner->pFrmRgn[k].right = (rt.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fRight;
+			m_pReelMapInner->pFrmRgn[k].bottom = fBottom;
+
+			m_pReelMapAllUp->pFrmRgn[k].left = (rt.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + rt.left;
+			m_pReelMapAllUp->pFrmRgn[k].top = rt.top;
+			m_pReelMapAllUp->pFrmRgn[k].right = (rt.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fRight;
+			m_pReelMapAllUp->pFrmRgn[k].bottom = fBottom;
+
+			for (i = 0; i < nTotPcs; i++)
+			{
+				fWidth = m_MasterDB.GetPcsWidth();
+				fHeight = m_MasterDB.GetPcsHeight();
+				pcsRt = m_MasterDB.GetPcsRgn(i);
+				fData1 = pcsRt.left;	// left
+				fData2 = pcsRt.top;		// top
+				fData3 = fData1 + fWidth * RMAP_PCS_SCALE; // right
+				fData4 = fData2 + fHeight * RMAP_PCS_SCALE; // bottom
+
+				m_pReelMapInner->pPcsRgn[k][i].left = (rt.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData1;
+				m_pReelMapInner->pPcsRgn[k][i].top = fData2;
+				m_pReelMapInner->pPcsRgn[k][i].right = (rt.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData3;
+				m_pReelMapInner->pPcsRgn[k][i].bottom = fData4;
+
+				m_pReelMapAllUp->pPcsRgn[k][i].left = (rt.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData1;
+				m_pReelMapAllUp->pPcsRgn[k][i].top = fData2;
+				m_pReelMapAllUp->pPcsRgn[k][i].right = (rt.right + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData3;
+				m_pReelMapAllUp->pPcsRgn[k][i].bottom = fData4;
+			}
+			break;
+		case ROT_CCW_90: // right->bottom, top->left, bottom->right, left->top ; Dir (x *= 1, y *= -1) 
+			fDistX = 0;
+			fDistY = rt.left + rt.right;
+
+			m_pReelMapInner->pFrmRgn[k].left = (rt.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + rt.top;
+			m_pReelMapInner->pFrmRgn[k].top = fDistY - rt.right;
+			m_pReelMapInner->pFrmRgn[k].right = (rt.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + rt.bottom;
+			m_pReelMapInner->pFrmRgn[k].bottom = fDistY - rt.left;
+
+			m_pReelMapAllUp->pFrmRgn[k].left = (rt.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + rt.top;
+			m_pReelMapAllUp->pFrmRgn[k].top = fDistY - rt.right;
+			m_pReelMapAllUp->pFrmRgn[k].right = (rt.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + rt.bottom;
+			m_pReelMapAllUp->pFrmRgn[k].bottom = fDistY - rt.left;
+
+			for (i = 0; i < nTotPcs; i++)
+			{
+				fWidth = m_MasterDB.GetPcsWidth();
+				fHeight = m_MasterDB.GetPcsHeight();
+				pcsRt = m_MasterDB.GetPcsRgn(i);
+				fData1 = pcsRt.top;				// left
+				fData2 = fDistY - pcsRt.right;	// top
+				fData3 = pcsRt.bottom;			// right
+				fData4 = fDistY - pcsRt.left;	// bottom
+
+				m_pReelMapInner->pPcsRgn[k][i].left = (rt.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData1;
+				m_pReelMapInner->pPcsRgn[k][i].top = fData2;
+				m_pReelMapInner->pPcsRgn[k][i].right = (rt.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData3;
+				m_pReelMapInner->pPcsRgn[k][i].bottom = fData4;
+
+				m_pReelMapAllUp->pPcsRgn[k][i].left = (rt.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData1;
+				m_pReelMapAllUp->pPcsRgn[k][i].top = fData2;
+				m_pReelMapAllUp->pPcsRgn[k][i].right = (rt.bottom + MYGL_GAP_PNL*dScale)*(nTotPnl - 1 - k) + fData3;
+				m_pReelMapAllUp->pPcsRgn[k][i].bottom = fData4;
 			}
 			break;
 		}
@@ -10586,13 +10692,12 @@ BOOL CGvisR2R_PunchDoc::InitReelmapInner()
 	int nTotPcs = m_MasterDB.GetTotPcs();
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bInnerDualTest;
 
-	if (m_pReelMapInner)
-	{
-		//m_pReelMap->ResetReelmap();
-		delete m_pReelMapInner;
-		m_pReelMapInner = NULL;
-	}
-	m_pReelMapInner = new CReelMap(RMAP_INNER_UP, MAX_DISP_PNL, nTotPcs); // Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
+	//if (m_pReelMapInner)
+	//{
+	//	delete m_pReelMapInner;
+	//	m_pReelMapInner = NULL;
+	//}
+	//m_pReelMapInner = new CReelMap(RMAP_INNER_UP, MAX_DISP_PNL, nTotPcs); // Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
 
 	if (m_pReelMapInnerUp)
 	{
@@ -10647,6 +10752,12 @@ BOOL CGvisR2R_PunchDoc::InitReelmapInner()
 			m_pReelMapInOuterDn = NULL;
 		}
 		m_pReelMapInOuterDn = new CReelMap(RMAP_INOUTER_DN, MAX_DISP_PNL, nTotPcs); // Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
+
+		m_pReelMapInner = m_pReelMapInnerAllUp;
+	}
+	else
+	{
+		m_pReelMapInner = m_pReelMapInnerUp;
 	}
 
 	//if (pMkInfo)
@@ -10676,13 +10787,12 @@ BOOL CGvisR2R_PunchDoc::InitReelmapInnerUp()
 	//int nTotPcs = m_MasterDB.m_pPcsRgn->GetTotPcs();
 	//int nTotPcs = m_MasterDB.m_pPcsRgn->nTotPcs;
 
-	if (m_pReelMapInner)
-	{
-		//m_pReelMap->ResetReelmap();
-		delete m_pReelMapInner;
-		m_pReelMapInner = NULL;
-	}
-	m_pReelMapInner = new CReelMap(RMAP_INNER_UP, MAX_DISP_PNL, nTotPcs);	// Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
+	//if (m_pReelMapInner)
+	//{
+	//	delete m_pReelMapInner;
+	//	m_pReelMapInner = NULL;
+	//}
+	//m_pReelMapInner = new CReelMap(RMAP_INNER_UP, MAX_DISP_PNL, nTotPcs);	// Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
 
 
 	//if (m_pReelMapInner->m_nLayer < 0)
@@ -10750,13 +10860,12 @@ BOOL CGvisR2R_PunchDoc::InitReelmapInnerDn()
 	//int nTotPcs = m_MasterDB.m_pPcsRgn->GetTotPcs();
 	//int nTotPcs = m_MasterDB.m_pPcsRgn->nTotPcs;
 
-	if (m_pReelMapInner)
-	{
-		//m_pReelMap->ResetReelmap();
-		delete m_pReelMapInner;
-		m_pReelMapInner = NULL;
-	}
-	m_pReelMapInner = new CReelMap(RMAP_INNER_UP, MAX_DISP_PNL, nTotPcs);	// Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
+	//if (m_pReelMapInner)
+	//{
+	//	delete m_pReelMapInner;
+	//	m_pReelMapInner = NULL;
+	//}
+	//m_pReelMapInner = new CReelMap(RMAP_INNER_UP, MAX_DISP_PNL, nTotPcs);	// Default: RMAP_NONE (RMAP_INNER -> RMAP_INNER_UP)
 
 
 	//if (m_pReelMap->m_nLayer < 0)

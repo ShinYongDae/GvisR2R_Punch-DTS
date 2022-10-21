@@ -947,6 +947,8 @@ public:
 	void SetInnerPathAtBufUp();
 	void SetInnerPathAtBufDn();
 
+	void ShowInnerLayer(BOOL bShow);
+
 // 재정의입니다.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

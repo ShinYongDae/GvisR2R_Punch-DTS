@@ -113,6 +113,11 @@ void CDlgFrameHigh::OnShowWindow(BOOL bShow, UINT nStatus)
 void CDlgFrameHigh::AtDlgShow()
 {
 	LoadImg();
+
+	if (pDoc->GetTestMode() == MODE_OUTER)
+		pView->ShowInnerLayer(TRUE);
+	else
+		pView->ShowInnerLayer(FALSE);
 }
 
 void CDlgFrameHigh::AtDlgHide()
@@ -717,4 +722,12 @@ void CDlgFrameHigh::SetEngraveLastShot(int nSerial)
 	CString sPath = PATH_WORKING_INFO;
 	pDoc->WorkingInfo.LastJob.sEngraveLastShot = str;
 	::WritePrivateProfileString(_T("Last Job"), _T("Engrave Last Shot"), str, sPath);
+}
+
+void CDlgFrameHigh::ShowInnerLayer(BOOL bShow)
+{
+	if(bShow)
+		myChkMenu06.ShowWindow(SW_SHOW);
+	else
+		myChkMenu06.ShowWindow(SW_HIDE);
 }

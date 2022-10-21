@@ -63,6 +63,7 @@ class CMyGL : public CWnd
 	void DrawRgn();
 	void DrawPnlNum();
 	void DrawPnlDefNum();
+	void DrawPnlLayerInfo();
 
 	void DrawPcs();
 	void DrawPin();

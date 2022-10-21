@@ -724,6 +724,11 @@ void CGvisR2R_PunchView::OnTimer(UINT_PTR nIDEvent)
 			if (m_pDlgFrameHigh)
 				m_pDlgFrameHigh->ChkMenu01();
 			SetDualTest(pDoc->WorkingInfo.LastJob.bDualTest);
+			if (pDoc->GetTestMode() == MODE_OUTER)
+			{
+				pDoc->GetInnerInfo(pDoc->WorkingInfo.LastJob.sLotUp);
+			}	
+
 			break;
 		case 14:
 			m_nStepInitView++;
@@ -12170,6 +12175,7 @@ void CGvisR2R_PunchView::InitReelmap()
 	if (pDoc->GetTestMode() == MODE_OUTER)
 	{
 		pDoc->InitReelmapInner();
+		pDoc->SetReelmapInner(ROT_NONE);
 	}
 }
 
@@ -16859,7 +16865,7 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 
 			if (pDoc->GetTestMode() == MODE_OUTER)
 			{
-				if (LoadPcrInnerUp(m_nShareUpS), FALSE)				// Default: From Buffer, TRUE: From Share
+				if (LoadPcrInnerUp(m_nShareUpS, FALSE))				// Default: From Buffer, TRUE: From Share
 				{
 					OrderingMkInnerUp(m_nShareUpS, bDualTest);
 				}
@@ -17032,7 +17038,7 @@ void CGvisR2R_PunchView::DoAutoChkShareFolder()	// 20170727-잔량처리 시 계속적으
 
 			if (pDoc->GetTestMode() == MODE_OUTER)
 			{
-				if (LoadPcrInnerDn(m_nShareUpS), FALSE)				// Default: From Buffer, TRUE: From Share
+				if (LoadPcrInnerDn(m_nShareUpS, FALSE))				// Default: From Buffer, TRUE: From Share
 				{
 					OrderingMkInnerDn(m_nShareUpS);
 				}
@@ -22151,6 +22157,14 @@ void CGvisR2R_PunchView::LoadPcrFromBuf()
 					UpdateReelmap(m_pBufSerial[0][i]);
 				}
 			}
+
+			if (pDoc->GetTestMode() == MODE_OUTER)
+			{
+				if (LoadPcrInnerUp(m_pBufSerial[0][i], FALSE))				// Default: From Buffer, TRUE: From Share
+				{
+					OrderingMkInnerUp(m_pBufSerial[0][i], bDualTest);
+				}
+			}
 		}
 	}
 
@@ -22165,6 +22179,15 @@ void CGvisR2R_PunchView::LoadPcrFromBuf()
 					OrderingMkDn(m_pBufSerial[1][i]);
 					UpdateReelmap(m_pBufSerial[1][i]); // After inspect bottom side.
 				}
+
+				if (pDoc->GetTestMode() == MODE_OUTER)
+				{
+					if (LoadPcrInnerDn(m_pBufSerial[1][i], FALSE))				// Default: From Buffer, TRUE: From Share
+					{
+						OrderingMkInnerDn(m_pBufSerial[1][i]);
+					}
+				}
+
 			}
 		}
 	}
@@ -23762,4 +23785,10 @@ void CGvisR2R_PunchView::UpdateYield()
 			}
 		}
 	}
+}
+
+void CGvisR2R_PunchView::ShowInnerLayer(BOOL bShow)
+{
+	if (m_pDlgFrameHigh)
+		m_pDlgFrameHigh->ShowInnerLayer(bShow);
 }

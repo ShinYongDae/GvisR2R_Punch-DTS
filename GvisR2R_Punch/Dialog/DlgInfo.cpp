@@ -1721,6 +1721,8 @@ void CDlgInfo::ShowInnerInfo()
 				myStcData[18].SetWindowText(_T(""));
 			}
 		}
+
+		pView->ShowInnerLayer(TRUE);
 	}
 	else
 	{
@@ -1734,6 +1736,8 @@ void CDlgInfo::ShowInnerInfo()
 		myStcData[16].ShowWindow(SW_HIDE); // 내층 정보 - LOT
 		myStcData[17].ShowWindow(SW_HIDE); // 내층 정보 - 상면 레이어
 		myStcData[18].ShowWindow(SW_HIDE); // 내층 정보 - 하면 레이어
+
+		pView->ShowInnerLayer(FALSE);
 	}
 }
 

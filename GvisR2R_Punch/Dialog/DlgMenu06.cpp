@@ -178,7 +178,7 @@ void CDlgMenu06::InitGL()
 	if (!m_pMyGL_Inner)
 	{
 		m_pMyGL_Inner = new CMyGL(this);
-		m_pMyGL_Inner->Init(IDC_STC_REELMAP_INNER, pDoc->m_pReelMapInnerAllUp);
+		m_pMyGL_Inner->Init(IDC_STC_REELMAP_INNER, pDoc->m_pReelMapInner);
 	}
 	m_pMyGL_Inner->SetRgn();
 	m_pMyGL_Inner->SetPcsDef();

@@ -421,6 +421,9 @@ public:
 	void SetMergeInnerPcsIdxUp(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
 	void SetMergeInnerPcsIdxDn(int nSerial, stPcrMerge *pPcrMgr, int nTotDefPcs, int nTotPcs);
 
+	void SetReelmapInner(int nDir = ROT_NONE);
+
+
 // 재정의입니다.
 public:
 	virtual BOOL OnNewDocument();
