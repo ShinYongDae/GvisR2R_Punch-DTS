@@ -1466,9 +1466,20 @@ BOOL CReelMap::Disp(int nMkPnl, BOOL bDumy)
 				break;
 			}
 
+			int nIdx = pDoc->GetPcrIdx1(nLoadPnl);
+
 			m_pPnlNum[k] = nLoadPnl; // 3 ~ 10
-			if(nLoadPnl <= pView->m_nLotEndSerial || pView->m_nLotEndSerial == 0)
-				m_pPnlDefNum[k] = pDoc->m_pPcr[RMAP_ALLUP][pDoc->GetPcrIdx1(nLoadPnl)]->m_nTotDef;
+			if (nLoadPnl <= pView->m_nLotEndSerial || pView->m_nLotEndSerial == 0)
+			{
+				if (m_nLayer < MAX_PCR)
+				{
+					m_pPnlDefNum[k] = pDoc->m_pPcr[m_nLayer][nIdx]->m_nTotDef;	//m_pPnlDefNum[k] = pDoc->m_pPcr[RMAP_ALLUP][nIdx]->m_nTotDef;
+				}
+				else
+				{
+					m_pPnlDefNum[k] = pDoc->m_pPcrInner[m_nLayer-MAX_PCR][nIdx]->m_nTotDef;
+				}
+			}
 
 			for(nR=0; nR<nNodeX; nR++)  // nR = 0 ~ 5
 			{
@@ -1864,9 +1875,9 @@ void CReelMap::ClrRst()
 CString CReelMap::GetYieldPath(int nRmap)
 {
 	CString sPath;
-#ifdef TEST_MODE
-	sPath = PATH_REELMAP;
-#else
+//#ifdef TEST_MODE
+//	sPath = PATH_REELMAP;
+//#else
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	CString str;
@@ -1981,7 +1992,7 @@ CString CReelMap::GetYieldPath(int nRmap)
 				str);
 		}
 	}
-#endif
+//#endif
 	return sPath;
 }
 
@@ -3067,9 +3078,9 @@ void CReelMap::SetPathAtBuf(CString sPath)
 CString CReelMap::GetRmapPath(int nRmap)
 {
 	CString sPath;
-#ifdef TEST_MODE
-	sPath = PATH_REELMAP;
-#else
+//#ifdef TEST_MODE
+//	sPath = PATH_REELMAP;
+//#else
 	BOOL bDualTest = pDoc->WorkingInfo.LastJob.bDualTest;
 
 	CString str;
@@ -3184,7 +3195,7 @@ CString CReelMap::GetRmapPath(int nRmap)
 											str);
 		}
 	}
-#endif
+//#endif
 	return sPath;
 }
 

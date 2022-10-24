@@ -267,7 +267,7 @@ void CMyGL::SetPnlDefNum()
 
 	int k;
 	for(k=0; k<m_nTotPnl; k++)
-		m_pPnlDefNum[k]=m_pReelMap->m_pPnlDefNum[k];//pDoc->
+		m_pPnlDefNum[k]=0;//pDoc->
 }
 
 void CMyGL::ResetRgn()
@@ -674,7 +674,7 @@ void CMyGL::DrawPnlLayerInfo()
 
 void CMyGL::DrawPnlDefNum()
 {
-	if (!m_pPnlDefNum || !m_pReelMap)
+	if (!m_pReelMap || !m_pReelMap->m_pPnlDefNum)
 		return;
 
 	int k;
@@ -684,10 +684,10 @@ void CMyGL::DrawPnlDefNum()
 	// 	for(k=0; k<m_nTotPnl; k++)
 	for (k = m_nTotPnl - 1; k >= 0; k--)
 	{
-		if (m_pPnlDefNum[k] <= 0)
+		if (m_pReelMap->m_pPnlDefNum[k] <= 0)
 			sPnlDefNum.Format(_T(""));
 		else
-			sPnlDefNum.Format(_T("Total: %d"), m_pPnlDefNum[k]);
+			sPnlDefNum.Format(_T("Total: %d"), m_pReelMap->m_pPnlDefNum[k]);
 		//strcpy(cPnlDefNum, sPnlDefNum);
 		//_stprintf(cPnlDefNum, _T("%s"), sPnlDefNum);
 

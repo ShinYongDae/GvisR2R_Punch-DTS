@@ -949,6 +949,10 @@ public:
 
 	void ShowInnerLayer(BOOL bShow);
 
+	void TestAuto();
+	void TestAutoReady();
+	void TestChkSerial();
+
 // 재정의입니다.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

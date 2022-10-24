@@ -41,7 +41,9 @@ public:
 	void SetRmapRgn();
 
 	void RefreshRmap();
-	void DispReelmap(int nSerial, BOOL bDumy);
+
+	BOOL SetSerialReelmap(int nSerial, BOOL bDumy = FALSE);
+	void DispReelmap(int nSerial, BOOL bDumy = FALSE);
 
 	afx_msg LRESULT OnDrawReelMapInner(WPARAM wPara, LPARAM lPara);
 	afx_msg LRESULT OnDrawReelMapOuter(WPARAM wPara, LPARAM lPara);

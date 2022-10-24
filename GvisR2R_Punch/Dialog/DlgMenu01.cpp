@@ -297,7 +297,9 @@ BOOL CDlgMenu01::OnInitDialog()
 	pView->DispMain(_T("정 지"), RGB_RED);
 	EnableBtn(TRUE);
 
+#ifndef TEST_MODE 
 	GetDlgItem(IDC_CHK_REMARKING)->ShowWindow(SW_HIDE);
+#endif
 
 // 	GetDlgItem(IDC_STC_ST)->ShowWindow(SW_HIDE);
 // 	GetDlgItem(IDC_STC_GD_RA_1)->ShowWindow(SW_HIDE);
@@ -429,34 +431,25 @@ void CDlgMenu01::OpenReelmap(int nSelRmap)
 	CString sPath;
 	if(pDoc->m_pReelMap)
 	{
-#ifdef TEST_MODE
-		switch(nSelRmap)
-		{
-		case RMAP_UP:
-			sPath = PATH_REELMAP_UP;
-			break;
-		case RMAP_DN:
-			sPath = PATH_REELMAP_DN;
-			break;
-		case RMAP_ALLUP:
-			sPath = PATH_REELMAP_ALL_UP;
-			break;
-		case RMAP_ALLDN:
-			sPath = PATH_REELMAP_ALL_DN;
-			break;
-		}
-		pDoc->m_pReelMap->m_nLayer = nSelRmap;
-		pDoc->m_pReelMap->Open(sPath);
-// #else
-// 		if(sPath == PATH_REELMAP_UP)
-// 			pDoc->m_pReelMap->m_nLayer = 0; // [0]:Up
-// 		else if(sPath == PATH_REELMAP_DN)
-// 			pDoc->m_pReelMap->m_nLayer = 1; // [1]:Dn
-// 		else if(sPath == PATH_REELMAP_ALL_UP)
-// 			pDoc->m_pReelMap->m_nLayer = 2; // [2]:AllUp
-// 		else if(sPath == PATH_REELMAP_ALL_DN)
-// 			pDoc->m_pReelMap->m_nLayer = 3; // [2]:AllDn
-#else
+//#ifdef TEST_MODE
+//		switch(nSelRmap)
+//		{
+//		case RMAP_UP:
+//			sPath = PATH_REELMAP_UP;
+//			break;
+//		case RMAP_DN:
+//			sPath = PATH_REELMAP_DN;
+//			break;
+//		case RMAP_ALLUP:
+//			sPath = PATH_REELMAP_ALL_UP;
+//			break;
+//		case RMAP_ALLDN:
+//			sPath = PATH_REELMAP_ALL_DN;
+//			break;
+//		}
+//		pDoc->m_pReelMap->m_nLayer = nSelRmap;
+//		pDoc->m_pReelMap->Open(sPath);
+//#else
 		if(nSelRmap < 0)
 			pDoc->m_pReelMap->m_nLayer = pView->m_nSelRmap;
 		else
@@ -464,7 +457,7 @@ void CDlgMenu01::OpenReelmap(int nSelRmap)
 
 		pDoc->m_pReelMap->Open(pView->GetRmapPath(nSelRmap));
 		pDoc->m_pReelMap->SetPathAtBuf(pView->GetRmapPath(nSelRmap));
-#endif	
+//#endif	
 	}
 }
 
@@ -4032,27 +4025,6 @@ void CDlgMenu01::OnChkRemarking()
 		;
 	}
 
-/*	BOOL bOn = myBtn[4].GetCheck();
-	if(bOn && !m_bLotEnd)
-	{
-//		if(IDNO == pView->DoMyMsgBox(_T("재마킹 작업을 하시겠습니까?"), MB_YESNO))
-		if(IDNO == pView->MsgBox(_T("재마킹 작업을 하시겠습니까?"), 0, MB_YESNO))
-			myBtn[4].SetCheck(FALSE);
-		else
-		{
-			pView->m_bReMk = TRUE;
-			if(pView->m_pMpe)
-				pView->m_pMpe->Write(_T("MB440182"), 1);			// 재마킹(PC가 On시키고, PLC가 확인하고 Off시킴)-20141031
-		}
-	}
-	else
-	{
-		if(m_bLotEnd)
-		{
-			pView->MsgBox(_T("현재 재마킹 작업을 하고 있는 중입니다."));
-			myBtn[4].SetCheck(TRUE);
-		}
-	}*/
 	this->MoveWindow(m_pRect, TRUE);
 }
 

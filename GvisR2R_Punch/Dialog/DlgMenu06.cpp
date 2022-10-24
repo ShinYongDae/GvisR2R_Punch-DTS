@@ -158,6 +158,9 @@ BOOL CDlgMenu06::OnInitDialog()
 	
 	// TODO: Add extra initialization here
 	InitGL();
+	SetPnlNum();
+	SetPnlDefNum();
+
 	InitStatic();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -276,8 +279,8 @@ void CDlgMenu06::DispReelmap(int nSerial, BOOL bDumy)
 
 	if (pDoc->m_pReelMapInner)
 		pDoc->m_pReelMapInner->Disp(nSerial, bDumy);
-	if (pDoc->m_pReelMapInOuterUp)
-		pDoc->m_pReelMapInOuterUp->Disp(nSerial, bDumy);
+	//if (pDoc->m_pReelMapInOuterUp)
+	//	pDoc->m_pReelMapInOuterUp->Disp(nSerial, bDumy);
 	SetPnlNum();
 	SetPnlDefNum();
 	myStcReelmapInner.Refresh();
@@ -301,8 +304,6 @@ void CDlgMenu06::OnTimer(UINT_PTR nIDEvent)//(UINT nIDEvent)
 	CDialog::OnTimer(nIDEvent);
 }
 
-
-
 BOOL CDlgMenu06::OnEraseBkgnd(CDC* pDC)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
@@ -313,3 +314,24 @@ BOOL CDlgMenu06::OnEraseBkgnd(CDC* pDC)
 
 	//return CDialog::OnEraseBkgnd(pDC);
 }
+
+
+BOOL CDlgMenu06::SetSerialReelmap(int nSerial, BOOL bDumy)
+{
+	if (nSerial <= 0)
+	{
+		pView->MsgBox(_T("Serial Error.6-1"));
+		//AfxMessageBox(_T("Serial Error.6-1"));
+		return 0;
+	}
+
+	CString sPath;
+	if (pDoc->MakeMkDir())
+	{
+		DispReelmap(nSerial, bDumy);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
