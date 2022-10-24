@@ -114,6 +114,7 @@ void CDlgMenu06::OnShowWindow(BOOL bShow, UINT nStatus)
 
 void CDlgMenu06::AtDlgShow()
 {
+	RefreshRmap();
 }
 
 void CDlgMenu06::AtDlgHide()
@@ -279,6 +280,8 @@ void CDlgMenu06::DispReelmap(int nSerial, BOOL bDumy)
 
 	if (pDoc->m_pReelMapInner)
 		pDoc->m_pReelMapInner->Disp(nSerial, bDumy);
+	if (pDoc->m_pReelMapAllUp)
+		pDoc->m_pReelMapAllUp->Disp(nSerial, bDumy);
 	//if (pDoc->m_pReelMapInOuterUp)
 	//	pDoc->m_pReelMapInOuterUp->Disp(nSerial, bDumy);
 	SetPnlNum();
