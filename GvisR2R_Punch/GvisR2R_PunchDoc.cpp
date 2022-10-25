@@ -10102,6 +10102,18 @@ void CGvisR2R_PunchDoc::SetTestMode(int nMode)
 	CString sData;
 	sData.Format(_T("%d"), nMode);
 	::WritePrivateProfileString(_T("Last Job"), _T("Test Mode"), sData, PATH_WORKING_INFO);
+
+	if (nMode == MODE_OUTER)
+	{
+		InitReelmapInner();
+		SetReelmapInner(ROT_NONE);
+
+		if(pView && pView->m_pDlgMenu06)
+		{ 
+			pView->SetPathAtBuf(); // Reelmap path를 설정함.
+			pView->m_pDlgMenu06->InitGL(); // After InitReelmapInner();
+		}
+	}
 }
 
 BOOL CGvisR2R_PunchDoc::GetInnerInfo(CString sCurrLot)

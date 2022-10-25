@@ -10296,6 +10296,14 @@ void CGvisR2R_PunchView::ResetMkInfo(int nAoi) // 0 : AOI-Up , 1 : AOI-Dn , 2 : 
 	// 		if(m_pDlgMenu01)
 	// 			m_pDlgMenu01->ResetMkInfo();
 	// 	}
+
+
+	if (pDoc->GetTestMode() == MODE_OUTER)
+	{
+		if (m_pDlgMenu06)
+			m_pDlgMenu06->InitGL();
+	}
+
 	pView->m_nDebugStep = 523; pView->DispThreadTick();
 }
 
@@ -23876,7 +23884,7 @@ void CGvisR2R_PunchView::TestChkSerial()
 	else
 		nSerial = m_nBufUpSerial[1];
 
+	SetSerialReelmap(nSerial);		// Reelmap(우) Display Start
 	SetSerialMkInfo(nSerial);		// 불량이미지(우) Display Start
-	SetSerialReelmap(nSerial);			// Reelmap(우) Display Start
 
 }

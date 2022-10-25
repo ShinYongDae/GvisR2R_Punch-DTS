@@ -25,7 +25,6 @@ class CDlgMenu06 : public CDialog
 	void AtDlgShow();
 	void AtDlgHide();
 
-	void InitGL();
 	void InitStatic();
 
 // Construction
@@ -35,6 +34,7 @@ public:
 
 	BOOL Create();
 
+	void InitGL();
 	void ResetGL();
 	void SetPnlNum();
 	void SetPnlDefNum();

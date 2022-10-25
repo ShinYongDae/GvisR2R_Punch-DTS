@@ -177,23 +177,39 @@ void CDlgMenu06::InitStatic()
 	myStcReelmapOuter.SubclassDlgItem(IDC_STC_REELMAP_OUTER, this);
 	myStcReelmapOuter.SetHwnd(this->GetSafeHwnd(), IDC_STC_REELMAP_OUTER);
 }
-void CDlgMenu06::InitGL()
+void CDlgMenu06::InitGL() // After InitReelmapInner()
 {
-	if (!m_pMyGL_Inner)
+	if (m_pMyGL_Inner)
+	{
+		delete m_pMyGL_Inner;
+		m_pMyGL_Inner = NULL;
+	}
+	if (pDoc->m_pReelMapInner)
 	{
 		m_pMyGL_Inner = new CMyGL(this);
 		m_pMyGL_Inner->Init(IDC_STC_REELMAP_INNER, pDoc->m_pReelMapInner);
 	}
-	m_pMyGL_Inner->SetRgn();
-	m_pMyGL_Inner->SetPcsDef();
+	if(m_pMyGL_Inner)
+	{
+		m_pMyGL_Inner->SetRgn();
+		m_pMyGL_Inner->SetPcsDef();
+	}
 
-	if (!m_pMyGL_Outer)
+	if (m_pMyGL_Outer)
+	{
+		delete m_pMyGL_Outer;
+		m_pMyGL_Outer = NULL;
+	}
+	if (pDoc->m_pReelMapAllUp)
 	{
 		m_pMyGL_Outer = new CMyGL(this);
 		m_pMyGL_Outer->Init(IDC_STC_REELMAP_OUTER, pDoc->m_pReelMapAllUp);
 	}
-	m_pMyGL_Outer->SetRgn();
-	m_pMyGL_Outer->SetPcsDef();
+	if (m_pMyGL_Outer)
+	{
+		m_pMyGL_Outer->SetRgn();
+		m_pMyGL_Outer->SetPcsDef();
+	}
 }
 
 void CDlgMenu06::ResetGL()

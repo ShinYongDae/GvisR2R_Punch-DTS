@@ -1266,8 +1266,7 @@ void CDlgInfo::OnStc61()
 
 void CDlgInfo::SetTestMode(int nMode)
 {
-	//pDoc->WorkingInfo.LastJob.nTestMode = nMode; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
-	pDoc->SetTestMode(nMode); // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
+	pDoc->WorkingInfo.LastJob.nTestMode = nMode; // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
 
 	//CString sData;
 	//sData.Format(_T("%d"), nMode);
@@ -1286,6 +1285,7 @@ void CDlgInfo::SetTestMode(int nMode)
 	}
 
 	ShowInnerInfo();
+	pDoc->SetTestMode(nMode); // MODE_NONE = 0, MODE_INNER = 1, MODE_OUTER = 2 .
 
 	myBtn[23].RedrawWindow();
 	myBtn[24].RedrawWindow();
@@ -1703,6 +1703,9 @@ void CDlgInfo::ShowInnerInfo()
 
 		if (ModifyLotData())
 		{
+			if(sCurrLot.IsEmpty())
+				sCurrLot = pDoc->WorkingInfo.LastJob.sLotUp;
+
 			if (GetInnerInfo(sCurrLot))
 			{
 				if (pView->IsRun())
