@@ -114,7 +114,7 @@ void CDlgMenu06::OnShowWindow(BOOL bShow, UINT nStatus)
 
 void CDlgMenu06::AtDlgShow()
 {
-	RefreshRmap();
+	//RefreshRmap();
 }
 
 void CDlgMenu06::AtDlgHide()
@@ -244,6 +244,7 @@ LRESULT CDlgMenu06::OnDrawReelMapInner(WPARAM wPara, LPARAM lPara)
 	if (m_pMyGL_Inner)
 	{
 		m_pMyGL_Inner->Draw();
+		Sleep(30);
 	}
 
 	return 0L;
@@ -254,6 +255,7 @@ LRESULT CDlgMenu06::OnDrawReelMapOuter(WPARAM wPara, LPARAM lPara)
 	if (m_pMyGL_Outer)
 	{
 		m_pMyGL_Outer->Draw();
+		Sleep(30);
 	}
 
 	return 0L;

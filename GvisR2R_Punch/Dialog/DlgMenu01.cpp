@@ -2290,6 +2290,7 @@ LRESULT CDlgMenu01::OnDrawReelMap(WPARAM wPara, LPARAM lPara)
 	if(m_pMyGL)
 	{
 		m_pMyGL->Draw();
+		Sleep(30);
 		//this->MoveWindow(m_pRect, TRUE);
 	}
 

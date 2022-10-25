@@ -591,7 +591,7 @@ void CMyGL::DrawRgn()
 
 void CMyGL::DrawPnlNum()
 {
-	if (!m_pReelMap)
+	if (!m_pReelMap || !m_pReelMap->pFrmRgn)
 		return;
 
 	int k;
@@ -647,7 +647,7 @@ void CMyGL::DrawPnlNum()
 
 void CMyGL::DrawPnlLayerInfo()
 {
-	if (!m_pReelMap || m_pReelMap->pFrmRgn)
+	if (!m_pReelMap || !m_pReelMap->pFrmRgn)
 		return;
 
 	CString sLayerInfo;
